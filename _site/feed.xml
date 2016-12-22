@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Josh Pell'Blog</title>
+    <title>Josh Pell'Page</title>
     <description>When you think you can stop learning, is a time when you are going to be washed out.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 16 Dec 2016 18:28:19 +0800</pubDate>
-    <lastBuildDate>Fri, 16 Dec 2016 18:28:19 +0800</lastBuildDate>
+    <pubDate>Thu, 22 Dec 2016 18:42:53 +0800</pubDate>
+    <lastBuildDate>Thu, 22 Dec 2016 18:42:53 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
@@ -17,15 +17,492 @@
 
 </description>
         <pubDate>Fri, 16 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/jekyll/2016/12/16/Wellcome/</link>
-        <guid isPermaLink="true">http://localhost:4000/jekyll/2016/12/16/Wellcome/</guid>
+        <link>http://localhost:4000/hello/2016/12/16/Wellcome/</link>
+        <guid isPermaLink="true">http://localhost:4000/hello/2016/12/16/Wellcome/</guid>
         
         <category>demo</category>
         
         <category>Hello, Lao Tie!</category>
         
         
-        <category>jekyll</category>
+        <category>Hello</category>
+        
+      </item>
+    
+      <item>
+        <title>emoji表情作为单字符长度的处理</title>
+        <description>&lt;p&gt;我们知道emoji表情是一些特殊格式的字符串，因此我们在计算其长度的时候直接用“xxx.length”即可，但有时候产品经理会要求你把所有的emoji表情都当做一个字符处理，别问我怎么知道的😭😭😭，这里写下来希望大家不要跟我一样到处跳坑&lt;/p&gt;
+
+&lt;p&gt;还是直接上代码&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;获取emoji个数（我这里写到了NSString的类方法中）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
++ (NSInteger)emojiCountInString:(NSString *)string
+{
+    __block NSInteger num = 0;
+    [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
+                               options:NSStringEnumerationByComposedCharacterSequences
+                            usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
+		const unichar hs = [substring characterAtIndex:0];
+		if (0xd800 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0xdbff){
+			if (substring.length &amp;gt; 1) {
+				const unichar ls = [substring characterAtIndex:1];
+			    const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
+				if (0x1d000 &amp;lt;= uc &amp;amp;&amp;amp; uc &amp;lt;= 0x1f918)
+				{
+					num += 1;
+				}
+			}
+		}
+		else if (substring.length &amp;gt; 1)
+		{
+			const unichar ls = [substring characterAtIndex:1];
+			if (ls == 0x20e3 || ls == 0xFE0F || ls == 0xd83c)
+			{
+				num += 1;
+			}
+		}
+	    else{
+		// non surrogate
+			if (0x2100 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x27ff)
+			{
+			if (0x278b &amp;lt;= hs &amp;amp;&amp;amp; 0x2792 &amp;gt;= hs)
+			{
+				//不为emoji
+			}
+			else
+			{
+				num += 1;
+			}
+		}
+		else if (0x2B05 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2b07)
+		{
+			num += 1;
+		}
+		else if (0x2934 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2935)
+		{
+			num += 1;
+		}
+		else if (0x3297 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x3299)
+		{
+			num += 1;
+		}
+		else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50 || hs == 0xd83e)
+		{
+			num += 1;
+		}
+	}
+	}];
+    return num;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;字符串去掉emoji&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
++ (NSString *)getStringWithoutEmoji:(NSString *)string
+{
+    __block NSString *tempStr = string;
+    [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
+                               options:NSStringEnumerationByComposedCharacterSequences
+                            usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
+                                const unichar hs = [substring characterAtIndex:0];
+                                // surrogate pair
+                                if (0xd800 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0xdbff)
+                                {
+                                    if (substring.length &amp;gt; 1)
+                                    {
+                                        const unichar ls = [substring characterAtIndex:1];
+                                        const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
+                                        if (0x1d000 &amp;lt;= uc &amp;amp;&amp;amp; uc &amp;lt;= 0x1f918)
+                                        {
+
+                                            tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                        }
+                                    }
+                                }
+                                else if (substring.length &amp;gt; 1)
+                                {
+                                    const unichar ls = [substring characterAtIndex:1];
+                                    if (ls == 0x20e3 || ls == 0xFE0F || ls == 0xd83c)
+                                    {
+                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                    }
+                                }
+                                else
+                                {
+                                    // non surrogate
+                                    if (0x2100 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x27ff)
+                                    {
+                                        if (0x278b &amp;lt;= hs &amp;amp;&amp;amp; 0x2792 &amp;gt;= hs)
+                                        {
+                                            //不为emoji
+                                        }
+                                        else
+                                        {
+                                            tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                        }
+                                    }
+                                    else if (0x2B05 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2b07)
+                                    {
+                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                    }
+                                    else if (0x2934 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2935)
+                                    {
+                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                    }
+                                    else if (0x3297 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x3299)
+                                    {
+                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                    }
+                                    else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50 || hs == 0xd83e)
+                                    {
+                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
+                                    }
+                                }
+                            }];
+    return tempStr;
+}
+
+
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Tue, 08 Nov 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/11/08/emoji%E8%A1%A8%E6%83%85%E4%BD%9C%E4%B8%BA%E5%8D%95%E5%AD%97%E7%AC%A6%E9%95%BF%E5%BA%A6%E7%9A%84%E5%A4%84%E7%90%86/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/11/08/emoji%E8%A1%A8%E6%83%85%E4%BD%9C%E4%B8%BA%E5%8D%95%E5%AD%97%E7%AC%A6%E9%95%BF%E5%BA%A6%E7%9A%84%E5%A4%84%E7%90%86/</guid>
+        
+        <category>emoji</category>
+        
+        <category>长度</category>
+        
+        <category>emoji表情作为单字符长度的处理</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>OC升序与降序排列数组</title>
+        <description>&lt;p&gt;对数组进行快速升降序排列,话不多说直接上代码&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;升序&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSArray *tMlist = @[@4,@5,@2,@6,@3,@7,@8];
+NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+     NSNumber *tNumber1 = (NSNumber *)obj1;
+     NSNumber *tNumber2 = (NSNumber *)obj2; //升序2，4，。。
+     if ([tNumber1 integerValue] &amp;lt; [tNumber2 integerValue]){
+          return NSOrderedAscending;
+     }else{
+          return NSOrderedDescending;
+     }
+}];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;降序&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSArray *tMlist = @[@4,@5,@2,@6,@3,@7,@8];
+NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+     NSNumber *tNumber1 = (NSNumber *)obj1;
+     NSNumber *tNumber2 = (NSNumber *)obj2; //降序序8，7，。。
+     if ([tNumber1 integerValue] &amp;lt; [tNumber2 integerValue]){
+          return NSOrderedDescending;
+     }else{
+          return NSOrderedAscending;
+     }
+}];
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Tue, 18 Oct 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/10/18/OC%E5%8D%87%E5%BA%8F%E4%B8%8E%E9%99%8D%E5%BA%8F%E6%8E%92%E5%88%97%E6%95%B0%E7%BB%84/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/10/18/OC%E5%8D%87%E5%BA%8F%E4%B8%8E%E9%99%8D%E5%BA%8F%E6%8E%92%E5%88%97%E6%95%B0%E7%BB%84/</guid>
+        
+        <category>oc排序</category>
+        
+        <category>升序降序</category>
+        
+        <category>OC升序与降序排列数组</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>cornerstone永久破解</title>
+        <description>&lt;p&gt;有截图就不码蚊子了😁&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5Qw8sv9/Qvlnf.png&quot; alt=&quot;Thumper&quot; /&gt;
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5Qw8GrN/qLFGC.png&quot; alt=&quot;Thumper&quot; /&gt;
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5Qw8A6m/SFQ1X.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 14 Oct 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/10/14/cornerstone%E6%B0%B8%E4%B9%85%E7%A0%B4%E8%A7%A3/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/10/14/cornerstone%E6%B0%B8%E4%B9%85%E7%A0%B4%E8%A7%A3/</guid>
+        
+        <category>cornerstone</category>
+        
+        <category>破解</category>
+        
+        <category>cornerstone永久破解</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>代码的特殊注释</title>
+        <description>&lt;p&gt;用“///”和“#param mark”来给代码做注释很常见，下面介绍几个不常见的注释方法，中高级程序员必备！&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;TODO: + 说明：
+如果代码中有该标识，说明在标识处有功能代码待编写，待实现的功能在说明中会简略说明。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;FIXME: + 说明：
+如果代码中有该标识，说明标识处代码需要修正，甚至代码是错误的，不能工作，需要修复，如何修正会在说明中简略说明。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;XXX: + 说明：
+如果代码中有该标识，说明标识处代码虽然实现了功能，但是实现的方法有待商榷，希望将来能改进，要改进的地方会在说明中简略说明。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;eclipse中特殊的注释：
+在eclipse中，TODO、FIXME和XXX都会被eclipse的task视图所收集。在项目发布前，检查一下task视图是一个很好的习惯。此外，在eclipse中，我们可自定义自己的特殊注释标签。如在C/C++中，进入window—&amp;gt;preferences—&amp;gt;C/C++—&amp;gt;Task Tags窗口即可添加特殊标签，默认只有TODO、FIXME和XXX。&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 09 Oct 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/10/09/%E4%BB%A3%E7%A0%81%E7%9A%84%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/10/09/%E4%BB%A3%E7%A0%81%E7%9A%84%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/</guid>
+        
+        <category>代码规范</category>
+        
+        <category>特殊注释</category>
+        
+        <category>OC代码的特殊注释</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>常用正则表达式</title>
+        <description>&lt;ul&gt;
+  &lt;li&gt;验证用户名和密码：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[a-zA-Z]/w{5,15}$&lt;/code&gt;正确格式：”[A-Z][a-z]_[0-9]”组成,并且第一个字必须为字母6~16位；&lt;/li&gt;
+  &lt;li&gt;验证电话号码：&lt;code class=&quot;highlighter-rouge&quot;&gt;^(//d{3,4}-)//d{7,8}$&lt;/code&gt;正确格式：xxx/xxxx-xxxxxxx/xxxxxxxx；&lt;/li&gt;
+  &lt;li&gt;验证手机号码：&lt;code class=&quot;highlighter-rouge&quot;&gt;^1[34578][0-9]//d{8}$&lt;/code&gt;;&lt;/li&gt;
+  &lt;li&gt;验证身份证号（15位或18位数字）：&lt;code class=&quot;highlighter-rouge&quot;&gt;//d{14}[[0-9],0-9xX]&lt;/code&gt;；&lt;/li&gt;
+  &lt;li&gt;验证Email地址:(&lt;code class=&quot;highlighter-rouge&quot;&gt;^//w+([-+.]//w+)*@//w+([-.]//w+)*/.//w+([-.]//w+)*$&lt;/code&gt;);&lt;/li&gt;
+  &lt;li&gt;只能输入由数字和26个英文字母组成的字符串：(&lt;code class=&quot;highlighter-rouge&quot;&gt;^[A-Za-z0-9]+$&lt;/code&gt;) ;&lt;/li&gt;
+  &lt;li&gt;整数或者小数：^[0-9]+([.]{0,1}[0-9]+){0,1}$&lt;/li&gt;
+  &lt;li&gt;只能输入数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[0-9]*$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入n位的数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^//d{n}$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入至少n位的数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^//d{n,}$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入m~n位的数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^//d{m,n}$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入某个数字开头：&lt;code class=&quot;highlighter-rouge&quot;&gt;^(0*)$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入有两位小数的正实数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[0-9]+(.[0-9]{2})?$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入有1~3位小数的正实数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[0-9]+(/.[0-9]{1,3})?$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入非零的正整数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^/+?[1-9][0-9]*$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入非零的负整数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^/-[1-9][]0-9&lt;/code&gt;*$。&lt;/li&gt;
+  &lt;li&gt;只能输入长度为3的字符：&lt;code class=&quot;highlighter-rouge&quot;&gt;^.{3}$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入由26个英文字母组成的字符串：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[A-Za-z]+$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入由26个大写英文字母组成的字符串：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[A-Z]+$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入由26个小写英文字母组成的字符串：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[a-z]+$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;验证是否含有^%&amp;amp;’,;=?$/等字符：&lt;code class=&quot;highlighter-rouge&quot;&gt;[^%&amp;amp;',;=?$/x22]+&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;只能输入汉字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[/u4e00-/u9fa5]{0,}$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;验证URL：&lt;code class=&quot;highlighter-rouge&quot;&gt;^http://([//w-]+/.)+[//w-]+(/[//w-./?%&amp;amp;=]*)?$&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;验证一年的12个月：&lt;code class=&quot;highlighter-rouge&quot;&gt;^(0?[1-9]1[0-2])$&lt;/code&gt;正确格式为：”01”～”09”和”10”～”12”&lt;/li&gt;
+  &lt;li&gt;验证一个月的31天：&lt;code class=&quot;highlighter-rouge&quot;&gt;^((0?[1-9])|((1|2)[0-9])|30|31)$&lt;/code&gt;正确格式为；”01”～”09”、”10”～”29”和“30”~“31”。&lt;/li&gt;
+  &lt;li&gt;获取日期正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;//d{4}[年|/-|/.]//d{/1-/12}[月|/-|/.]//d{/1-/31}日?&lt;/code&gt;
+评注：可用来匹配大多数年月日信息。&lt;/li&gt;
+  &lt;li&gt;匹配双字节字符(包括汉字在内)：&lt;code class=&quot;highlighter-rouge&quot;&gt;[^/x00-/xff]&lt;/code&gt;
+评注：可以用来计算字符串的长度（一个双字节字符长度计+2，ASCII字符计1）&lt;/li&gt;
+  &lt;li&gt;匹配空白行的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;/n/s*/r&lt;/code&gt;
+评注：可以用来删除空白行&lt;/li&gt;
+  &lt;li&gt;匹配HTML标记的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;(/S*?)[^&amp;gt;]*&amp;gt;.*?|&amp;lt;.*? /&amp;gt;&lt;/code&gt;
+评注：网上流传的版本太糟糕，上面这个也仅仅能匹配部分，对于复杂的嵌套标记依旧无能为力&lt;/li&gt;
+  &lt;li&gt;匹配首尾空白字符的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;^/s*|/s*$&lt;/code&gt;
+评注：可以用来删除行首行尾的空白字符(包括空格、制表符、换页符等等)，非常有用的表达式&lt;/li&gt;
+  &lt;li&gt;匹配网址URL的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;[a-zA-z]+://[^/s]*&lt;/code&gt;
+评注：网上流传的版本功能很有限，上面这个基本可以满足需求&lt;/li&gt;
+  &lt;li&gt;匹配帐号是否合法(字母开头，允许5-16字节，允许字母数字下划线)：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[a-zA-Z][a-zA-Z0-9_]{4,15}$&lt;/code&gt;
+评注：表单验证时很实用&lt;/li&gt;
+  &lt;li&gt;匹配腾讯QQ号：&lt;code class=&quot;highlighter-rouge&quot;&gt;[1-9][0-9]/{4,/}&lt;/code&gt;评注：腾讯QQ号从10 000 开始&lt;/li&gt;
+  &lt;li&gt;匹配中国邮政编码：&lt;code class=&quot;highlighter-rouge&quot;&gt;[1-9]//d{5}(?!/d)&lt;/code&gt;评注：中国邮政编码为6位数字&lt;/li&gt;
+  &lt;li&gt;匹配ip地址：&lt;code class=&quot;highlighter-rouge&quot;&gt;((2[0-4]//d|25[0-5]|[01]?//d//d?)/.){3}(2[0-4]//d|25[0-5]|[01]?//d//d?)&lt;/code&gt;。评注：提取ip地址时有用&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 24 Aug 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/08/24/%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/08/24/%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
+        
+        <category>正则</category>
+        
+        <category>常用正则表达式</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>界面中有键盘事件时的UI处理</title>
+        <description>&lt;ul&gt;
+  &lt;li&gt;界面操作的时候经常需要进行输入操作，键盘会有遮挡UI的情况，这是就需要对键盘进行监听，做对应处理&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;控制器加入对键盘事件的监听，控制器加入代码&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[NSNotificationCenter defaultCenter]addObserver:selfselector:@selector(keyboardWillAppear:) name:UIKeyboardWillShowNotification object:nil];
+[[NSNotificationCenter defaultCenter]addObserver:selfselector:@selector(keyboardWillDisappear:) name:UIKeyboardWillHideNotification object:nil];	    
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;实现键盘出现和消失的代理并计算键盘高度，按需求操作UI&lt;/p&gt;
+
+    &lt;p&gt;键盘出现和消失&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)keyboardWillAppear:(NSNotification *)notification{
+
+    float keyboardH = [self keyboardEndingFrameHeight:notification.userInfo];
+    [UIView animateWithDuration:0.2 animations:^{
+    	self.contentView.frame = CGRectMake(0,kDeviceHeight-contentView.height-keyboardH,kDeviceWidth,contentView.height);
+    }];
+}
+
+-(void)keyboardWillDisappear:(NSNotification *)note {
+
+    self.contentView.frame = CGRectMake(0,kDeviceHeight-contentView.height,kDeviceWidth,contentView.height);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;下面也是最重要的方法，获取键盘高度&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(CGFloat)keyboardEndingFrameHeight:(NSDictionary *)userInfo {
+
+    CGRect keyboardEndingUncorrectedFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey]CGRectValue];
+
+    CGRect keyboardEndingFrame = [selfconvertRect:keyboardEndingUncorrectedFrame fromView:nil];
+
+    return keyboardEndingFrame.size.height;
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 08 Aug 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/08/08/%E7%95%8C%E9%9D%A2%E4%B8%AD%E6%9C%89%E9%94%AE%E7%9B%98%E4%BA%8B%E4%BB%B6%E6%97%B6%E7%9A%84UI%E5%A4%84%E7%90%86/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/08/08/%E7%95%8C%E9%9D%A2%E4%B8%AD%E6%9C%89%E9%94%AE%E7%9B%98%E4%BA%8B%E4%BB%B6%E6%97%B6%E7%9A%84UI%E5%A4%84%E7%90%86/</guid>
+        
+        <category>iOS</category>
+        
+        <category>键盘</category>
+        
+        <category>界面中有键盘事件时的UI处理</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>tableView的cell旋转效果展示</title>
+        <description>&lt;p&gt;让人眼前一亮的cell展示效果，只需要加入以下代码：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    CATransform3D rotation;
+    rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4);
+    rotation.m34 = 1.0/ -600;
+    
+    cell.layer.shadowColor = [[UIColor blackColor]CGColor];
+    cell.layer.shadowOffset = CGSizeMake(10, 10);
+    cell.alpha = 0;
+    cell.layer.transform = rotation;
+    cell.layer.anchorPoint = CGPointMake(0.5, 0.5);
+    
+    [UIView beginAnimations:@&quot;rotation&quot; context:NULL];
+    [UIView setAnimationDuration:0.8];
+    cell.layer.transform = CATransform3DIdentity;
+    cell.alpha = 1;
+    cell.layer.shadowOffset = CGSizeMake(0, 0);
+    
+    [UIView commitAnimations];
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;如需要其他效果，修改 &lt;code class=&quot;highlighter-rouge&quot;&gt;rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4)&lt;/code&gt; 参数即可&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 01 Aug 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/08/01/tableView%E7%9A%84cell%E6%97%8B%E8%BD%AC%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/08/01/tableView%E7%9A%84cell%E6%97%8B%E8%BD%AC%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA/</guid>
+        
+        <category>cell旋转</category>
+        
+        <category>tableView的cell旋转效果展示</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>SDWebImage的缓存图片</title>
+        <description>&lt;h3 id=&quot;为了避免浪费流量以及提高显示图片效率使用sdwebimage经常需要使用它的缓存图片&quot;&gt;为了避免浪费流量，以及提高显示图片效率，使用SDWebImage经常需要使用它的缓存图片&lt;/h3&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;UIImage *pickImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:urlStr];
+        if (pickImage) {
+
+            _picImageView.image = pickImage;
+
+        }else{
+
+            [_picImageViewsetImageWithURL:[NSURLURLWithString:urlStr] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];	
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Wed, 27 Jul 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/07/27/SDWebImage%E7%9A%84%E7%BC%93%E5%AD%98%E5%9B%BE%E7%89%87/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/07/27/SDWebImage%E7%9A%84%E7%BC%93%E5%AD%98%E5%9B%BE%E7%89%87/</guid>
+        
+        <category>SDWebImage</category>
+        
+        <category>缓存</category>
+        
+        <category>SDWebImage取缓存图片</category>
+        
+        
+        <category>tips</category>
         
       </item>
     

@@ -1,5 +1,5 @@
 # Site settings
-title: "Josh Pell'Blog"
+title: "Josh Pell'Page"
 email: joshpell@163.com
 description: "When you think you can stop learning, is a time when you are going to be washed out."
 baseurl: ""
@@ -24,8 +24,8 @@ xing_link:
 facebook_link:
 
 # Footer
-footer_left: "Mail me <i class=\"fa fa-heart\"></i> by <a href=\"https://twitter.com/_JacobTomlinson\">QQmail</a>"
-footer_right: "&lt;/&gt; on <a href=\"https://github.com/JoshPellTan/JoshPellTan.github.io\">Github</a> &nbsp;<i class=\"fa fa-github-alt\"></i>"
+footer_left: "Mail me <i class=\"fa fa-heart\"></i> by <a href=\"email.163.com\">163mail</a> "
+footer_right: "Star me on <a href=\"https://github.com/JoshPellTan/JoshPellTan.github.io\">Github</a> &nbsp;<i class=\"fa fa-github-alt\"></i>"
 
 # Build settings
 markdown: kramdown

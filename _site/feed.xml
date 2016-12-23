@@ -5,8 +5,8 @@
     <description>When you think you can stop learning, is a time when you are going to be washed out.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 23 Dec 2016 15:03:38 +0800</pubDate>
-    <lastBuildDate>Fri, 23 Dec 2016 15:03:38 +0800</lastBuildDate>
+    <pubDate>Fri, 23 Dec 2016 16:38:23 +0800</pubDate>
+    <lastBuildDate>Fri, 23 Dec 2016 16:38:23 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
@@ -137,8 +137,9 @@
     
       <item>
         <title>RunTime动态添加方法和属性</title>
-        <description>&lt;p&gt;###1.动态添加方法
-面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。&lt;/p&gt;
+        <description>&lt;h3 id=&quot;动态添加方法&quot;&gt;动态添加方法&lt;/h3&gt;
+
+&lt;p&gt;面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。&lt;/p&gt;
 
 &lt;p&gt;performSelector方法区别于直接调用，直接调用时假如你方法没实现，编译直接报错，而performSelector只会报警告，所以人家是问你runtime动态添加方法的东西。&lt;/p&gt;
 
@@ -195,8 +196,8 @@ SEL name：就是方法名字是啥，默认进入方法的时候，肯定是方
 &lt;/div&gt;
 &lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5YKO1rz/BI7j7.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;###2.动态添加属性
-通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。&lt;/p&gt;
+&lt;h3 id=&quot;动态添加属性&quot;&gt;动态添加属性&lt;/h3&gt;
+&lt;p&gt;通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。&lt;/p&gt;
 
 &lt;p&gt;默认我们在创建分类的时候，添加一个成员属性后，大家往往会发现，直接调用这个类的点语法，我们获取不了属性,为什么呢？&lt;/p&gt;
 

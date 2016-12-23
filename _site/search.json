@@ -89,6 +89,14 @@
     } ,
     
   {
+    "title"    : "移除不需要再显示的视图控制器",
+    "category" : "",
+    "tags"     : "移除, 视图控制器, 移除不需要再显示的视图控制器",
+    "url"      : "/tips/2016/07/29/%E7%A7%BB%E9%99%A4%E4%B8%8D%E9%9C%80%E8%A6%81%E5%86%8D%E6%98%BE%E7%A4%BA%E7%9A%84%E8%A7%86%E5%9B%BE%E6%8E%A7%E5%88%B6%E5%99%A8/",
+    "date"     : "2016-07-29 16:08:08 +0800"
+    } ,
+    
+  {
     "title"    : "SDWebImage的缓存图片",
     "category" : "",
     "tags"     : "SDWebImage, 缓存, SDWebImage取缓存图片",

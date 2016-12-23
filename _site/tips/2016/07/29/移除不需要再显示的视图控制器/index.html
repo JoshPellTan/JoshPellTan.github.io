@@ -4,7 +4,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RunTime动态添加方法和属性</title>
+<title>移除不需要再显示的视图控制器</title>
 <meta name="description" content="When you think you can stop learning, is a time when you are going to be washed out.">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -88,13 +88,13 @@
       </div>
       
 
-      <h1 class="header" itemprop="name">RunTime动态添加方法和属性</h1>
+      <h1 class="header" itemprop="name">移除不需要再显示的视图控制器</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">December 12, 2016</span>
-           under study
+          on <span itemprop="datePublished" content="2014-08-28">July 29, 2016</span>
+           under tips
         </i></small>
       </div>
 
@@ -108,113 +108,27 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="动态添加方法">动态添加方法</h3>
+        <span itemprop="articleBody"><p>navigationController在使用过程中会产生很多controller，但很多页面使用率特别低，在退出后可以直接将其移除，可以用下面方法实现：</p>
 
-<p>面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。</p>
-
-<p>performSelector方法区别于直接调用，直接调用时假如你方法没实现，编译直接报错，而performSelector只会报警告，所以人家是问你runtime动态添加方法的东西。</p>
-
-<p>动态添加方法是一个很有意义的事情，因为程序在编译的时候，会把所有的方法加到一个方法列表中，但是我们并不是所有的方法都会使用到，耗时耗力。我们应该多利用懒加载的方式，用到某个方法，再添加，不用的方法就不用管它。</p>
-
-<p>首先我们需要导入#import &lt;objc/message.h&gt;，然后写下下面2个方法：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// 当某个类方法只声明，没有实现的时候，会执行下面的方法
-+ (BOOL)resolveClassMethod:(SEL)sel;
-// 当某个对象方法没有只声明，没有实现的时候，会执行下面的方法。
-+ (BOOL)resolveInstanceMethod:(SEL)sel ;
-</code></pre>
-</div>
-<p>我们先创建一个函数：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>void eat(id self, SEL _cmd,id param1){
-    NSLog(@"调用%@---%@---%@",self,NSStringFromSelector(_cmd),param1);
-}
-</code></pre>
-</div>
-<p>讲解一下，每一个函数，都有2个默认的隐式参数，一个是谁调用了自己，一个是SEL，SEL就是对方法的一种包装。包装的SEL类型数据它对应相应的方法地址,找到方法地址就可以调用方法。后面的id类型的param1是我写的一个参数，因为是C语言的函数，我们无法创建NS之类的类型，这里我就用id类型来接参数。</p>
-
-<p>接下来，根据官方文档我们可以添加下面的代码做判断，使得在找不到eat方法的时候，可以执行我们动态添加的eat方法，注意，上面的函数名可以随意写，只需要在下面添加方法的时候做好关联就好：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// 外界调用一个没有实现的对象方法-
-// resolveInstanceMethod中sel是没有实现的参数
-+ (BOOL)resolveInstanceMethod:(SEL)sel{
-
-    NSLog(@"%@",NSStringFromSelector(sel));
-//    if (sel == @selector(eat)) {}这句话等同下面的判断
-
-    if ([NSStringFromSelector(sel) isEqualToString:@"eat:"] ) {
-        // 这里添加方法
-        // 给哪个类
-        //SEL:方法名
-        //IMP:方法的实现（函数的入口-函数的指针-函数的名）
-        //type :方法类型
-        class_addMethod(self, sel, (IMP)eat, "v@:@"); 
-        returnYES;
+<div class="highlighter-rouge"><pre class="highlight"><code>- (void)removeBulidPhotoAlbumController{
+    NSMutableArray *removeArr = @[].mutableCopy;
+    for (int i=0; i&lt;self.navigationController.childViewControllers.count; i++) {
+        id controller = self.navigationController.childViewControllers[i];
+        if ([controller isKindOfClass:[BulidPhotoAlbumController class]]) {
+            [removeArr addObject:controller];
+        }
     }
-    return [super resolveInstanceMethod:sel];
+
+    NSMutableArray *tempArr = self.navigationController.childViewControllers.mutableCopy;
+    for (int i=0; i&lt;removeArr.count; i++) {
+        id controller = removeArr[i];
+        [tempArr removeObject:controller];
+    }
+    [self.navigationController setViewControllers:tempArr];
 }
+
 </code></pre>
 </div>
-<p>这里介绍一下OBJC_EXPORT BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)这个函数的参数意义</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>Class cls:就是你给哪个类添加的这个方法
-SEL name：就是方法名字是啥，默认进入方法的时候，肯定是方法上带的参数sel没有，所以我们这里传入的是sel。
-(IMP)eat：这里需要我们传入一个IMP，啥实IMP,IMP就是方法的实现（函数的入口-函数的指针-函数的名）大家这里意会下
- const char *types，这里我们可以好好说一说。我先说下意思，*v@:@*的意思就是，返回类型是void,参数是id,SEL,id。具体大家参考上面我写的函数以及函数说明。
-
-如果想查到这些代表啥意思，可以打开苹果文档，输入Type Encodings，选择我箭头所指。查询。
-</code></pre>
-</div>
-<p><img src="http://pic.yupoo.com/joshpell/G5YKO1rz/BI7j7.png" alt="Thumper" /></p>
-
-<h3 id="动态添加属性">动态添加属性</h3>
-<p>通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。</p>
-
-<p>默认我们在创建分类的时候，添加一个成员属性后，大家往往会发现，直接调用这个类的点语法，我们获取不了属性,为什么呢？</p>
-
-<p>因为默认分类创建的属性，不会执行set和get方法。如果我们一定要获取到这个属性，我们应该怎么做呢？这里有2种方法，一种就是添加一个静态变量，重写它的set和get方法.另外一种就是通过运行时，添加这个属性。这里我只讲第二种，代码如下：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// 声明一个char型的key
-static char nameKey;
-
-- (void)setName:(NSString *)name
-{
-    // 属性跟对象有关联-就是添加属性
-
-    // object:对象
-    // key:属性名，根据key去获取到值
-    // value:值
-    // policy：策略
-    objc_setAssociatedObject(self, &amp;nameKey, name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-</code></pre>
-</div>
-<p>这里我讲一下OBJC_EXPORT void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)这个方法。</p>
-
-<p>这个方法的字面意思就是把一个值，通过一个key绑定到一个类中，最后设置一下保存的策略。代码的意思是，把name的值，通过nameKey绑定到当前类，保存的是nonatomic的copy类型。
-补充一下最后一个参数（策略）：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// assign类型
-   OBJC_ASSOCIATION_ASSIGN = 0,
-// 非原子性Retain--&gt;相当于Strong
-    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
-// 非原子性 copy-
-    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,
-// 原子性Retain
-    OBJC_ASSOCIATION_RETAIN = 01401,
-// 原子性copy
-    OBJC_ASSOCIATION_COPY
-</code></pre>
-</div>
-<p>取得动态绑定属性的方法如下:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>- (NSString *)name
-{
-    return objc_getAssociatedObject(self, &amp;nameKey);
-}
-</code></pre>
-</div>
-<p>简单的解释就是通过self这个类的，nameKey这个key,我们就可以取到nameKey相对应的值了。这就是如何通过runtime来动态的给类添加属性了，帅哥，你可以试试了！</p>
 
 </span>
 
@@ -231,7 +145,7 @@ static char nameKey;
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            runtime, 动态添加, RunTime动态添加方法和属性
+            移除, 视图控制器, 移除不需要再显示的视图控制器
           </small>
         </div>
         

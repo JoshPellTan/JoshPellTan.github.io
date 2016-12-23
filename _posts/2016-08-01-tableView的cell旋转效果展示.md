@@ -3,7 +3,7 @@ layout:     post
 title:      tableView的cell旋转效果展示
 date:       2016-08-01 08:08:08
 summary:    Wellcome To My Blog.
-categories: tips
+categories: UI
 thumbnail: cogs
 tags:
  - cell旋转

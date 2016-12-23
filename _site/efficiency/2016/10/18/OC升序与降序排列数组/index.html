@@ -4,7 +4,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SDWebImage的缓存图片</title>
+<title>OC升序与降序排列数组</title>
 <meta name="description" content="When you think you can stop learning, is a time when you are going to be washed out.">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -88,13 +88,13 @@
       </div>
       
 
-      <h1 class="header" itemprop="name">SDWebImage的缓存图片</h1>
+      <h1 class="header" itemprop="name">OC升序与降序排列数组</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">July 27, 2016</span>
-           under tips
+          on <span itemprop="datePublished" content="2014-08-28">October 18, 2016</span>
+           under Efficiency
         </i></small>
       </div>
 
@@ -108,15 +108,39 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="为了避免浪费流量以及提高显示图片效率使用sdwebimage经常需要使用它的缓存图片">为了避免浪费流量，以及提高显示图片效率，使用SDWebImage经常需要使用它的缓存图片</h3>
-<div class="highlighter-rouge"><pre class="highlight"><code>UIImage *pickImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:urlStr];
-        if (pickImage) {
+        <span itemprop="articleBody"><p>对数组进行快速升降序排列,话不多说直接上代码</p>
 
-            _picImageView.image = pickImage;
+<ul>
+  <li>升序</li>
+</ul>
 
-        }else{
+<div class="highlighter-rouge"><pre class="highlight"><code>NSArray *tMlist = @[@4,@5,@2,@6,@3,@7,@8];
+NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+     NSNumber *tNumber1 = (NSNumber *)obj1;
+     NSNumber *tNumber2 = (NSNumber *)obj2; //升序2，4，。。
+     if ([tNumber1 integerValue] &lt; [tNumber2 integerValue]){
+          return NSOrderedAscending;
+     }else{
+          return NSOrderedDescending;
+     }
+}];
+</code></pre>
+</div>
+<ul>
+  <li>降序</li>
+</ul>
 
-            [_picImageViewsetImageWithURL:[NSURLURLWithString:urlStr] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];	
+<div class="highlighter-rouge"><pre class="highlight"><code>NSArray *tMlist = @[@4,@5,@2,@6,@3,@7,@8];
+NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+     NSNumber *tNumber1 = (NSNumber *)obj1;
+     NSNumber *tNumber2 = (NSNumber *)obj2; //降序序8，7，。。
+     if ([tNumber1 integerValue] &lt; [tNumber2 integerValue]){
+          return NSOrderedDescending;
+     }else{
+          return NSOrderedAscending;
+     }
+}];
+
 </code></pre>
 </div>
 
@@ -135,7 +159,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            SDWebImage, 缓存, SDWebImage取缓存图片
+            oc排序, 升序降序, OC升序与降序排列数组
           </small>
         </div>
         

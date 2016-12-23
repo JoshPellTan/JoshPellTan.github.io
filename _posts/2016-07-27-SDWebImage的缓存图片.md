@@ -3,7 +3,7 @@ layout:     post
 title:      SDWebImage的缓存图片
 date:       2016-07-27 08:08:08
 summary:    Wellcome To My Blog.
-categories: tips
+categories: Efficiency
 thumbnail: cogs
 tags:
  - SDWebImage

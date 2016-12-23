@@ -4,7 +4,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>tableView的cell旋转效果展示</title>
+<title>界面中有键盘事件时的UI处理</title>
 <meta name="description" content="When you think you can stop learning, is a time when you are going to be washed out.">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -88,13 +88,13 @@
       </div>
       
 
-      <h1 class="header" itemprop="name">tableView的cell旋转效果展示</h1>
+      <h1 class="header" itemprop="name">界面中有键盘事件时的UI处理</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">August 1, 2016</span>
-           under tips
+          on <span itemprop="datePublished" content="2014-08-28">August 8, 2016</span>
+           under UI
         </i></small>
       </div>
 
@@ -108,32 +108,52 @@
 
         
 
-        <span itemprop="articleBody"><p>让人眼前一亮的cell展示效果，只需要加入以下代码：</p>
+        <span itemprop="articleBody"><ul>
+  <li>界面操作的时候经常需要进行输入操作，键盘会有遮挡UI的情况，这是就需要对键盘进行监听，做对应处理</li>
+</ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+<p>控制器加入对键盘事件的监听，控制器加入代码</p>
 
-    CATransform3D rotation;
-    rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4);
-    rotation.m34 = 1.0/ -600;
-    
-    cell.layer.shadowColor = [[UIColor blackColor]CGColor];
-    cell.layer.shadowOffset = CGSizeMake(10, 10);
-    cell.alpha = 0;
-    cell.layer.transform = rotation;
-    cell.layer.anchorPoint = CGPointMake(0.5, 0.5);
-    
-    [UIView beginAnimations:@"rotation" context:NULL];
-    [UIView setAnimationDuration:0.8];
-    cell.layer.transform = CATransform3DIdentity;
-    cell.alpha = 1;
-    cell.layer.shadowOffset = CGSizeMake(0, 0);
-    
-    [UIView commitAnimations];
-}
-
+<div class="highlighter-rouge"><pre class="highlight"><code>[NSNotificationCenter defaultCenter]addObserver:selfselector:@selector(keyboardWillAppear:) name:UIKeyboardWillShowNotification object:nil];
+[[NSNotificationCenter defaultCenter]addObserver:selfselector:@selector(keyboardWillDisappear:) name:UIKeyboardWillHideNotification object:nil];	    
 </code></pre>
 </div>
-<p>如需要其他效果，修改 <code class="highlighter-rouge">rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4)</code> 参数即可</p>
+
+<ul>
+  <li>
+    <p>实现键盘出现和消失的代理并计算键盘高度，按需求操作UI</p>
+
+    <p>键盘出现和消失</p>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>-(void)keyboardWillAppear:(NSNotification *)notification{
+
+    float keyboardH = [self keyboardEndingFrameHeight:notification.userInfo];
+    [UIView animateWithDuration:0.2 animations:^{
+    	self.contentView.frame = CGRectMake(0,kDeviceHeight-contentView.height-keyboardH,kDeviceWidth,contentView.height);
+    }];
+}
+
+-(void)keyboardWillDisappear:(NSNotification *)note {
+
+    self.contentView.frame = CGRectMake(0,kDeviceHeight-contentView.height,kDeviceWidth,contentView.height);
+}
+</code></pre>
+</div>
+<p>下面也是最重要的方法，获取键盘高度</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>-(CGFloat)keyboardEndingFrameHeight:(NSDictionary *)userInfo {
+
+    CGRect keyboardEndingUncorrectedFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey]CGRectValue];
+
+    CGRect keyboardEndingFrame = [selfconvertRect:keyboardEndingUncorrectedFrame fromView:nil];
+
+    return keyboardEndingFrame.size.height;
+
+}
+</code></pre>
+</div>
 
 </span>
 
@@ -150,7 +170,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            cell旋转, tableView的cell旋转效果展示
+            iOS, 键盘, 界面中有键盘事件时的UI处理
           </small>
         </div>
         

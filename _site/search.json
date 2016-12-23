@@ -9,6 +9,22 @@
     } ,
     
   {
+    "title"    : "RunTime方法交换",
+    "category" : "",
+    "tags"     : "runtime, 方法交换, RunTime方法交换",
+    "url"      : "/study/2016/12/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/",
+    "date"     : "2016-12-12 16:08:08 +0800"
+    } ,
+    
+  {
+    "title"    : "RunTime动态添加方法和属性",
+    "category" : "",
+    "tags"     : "runtime, 动态添加, RunTime动态添加方法和属性",
+    "url"      : "/study/2016/12/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/",
+    "date"     : "2016-12-12 16:08:08 +0800"
+    } ,
+    
+  {
     "title"    : "emoji表情作为单字符长度的处理",
     "category" : "",
     "tags"     : "emoji, 长度, emoji表情作为单字符长度的处理",
@@ -21,14 +37,6 @@
     "category" : "",
     "tags"     : "循环引用, block, self, block中weakSelf和strongSelf的简化",
     "url"      : "/efficiency/2016/10/18/block%E4%B8%ADweakSelf%E5%92%8CstrongSelf%E7%9A%84%E7%AE%80%E5%8C%96/",
-    "date"     : "2016-10-18 16:08:08 +0800"
-    } ,
-    
-  {
-    "title"    : "RunTime方法交换",
-    "category" : "",
-    "tags"     : "runtime, 方法交换, RunTime方法交换",
-    "url"      : "/study/2016/10/18/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2%E5%92%8C%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E5%B1%9E%E6%80%A7/",
     "date"     : "2016-10-18 16:08:08 +0800"
     } ,
     

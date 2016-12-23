@@ -5,8 +5,8 @@
     <description>When you think you can stop learning, is a time when you are going to be washed out.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 23 Dec 2016 11:59:29 +0800</pubDate>
-    <lastBuildDate>Fri, 23 Dec 2016 11:59:29 +0800</lastBuildDate>
+    <pubDate>Fri, 23 Dec 2016 15:03:38 +0800</pubDate>
+    <lastBuildDate>Fri, 23 Dec 2016 15:03:38 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
@@ -26,6 +26,237 @@
         
         
         <category>Hello</category>
+        
+      </item>
+    
+      <item>
+        <title>RunTime方法交换</title>
+        <description>&lt;p&gt;现在我有个这种需求：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[UIImage imageNamed:@&quot;img1&quot;];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这个方法在图片不存在是会引起崩溃，这里先提供两种简单点的方法。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;继承&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (UIImage *)imageNamed:(NSString *)name {
+
+    // 恢复系统做法
+    UIImage *image = [super imageNamed:name];
+    if ( image == nil ) {
+        NSLog(@&quot;加载失败&quot;);
+    }
+    return image;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;就是创建一个UIImage的子类，用子类的&lt;code class=&quot;highlighter-rouge&quot;&gt;imageNamed:&lt;/code&gt;方法加载图片&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;分类&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;分类方法挺好，简洁。切记，方法名不能重复系统方法名，可以加个前缀&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (UIImage *)TJ_imageNamed:(NSString *)name {
+
+    // 恢复系统做法
+    UIImage *image = [UIImage imageNamed:name];
+    if ( image == nil ) {
+        NSLog(@&quot;加载失败&quot;);
+    }
+    return image;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;大家看到这儿发现与我们的runtime还没半毛钱关系，稍安勿躁。现在需求变这样：一个项目，已经开发迭代两年，以前都是用UIImage加载图片，但现在项目老大要我们dui这个空图片的崩溃问题进行处理，一看看上面两个方法，懵逼中。。。。。。工程量太大，灯灯灯等！runtime登场：&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;流程&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;提供分类&lt;/li&gt;
+  &lt;li&gt;写一个有这样功能的方法&lt;/li&gt;
+  &lt;li&gt;用这个方法跟系统方法进行方法交换&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;分类中的新方法：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (void)load {
+
+    // 获取类方法
+    // class:获取哪个类的方法
+    // SEL:获取哪
+    Method imageNameMethod = class_getClassMethod(self, @selector(imageNamed:));
+    Method bj_imageNameMethod = class_getClassMethod(self, @selector(TJ_imageNamed:));
+
+    // 交换方法的实现
+    method_exchangeImplementations(imageNameMethod, bj_imageNameMethod);
+}
+
++ (UIImage *)bj_imageNamed:(NSString *)name {
+
+    UIImage *image = [UIImage bj_imageNamed:name];
+
+    if (image == nil) {
+        NSLog(@&quot;加载失败！\n&quot;);
+    }
+
+    return image;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;主线程直接调用：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[UIImage imageNamed:@&quot;img1&quot;];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;方法交换示意图：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5XK4VgE/rDp9G.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/study/2016/12/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/</link>
+        <guid isPermaLink="true">http://localhost:4000/study/2016/12/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/</guid>
+        
+        <category>runtime</category>
+        
+        <category>方法交换</category>
+        
+        <category>RunTime方法交换</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>RunTime动态添加方法和属性</title>
+        <description>&lt;p&gt;###1.动态添加方法
+面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。&lt;/p&gt;
+
+&lt;p&gt;performSelector方法区别于直接调用，直接调用时假如你方法没实现，编译直接报错，而performSelector只会报警告，所以人家是问你runtime动态添加方法的东西。&lt;/p&gt;
+
+&lt;p&gt;动态添加方法是一个很有意义的事情，因为程序在编译的时候，会把所有的方法加到一个方法列表中，但是我们并不是所有的方法都会使用到，耗时耗力。我们应该多利用懒加载的方式，用到某个方法，再添加，不用的方法就不用管它。&lt;/p&gt;
+
+&lt;p&gt;首先我们需要导入#import &amp;lt;objc/message.h&amp;gt;，然后写下下面2个方法：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 当某个类方法只声明，没有实现的时候，会执行下面的方法
++ (BOOL)resolveClassMethod:(SEL)sel;
+// 当某个对象方法没有只声明，没有实现的时候，会执行下面的方法。
++ (BOOL)resolveInstanceMethod:(SEL)sel ;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;我们先创建一个函数：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void eat(id self, SEL _cmd,id param1){
+    NSLog(@&quot;调用%@---%@---%@&quot;,self,NSStringFromSelector(_cmd),param1);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;讲解一下，每一个函数，都有2个默认的隐式参数，一个是谁调用了自己，一个是SEL，SEL就是对方法的一种包装。包装的SEL类型数据它对应相应的方法地址,找到方法地址就可以调用方法。后面的id类型的param1是我写的一个参数，因为是C语言的函数，我们无法创建NS之类的类型，这里我就用id类型来接参数。&lt;/p&gt;
+
+&lt;p&gt;接下来，根据官方文档我们可以添加下面的代码做判断，使得在找不到eat方法的时候，可以执行我们动态添加的eat方法，注意，上面的函数名可以随意写，只需要在下面添加方法的时候做好关联就好：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 外界调用一个没有实现的对象方法-
+// resolveInstanceMethod中sel是没有实现的参数
++ (BOOL)resolveInstanceMethod:(SEL)sel{
+
+    NSLog(@&quot;%@&quot;,NSStringFromSelector(sel));
+//    if (sel == @selector(eat)) {}这句话等同下面的判断
+
+    if ([NSStringFromSelector(sel) isEqualToString:@&quot;eat:&quot;] ) {
+        // 这里添加方法
+        // 给哪个类
+        //SEL:方法名
+        //IMP:方法的实现（函数的入口-函数的指针-函数的名）
+        //type :方法类型
+        class_addMethod(self, sel, (IMP)eat, &quot;v@:@&quot;); 
+        returnYES;
+    }
+    return [super resolveInstanceMethod:sel];
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这里介绍一下OBJC_EXPORT BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)这个函数的参数意义&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Class cls:就是你给哪个类添加的这个方法
+SEL name：就是方法名字是啥，默认进入方法的时候，肯定是方法上带的参数sel没有，所以我们这里传入的是sel。
+(IMP)eat：这里需要我们传入一个IMP，啥实IMP,IMP就是方法的实现（函数的入口-函数的指针-函数的名）大家这里意会下
+ const char *types，这里我们可以好好说一说。我先说下意思，*v@:@*的意思就是，返回类型是void,参数是id,SEL,id。具体大家参考上面我写的函数以及函数说明。
+
+如果想查到这些代表啥意思，可以打开苹果文档，输入Type Encodings，选择我箭头所指。查询。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5YKO1rz/BI7j7.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;###2.动态添加属性
+通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。&lt;/p&gt;
+
+&lt;p&gt;默认我们在创建分类的时候，添加一个成员属性后，大家往往会发现，直接调用这个类的点语法，我们获取不了属性,为什么呢？&lt;/p&gt;
+
+&lt;p&gt;因为默认分类创建的属性，不会执行set和get方法。如果我们一定要获取到这个属性，我们应该怎么做呢？这里有2种方法，一种就是添加一个静态变量，重写它的set和get方法.另外一种就是通过运行时，添加这个属性。这里我只讲第二种，代码如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 声明一个char型的key
+static char nameKey;
+
+- (void)setName:(NSString *)name
+{
+    // 属性跟对象有关联-就是添加属性
+
+    // object:对象
+    // key:属性名，根据key去获取到值
+    // value:值
+    // policy：策略
+    objc_setAssociatedObject(self, &amp;amp;nameKey, name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这里我讲一下OBJC_EXPORT void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)这个方法。&lt;/p&gt;
+
+&lt;p&gt;这个方法的字面意思就是把一个值，通过一个key绑定到一个类中，最后设置一下保存的策略。代码的意思是，把name的值，通过nameKey绑定到当前类，保存的是nonatomic的copy类型。
+补充一下最后一个参数（策略）：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// assign类型
+   OBJC_ASSOCIATION_ASSIGN = 0,
+// 非原子性Retain--&amp;gt;相当于Strong
+    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
+// 非原子性 copy-
+    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,
+// 原子性Retain
+    OBJC_ASSOCIATION_RETAIN = 01401,
+// 原子性copy
+    OBJC_ASSOCIATION_COPY
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;取得动态绑定属性的方法如下:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (NSString *)name
+{
+    return objc_getAssociatedObject(self, &amp;amp;nameKey);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;简单的解释就是通过self这个类的，nameKey这个key,我们就可以取到nameKey相对应的值了。这就是如何通过runtime来动态的给类添加属性了，帅哥，你可以试试了！&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/study/2016/12/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/</link>
+        <guid isPermaLink="true">http://localhost:4000/study/2016/12/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/</guid>
+        
+        <category>runtime</category>
+        
+        <category>动态添加</category>
+        
+        <category>RunTime动态添加方法和属性</category>
+        
+        
+        <category>study</category>
         
       </item>
     
@@ -236,112 +467,6 @@
         
         
         <category>Efficiency</category>
-        
-      </item>
-    
-      <item>
-        <title>RunTime方法交换</title>
-        <description>&lt;p&gt;现在我有个这种需求：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[UIImage imageNamed:@&quot;img1&quot;];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;这个方法在图片不存在是会引起崩溃，这里先提供两种简单点的方法。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;继承&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (UIImage *)imageNamed:(NSString *)name {
-
-    // 恢复系统做法
-    UIImage *image = [super imageNamed:name];
-    if ( image == nil ) {
-        NSLog(@&quot;加载失败&quot;);
-    }
-    return image;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;就是创建一个UIImage的子类，用子类的&lt;code class=&quot;highlighter-rouge&quot;&gt;imageNamed:&lt;/code&gt;方法加载图片&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;分类&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;分类方法挺好，简洁。切记，方法名不能重复系统方法名，可以加个前缀&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (UIImage *)TJ_imageNamed:(NSString *)name {
-
-    // 恢复系统做法
-    UIImage *image = [UIImage imageNamed:name];
-    if ( image == nil ) {
-        NSLog(@&quot;加载失败&quot;);
-    }
-    return image;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;大家看到这儿发现与我们的runtime还没半毛钱关系，稍安勿躁。现在需求变这样：一个项目，已经开发迭代两年，以前都是用UIImage加载图片，但现在项目老大要我们dui这个空图片的崩溃问题进行处理，一看看上面两个方法，懵逼中。。。。。。工程量太大，灯灯灯等！runtime登场：&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;流程&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;提供分类&lt;/li&gt;
-  &lt;li&gt;写一个有这样功能的方法&lt;/li&gt;
-  &lt;li&gt;用这个方法跟系统方法进行方法交换&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;分类中的新方法：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (void)load {
-
-    // 获取类方法
-    // class:获取哪个类的方法
-    // SEL:获取哪
-    Method imageNameMethod = class_getClassMethod(self, @selector(imageNamed:));
-    Method bj_imageNameMethod = class_getClassMethod(self, @selector(TJ_imageNamed:));
-
-    // 交换方法的实现
-    method_exchangeImplementations(imageNameMethod, bj_imageNameMethod);
-}
-
-+ (UIImage *)bj_imageNamed:(NSString *)name {
-
-    UIImage *image = [UIImage bj_imageNamed:name];
-
-    if (image == nil) {
-        NSLog(@&quot;加载失败！\n&quot;);
-    }
-
-    return image;
-}
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;主线程直接调用：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[UIImage imageNamed:@&quot;img1&quot;];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;方法交换示意图：
-&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5XK4VgE/rDp9G.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Tue, 18 Oct 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/study/2016/10/18/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2%E5%92%8C%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E5%B1%9E%E6%80%A7/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2016/10/18/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2%E5%92%8C%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E5%B1%9E%E6%80%A7/</guid>
-        
-        <category>runtime</category>
-        
-        <category>方法交换</category>
-        
-        <category>RunTime方法交换</category>
-        
-        
-        <category>study</category>
         
       </item>
     
@@ -580,49 +705,6 @@ NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1
         <category>键盘</category>
         
         <category>界面中有键盘事件时的UI处理</category>
-        
-        
-        <category>UI</category>
-        
-      </item>
-    
-      <item>
-        <title>tableView的cell旋转效果展示</title>
-        <description>&lt;p&gt;让人眼前一亮的cell展示效果，只需要加入以下代码：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-
-    CATransform3D rotation;
-    rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4);
-    rotation.m34 = 1.0/ -600;
-    
-    cell.layer.shadowColor = [[UIColor blackColor]CGColor];
-    cell.layer.shadowOffset = CGSizeMake(10, 10);
-    cell.alpha = 0;
-    cell.layer.transform = rotation;
-    cell.layer.anchorPoint = CGPointMake(0.5, 0.5);
-    
-    [UIView beginAnimations:@&quot;rotation&quot; context:NULL];
-    [UIView setAnimationDuration:0.8];
-    cell.layer.transform = CATransform3DIdentity;
-    cell.alpha = 1;
-    cell.layer.shadowOffset = CGSizeMake(0, 0);
-    
-    [UIView commitAnimations];
-}
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;如需要其他效果，修改 &lt;code class=&quot;highlighter-rouge&quot;&gt;rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4)&lt;/code&gt; 参数即可&lt;/p&gt;
-
-</description>
-        <pubDate>Mon, 01 Aug 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/ui/2016/08/01/tableView%E7%9A%84cell%E6%97%8B%E8%BD%AC%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA/</link>
-        <guid isPermaLink="true">http://localhost:4000/ui/2016/08/01/tableView%E7%9A%84cell%E6%97%8B%E8%BD%AC%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA/</guid>
-        
-        <category>cell旋转</category>
-        
-        <category>tableView的cell旋转效果展示</category>
         
         
         <category>UI</category>

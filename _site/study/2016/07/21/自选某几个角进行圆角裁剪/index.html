@@ -4,7 +4,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wellcome</title>
+<title>自选某几个角进行圆角裁剪</title>
 <meta name="description" content="When you think you can stop learning, is a time when you are going to be washed out.">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -88,13 +88,13 @@
       </div>
       
 
-      <h1 class="header" itemprop="name">Wellcome</h1>
+      <h1 class="header" itemprop="name">自选某几个角进行圆角裁剪</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">December 16, 2016</span>
-           under Hello
+          on <span itemprop="datePublished" content="2014-08-28">July 21, 2016</span>
+           under study
         </i></small>
       </div>
 
@@ -108,9 +108,37 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="images-look-great-too">Images look great, too</h3>
+        <span itemprop="articleBody"><p>圆角在苹果的世界时随处可见的。为视图设置圆角在开发iOS当中是经常要做的事情。要为UIView对象设置圆角也是非常简单地事情。</p>
 
-<p><img src="https://i.imgur.com/DMCHDqF.jpg" alt="Thumper" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>view.layer.cornerRadius = 10;
+</code></pre>
+</div>
+
+<p>这样一句代码就轻松为一个view的四个角设置了圆角。 但当我们需要为view任意一个角设置圆角的时候，需要怎么办呢？有一个方法就是通过layer.mask，也就是遮罩。加上UIBezierPath的 <code class="highlighter-rouge">+ (UIBezierPath *)bezierPathWithRoundedRect:(CGRect)rect byRoundingCorners:(UIRectCorner)corners cornerRadii:(CGSize)cornerRadii</code> 的这个方法就可以轻松添加圆角遮罩了。</p>
+
+<p>UIRectCorner的定义如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef NS_OPTIONS(NSUInteger, UIRectCorner) { 
+UIRectCornerTopLeft      = 1 &lt;&lt; 0,
+UIRectCornerTopRight    = 1 &lt;&lt; 1,
+UIRectCornerBottomLeft  = 1 &lt;&lt; 2,
+UIRectCornerBottomRight = 1 &lt;&lt; 3,
+UIRectCornerAllCorners  = ~0UL
+};
+</code></pre>
+</div>
+
+<p>例子:下面代码就是为一个view三个角设置圆角。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- (void)layoutSubviews{
+	[super layoutSubviews];
+	CGFloat corner = 50;
+	CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+	shapeLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight | UIRectCornerBottomLeft cornerRadii:CGSizeMake(corner, corner)].CGPath;
+	self.layer.mask = shapeLayer;
+}
+</code></pre>
+</div>
 
 </span>
 
@@ -127,7 +155,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            demo, Hello, Lao Tie!
+            自选, 圆角, 自选某几个角进行圆角裁剪
           </small>
         </div>
         
@@ -177,7 +205,7 @@ var disqus_shortname = "cartenoire"; // required: replace example with your foru
 
     <div class="footer clearfix">
   <div class="col-md-6">
-    Mail me <i class="fa fa-heart"></i> by <a href="email.163.com">163mail</a> 
+    Mail me <i class="fa fa-heart"></i> by <a href="mailto:joshpell@163.com">163mail</a> 
   </div>
   <div class="col-md-6">
     Star me on <a href="https://github.com/JoshPellTan/JoshPellTan.github.io">Github</a> &nbsp;<i class="fa fa-github-alt"></i>

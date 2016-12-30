@@ -24,7 +24,7 @@ xing_link:
 facebook_link:
 
 # Footer
-footer_left: "Mail me <i class=\"fa fa-heart\"></i> by <a href=\"email.163.com\">163mail</a> "
+footer_left: "Mail me <i class=\"fa fa-heart\"></i> by <a href=\"mailto:joshpell@163.com\">163mail</a> "
 footer_right: "Star me on <a href=\"https://github.com/JoshPellTan/JoshPellTan.github.io\">Github</a> &nbsp;<i class=\"fa fa-github-alt\"></i>"
 
 # Build settings

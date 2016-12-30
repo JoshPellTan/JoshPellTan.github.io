@@ -4,7 +4,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RunTime方法交换</title>
+<title>WKWebKit介绍</title>
 <meta name="description" content="When you think you can stop learning, is a time when you are going to be washed out.">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -88,7 +88,7 @@
       </div>
       
 
-      <h1 class="header" itemprop="name">RunTime方法交换</h1>
+      <h1 class="header" itemprop="name">WKWebKit介绍</h1>
 
       <div class="author">
         <small><i>
@@ -108,93 +108,130 @@
 
         
 
-        <span itemprop="articleBody"><p>现在我有个这种需求：</p>
+        <span itemprop="articleBody"><p>苹果在iOS8推出了一个新的框架<code class="highlighter-rouge">WKWebKit</code>，更好地内存优化、更快的加载速度和更丰富的接口让它成为了开发者手中的香馍馍，替代UIWebView就变得顺理成章。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>[UIImage imageNamed:@"img1"];
-</code></pre>
-</div>
-<p>这个方法在图片不存在是会引起崩溃，这里先提供两种简单点的方法。</p>
+<p>UIWebView&amp;UIWebDelegate这两个东西在WKWebKit中被重构成16个类、3个协议</p>
 
-<ul>
-  <li>继承</li>
-</ul>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>+ (UIImage *)imageNamed:(NSString *)name {
-
-    // 恢复系统做法
-    UIImage *image = [super imageNamed:name];
-    if ( image == nil ) {
-        NSLog(@"加载失败");
-    }
-    return image;
-}
-</code></pre>
-</div>
-<p>就是创建一个UIImage的子类，用子类的<code class="highlighter-rouge">imageNamed:</code>方法加载图片</p>
+<p><strong><em>Classes</em></strong>:</p>
 
 <ul>
-  <li>分类</li>
+  <li>WKBackForwardList：历史记录列表，可以通过后退和前进动作访问到；（- itemAtIndex: 该类中唯一方法，用于返回项目在指定的距离当前项目。还有backItem、currentItem、forwardItem、backList、forwardList属性）</li>
+  <li>WKBackForwardListItem：webView中后退列表里的某一网页；（有URL、title、initialURL三个属性）</li>
+  <li>WKFrameInfo:包含一个框架在一个网页的信息；（有mainFrame、request、securityOrigin三个属性，其中securityOrigin是一个WKSecurityOrigin对象属性，iOS9之后可使用，是由一个主机名称，协议和端口号组成。）</li>
+  <li>WKNavigation：包含一个网页加载进度信息；</li>
+  <li>WKNavigationAction：包含可能让网页导航变化的信息，用于判断是否做出导航变化；（值得注意的是可能会常用的 WKNavigationType这个枚举）</li>
+  <li>WKNavigationResponse：包含可能让网页导航变化的返回内容信息，用于判断是否做出导航变化；</li>
+  <li>WKPreferences：概括一个webView的偏好设置；（ minimumFontSize、 javaScriptEnabled、 javaScriptCanOpenWindowsAutomatically三个属性，值得注意的是后两个属性，一个决定是否启用javaScript,另一个是在没有用户交互的情况下，是否JavaScript可以打开windows）</li>
+  <li>WKProcessPool：表示一个web内容加载池；</li>
+  <li>WKUserContentController：提供使用JavaScript post信息和注射script的方法。（- addScriptMessageHandler:name: 添加一个消息处理程序脚本 - addUserScript: 添加一个用户脚本 - removeAllUserScripts remove所有用户脚本 —removeScriptMessageHandlerForName: 删除一个消息处理程序的脚本 和一个userScript属性： 与用户相关联的用户脚本内容控制器）</li>
+  <li>WKScriptMessage: 包含网页发出的信息。（body、webView、frameInfo、name）</li>
+  <li>WKUserScript：表示可以被网页接受的用户脚本。</li>
+  <li>WKWebViewConfiguration: 初始化 webview 的设置。（- initWithSource:injectionTime:forMainFrameOnly: 返回一个初始化用户脚本,可以添加到一个用户内容控制器 还有source、injectionTime、forMainFrameOnly）</li>
+  <li>WKWindowFeatures:指定加载新网页时的窗口属性。(全是窗口属性)</li>
+  <li>WKWebViewConfiguration:对象是属性的集合用来初始化一个web视图。(属性比较多，不过这个对象在初始化web视图的时候必须会用到)</li>
+  <li>还有WKWebsiteDataStore&amp;WKWebsiteDataRecord两个类</li>
 </ul>
 
-<p>分类方法挺好，简洁。切记，方法名不能重复系统方法名，可以加个前缀</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>+ (UIImage *)TJ_imageNamed:(NSString *)name {
-
-    // 恢复系统做法
-    UIImage *image = [UIImage imageNamed:name];
-    if ( image == nil ) {
-        NSLog(@"加载失败");
-    }
-    return image;
-}
-</code></pre>
-</div>
-<p>大家看到这儿发现与我们的runtime还没半毛钱关系，稍安勿躁。现在需求变这样：一个项目，已经开发迭代两年，以前都是用UIImage加载图片，但现在项目老大要我们dui这个空图片的崩溃问题进行处理，一看看上面两个方法，懵逼中。。。。。。工程量太大，灯灯灯等！runtime登场：</p>
-
-<p><code class="highlighter-rouge">流程</code>:</p>
+<p><strong><em>Protocols</em></strong>:</p>
 
 <ul>
-  <li>提供分类</li>
-  <li>写一个有这样功能的方法</li>
-  <li>用这个方法跟系统方法进行方法交换</li>
+  <li>WKNavigationDelegate:提供了追踪主窗口网页加载过程和判断主窗口和子窗口是否进行页面加载新页面的相关方法。</li>
+  <li>WKScriptMessageHandler: 提供从网页中收消息的回调方法。</li>
+  <li>WKUIDelegate: 提供用原生控件显示网页的方法回调。</li>
 </ul>
 
-<p>分类中的新方法：</p>
+<p><em>WKNavigationDelegate</em>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>+ (void)load {
+<ul>
+  <li>
+    <ul>
+      <li>webView:didCommitNavigation: 主框架在内容开始到达时调用。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:didFailNavigation:withError: 主框架导航发生错误时调用。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:didFailProvisionalNavigation:withError: 主框架在开始加载数据出现错误时调用</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:didFinishNavigation: 主框架导航完成时调用</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:didReceiveAuthenticationChallenge:completionHandler: web视图需要响应身份验证时调用</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:didReceiveServerRedirectForProvisionalNavigation: 主服务器接受到重定向时调用</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:didStartProvisionalNavigation: 主框架导航开始时调用</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:decidePolicyForNavigationAction:decisionHandler: 决定是否允许或取消一个导航</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>webView:decidePolicyForNavigationResponse:decisionHandler: 决定是否允许或取消一个导航后其反应是已知的</li>
+    </ul>
+  </li>
+</ul>
 
-    // 获取类方法
-    // class:获取哪个类的方法
-    // SEL:获取哪
-    Method imageNameMethod = class_getClassMethod(self, @selector(imageNamed:));
-    Method bj_imageNameMethod = class_getClassMethod(self, @selector(TJ_imageNamed:));
+<p><em>WKScriptMessageHandler</em>：</p>
 
-    // 交换方法的实现
-    method_exchangeImplementations(imageNameMethod, bj_imageNameMethod);
-}
+<ul>
+  <li>userContentController:didReceiveScriptMessage:（required）一个脚本从一个网页接收到消息时调用</li>
+  <li>WKUIDelegate：</li>
+  <li>webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:创建一个新的webView</li>
+  <li>webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler: 显示一个JavaScript警告面板。</li>
+  <li>webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:显示一个JavaScript确认面板。</li>
+  <li>webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler: 显示一个JavaScript文本输入面板。</li>
+</ul>
 
-+ (UIImage *)bj_imageNamed:(NSString *)name {
+<p>其中一些类中的枚举状态：</p>
 
-    UIImage *image = [UIImage bj_imageNamed:name];
-
-    if (image == nil) {
-        NSLog(@"加载失败！\n");
-    }
-
-    return image;
-}
-
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef NS_ENUM(NSInteger, WKNavigationType) {
+    WKNavigationTypeLinkActivated,//链接的href属性被用户激活。
+    WKNavigationTypeFormSubmitted,//一个表单提交。
+    WKNavigationTypeBackForward,//回到前面的条目列表请求。
+    WKNavigationTypeReload,//网页加载。
+    WKNavigationTypeFormResubmitted,//一个表单提交(例如通过前进,后退,或重新加载)。
+    WKNavigationTypeOther = -1,//导航是发生一些其他原因。
+} NS_ENUM_AVAILABLE(10_10, 8_0);
 </code></pre>
 </div>
-
-<p>主线程直接调用：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>[UIImage imageNamed:@"img1"];
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
+    WKUserScriptInjectionTimeAtDocumentStart,//注入后的脚本创建文档元素,但在其他任何内容已经被加载。
+    WKUserScriptInjectionTimeAtDocumentEnd//注入脚本文档完成加载后,但在任何子资源可能完成加载。
+}
+NS_ENUM_AVAILABLE(10_10, 8_0);
 </code></pre>
 </div>
-
-<p>方法交换示意图：
-<img src="http://pic.yupoo.com/joshpell/G5XK4VgE/rDp9G.png" alt="Thumper" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
+    WKNavigationActionPolicyCancel,//取消导航
+    WKNavigationActionPolicyAllow,//允许导航继续
+} NS_ENUM_AVAILABLE(10_10, 8_0);
+</code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
+    WKNavigationResponsePolicyCancel,//取消导航
+    WKNavigationResponsePolicyAllow,//允许导航继续
+} NS_ENUM_AVAILABLE(10_10, 8_0);
+</code></pre>
+</div>
 
 </span>
 
@@ -211,7 +248,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            runtime, 方法交换, RunTime方法交换
+            WKWebKit, WKWebKit介绍
           </small>
         </div>
         

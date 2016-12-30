@@ -5,27 +5,117 @@
     <description>When you think you can stop learning, is a time when you are going to be washed out.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 23 Dec 2016 16:38:23 +0800</pubDate>
-    <lastBuildDate>Fri, 23 Dec 2016 16:38:23 +0800</lastBuildDate>
+    <pubDate>Fri, 30 Dec 2016 16:31:20 +0800</pubDate>
+    <lastBuildDate>Fri, 30 Dec 2016 16:31:20 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
-        <title>Wellcome</title>
-        <description>&lt;h3 id=&quot;images-look-great-too&quot;&gt;Images look great, too&lt;/h3&gt;
+        <title>iOS开发调试总结</title>
+        <description>&lt;p&gt;软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS 10开发，语言就用OC，IDE就用Xcode，来唠唠开发调试&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/DMCHDqF.jpg&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;###一、NSLog打印
+NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。&lt;/p&gt;
 
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define JFLog(format, ...) do { \
+    fprintf(stderr,&quot;&amp;lt;%s : %d&amp;gt; %s\n&quot;, \
+    [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], \
+    __LINE__, __func__); \
+    (NSLog)((format), ##__VA_ARGS__); \
+    fprintf(stderr,&quot;-------\n&quot;); \
+} while (0)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;###二、生命周期方法init、dealloc
+在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。&lt;/p&gt;
+
+&lt;p&gt;###三、查看代码运行时间
+有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define CODE_START NSDate *startTime = [NSDate date]
+#define CODE_END   NSLog(@&quot;Time:%f&quot;,-[startTime timeIntervalSinceNow])
+//用法
+	CODE_START;
+   //放置被监测代码
+   CODE_END;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;控制台打印：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G72XQEDV/GRPz7.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;###四、僵尸对象
+iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&amp;gt;Scheme–&amp;gt;Edit Scheme. 勾选Enable Zombie Objects即可。
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G738nBWj/6MlYo.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;###五、Analyze分析器
+Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&amp;gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73a9gTh/AuFpd.png&quot; alt=&quot;Thumper&quot; /&gt;
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73a9kFw/MHxeo.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;###六、断点&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;普通断点&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;断点(Breakpoint)绝对是调试程序的第一大选择，也是有一个基础调试技能。断点打在哪儿当程序运行至此时就会暂停到这里（这一行未被执行）。
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73fEqOg/AMPEV.png&quot; alt=&quot;Thumper&quot; /&gt;
+点击数字行数就在此行添加断点，再点击一次则取消（还有颜色，但不起断点作用了，可能是提醒你曾经在这里打过断点），调试中还能在下方调试信息区看到参数的值：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73hnyMy/hCXKr.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;条件断点&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上面是最普通的断点使用方法，我们还能对断点的属性进行配置，设置条件，让断点更智能化
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73l8Wdq/FkRh.png&quot; alt=&quot;Thumper&quot; /&gt;
+点击Edit Breadpoint…就是进入条件断点,以下面代码为例&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)test{
+	for (int i = 0;i &amp;lt; 5; i++){
+		NSLog(@&quot;我的值：%d&quot;,i);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;我并不想每次循环都有断点，只有在为3时需要，则条件如下：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIPyS/RcVHi.png&quot; alt=&quot;Thumper&quot; /&gt;
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kILIY/yVUta.png&quot; alt=&quot;Thumper&quot; /&gt;
+也可以查看某个方法被调用的次数，设置Action参数如下，注：要选中Automatically continue after evaluating actions。
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIHrl/3If2z.png&quot; alt=&quot;Thumper&quot; /&gt;
+控制台输入如下：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIC82/FWnAt.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;###七、异常断点
+断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
+添加异常断点：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rC3cb/WnJa4.png&quot; alt=&quot;Thumper&quot; /&gt;
+若有异常则会出现下面图样的情况，点击进行查看：
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rC03E/smK06.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;符号断点 Symbolic Breakpoint&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;创建方法跟异常断点一样，符号断点可以在指定的类名或者方法名中执行异常中断
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rBXiT/CqOeh.png&quot; alt=&quot;Thumper&quot; /&gt;
+配置符号断点如下：假如需要在执行到ViewController类的viewDidLoad方法时执行中断。
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rBTzl/KRJSx.png&quot; alt=&quot;Thumper&quot; /&gt;
+如果你的Symbol只写了一个函数名，那么就会在出现该函数名的地方就中断执行。如下，就会在运行到doAnimation的时候中断
+&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rBP4N/3bgut.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;以上就是跟大家分享的调试经验啦！&lt;/p&gt;
 </description>
-        <pubDate>Fri, 16 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/hello/2016/12/16/Wellcome/</link>
-        <guid isPermaLink="true">http://localhost:4000/hello/2016/12/16/Wellcome/</guid>
+        <pubDate>Fri, 30 Dec 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/study/2016/12/30/iOS%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95%E6%80%BB%E7%BB%93/</link>
+        <guid isPermaLink="true">http://localhost:4000/study/2016/12/30/iOS%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95%E6%80%BB%E7%BB%93/</guid>
         
-        <category>demo</category>
+        <category>iOS</category>
         
-        <category>Hello, Lao Tie!</category>
+        <category>调试</category>
+        
+        <category>iOS开发调试总结</category>
         
         
-        <category>Hello</category>
+        <category>study</category>
         
       </item>
     
@@ -255,6 +345,180 @@ static char nameKey;
         <category>动态添加</category>
         
         <category>RunTime动态添加方法和属性</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>xib作为cell时的复用问题</title>
+        <description>&lt;p&gt;apple鼓励大家使用图形化界面开发，这样效率更高，但我们在使用xib新建cell的时候会遇到问题,xib新建时是没有&lt;code class=&quot;highlighter-rouge&quot;&gt;initWithStyle: reuseIdentifier:&lt;/code&gt;这个方法的，但为了效率cell还是需要复用，所以就需要用下面方法来新建cell了：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MyCustomCell * cell = [tableView dequeueReusableCellWithIdentifier:@&quot;myCell&quot;];
+    if (!cell){
+    
+        [tableView registerNib:[UINib nibWithNibName:@&quot;MyCustomCell&quot; bundle:nil] forCellReuseIdentifier:@&quot;myCell&quot;];
+        cell = [tableView dequeueReusableCellWithIdentifier:@&quot;myCell&quot;];
+    }
+    return cell;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/tips/2016/12/12/xib%E4%BD%9C%E4%B8%BAcell%E6%97%B6%E7%9A%84%E5%A4%8D%E7%94%A8%E9%97%AE%E9%A2%98/</link>
+        <guid isPermaLink="true">http://localhost:4000/tips/2016/12/12/xib%E4%BD%9C%E4%B8%BAcell%E6%97%B6%E7%9A%84%E5%A4%8D%E7%94%A8%E9%97%AE%E9%A2%98/</guid>
+        
+        <category>xib</category>
+        
+        <category>复用</category>
+        
+        <category>xib作为cell时的复用问题</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
+    
+      <item>
+        <title>WKWebKit介绍</title>
+        <description>&lt;p&gt;苹果在iOS8推出了一个新的框架&lt;code class=&quot;highlighter-rouge&quot;&gt;WKWebKit&lt;/code&gt;，更好地内存优化、更快的加载速度和更丰富的接口让它成为了开发者手中的香馍馍，替代UIWebView就变得顺理成章。&lt;/p&gt;
+
+&lt;p&gt;UIWebView&amp;amp;UIWebDelegate这两个东西在WKWebKit中被重构成16个类、3个协议&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Classes&lt;/em&gt;&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;WKBackForwardList：历史记录列表，可以通过后退和前进动作访问到；（- itemAtIndex: 该类中唯一方法，用于返回项目在指定的距离当前项目。还有backItem、currentItem、forwardItem、backList、forwardList属性）&lt;/li&gt;
+  &lt;li&gt;WKBackForwardListItem：webView中后退列表里的某一网页；（有URL、title、initialURL三个属性）&lt;/li&gt;
+  &lt;li&gt;WKFrameInfo:包含一个框架在一个网页的信息；（有mainFrame、request、securityOrigin三个属性，其中securityOrigin是一个WKSecurityOrigin对象属性，iOS9之后可使用，是由一个主机名称，协议和端口号组成。）&lt;/li&gt;
+  &lt;li&gt;WKNavigation：包含一个网页加载进度信息；&lt;/li&gt;
+  &lt;li&gt;WKNavigationAction：包含可能让网页导航变化的信息，用于判断是否做出导航变化；（值得注意的是可能会常用的 WKNavigationType这个枚举）&lt;/li&gt;
+  &lt;li&gt;WKNavigationResponse：包含可能让网页导航变化的返回内容信息，用于判断是否做出导航变化；&lt;/li&gt;
+  &lt;li&gt;WKPreferences：概括一个webView的偏好设置；（ minimumFontSize、 javaScriptEnabled、 javaScriptCanOpenWindowsAutomatically三个属性，值得注意的是后两个属性，一个决定是否启用javaScript,另一个是在没有用户交互的情况下，是否JavaScript可以打开windows）&lt;/li&gt;
+  &lt;li&gt;WKProcessPool：表示一个web内容加载池；&lt;/li&gt;
+  &lt;li&gt;WKUserContentController：提供使用JavaScript post信息和注射script的方法。（- addScriptMessageHandler:name: 添加一个消息处理程序脚本 - addUserScript: 添加一个用户脚本 - removeAllUserScripts remove所有用户脚本 —removeScriptMessageHandlerForName: 删除一个消息处理程序的脚本 和一个userScript属性： 与用户相关联的用户脚本内容控制器）&lt;/li&gt;
+  &lt;li&gt;WKScriptMessage: 包含网页发出的信息。（body、webView、frameInfo、name）&lt;/li&gt;
+  &lt;li&gt;WKUserScript：表示可以被网页接受的用户脚本。&lt;/li&gt;
+  &lt;li&gt;WKWebViewConfiguration: 初始化 webview 的设置。（- initWithSource:injectionTime:forMainFrameOnly: 返回一个初始化用户脚本,可以添加到一个用户内容控制器 还有source、injectionTime、forMainFrameOnly）&lt;/li&gt;
+  &lt;li&gt;WKWindowFeatures:指定加载新网页时的窗口属性。(全是窗口属性)&lt;/li&gt;
+  &lt;li&gt;WKWebViewConfiguration:对象是属性的集合用来初始化一个web视图。(属性比较多，不过这个对象在初始化web视图的时候必须会用到)&lt;/li&gt;
+  &lt;li&gt;还有WKWebsiteDataStore&amp;amp;WKWebsiteDataRecord两个类&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Protocols&lt;/em&gt;&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;WKNavigationDelegate:提供了追踪主窗口网页加载过程和判断主窗口和子窗口是否进行页面加载新页面的相关方法。&lt;/li&gt;
+  &lt;li&gt;WKScriptMessageHandler: 提供从网页中收消息的回调方法。&lt;/li&gt;
+  &lt;li&gt;WKUIDelegate: 提供用原生控件显示网页的方法回调。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;WKNavigationDelegate&lt;/em&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didCommitNavigation: 主框架在内容开始到达时调用。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didFailNavigation:withError: 主框架导航发生错误时调用。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didFailProvisionalNavigation:withError: 主框架在开始加载数据出现错误时调用&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didFinishNavigation: 主框架导航完成时调用&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didReceiveAuthenticationChallenge:completionHandler: web视图需要响应身份验证时调用&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didReceiveServerRedirectForProvisionalNavigation: 主服务器接受到重定向时调用&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:didStartProvisionalNavigation: 主框架导航开始时调用&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:decidePolicyForNavigationAction:decisionHandler: 决定是否允许或取消一个导航&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;ul&gt;
+      &lt;li&gt;webView:decidePolicyForNavigationResponse:decisionHandler: 决定是否允许或取消一个导航后其反应是已知的&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;WKScriptMessageHandler&lt;/em&gt;：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;userContentController:didReceiveScriptMessage:（required）一个脚本从一个网页接收到消息时调用&lt;/li&gt;
+  &lt;li&gt;WKUIDelegate：&lt;/li&gt;
+  &lt;li&gt;webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:创建一个新的webView&lt;/li&gt;
+  &lt;li&gt;webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler: 显示一个JavaScript警告面板。&lt;/li&gt;
+  &lt;li&gt;webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:显示一个JavaScript确认面板。&lt;/li&gt;
+  &lt;li&gt;webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler: 显示一个JavaScript文本输入面板。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;其中一些类中的枚举状态：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKNavigationType) {
+    WKNavigationTypeLinkActivated,//链接的href属性被用户激活。
+    WKNavigationTypeFormSubmitted,//一个表单提交。
+    WKNavigationTypeBackForward,//回到前面的条目列表请求。
+    WKNavigationTypeReload,//网页加载。
+    WKNavigationTypeFormResubmitted,//一个表单提交(例如通过前进,后退,或重新加载)。
+    WKNavigationTypeOther = -1,//导航是发生一些其他原因。
+} NS_ENUM_AVAILABLE(10_10, 8_0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
+    WKUserScriptInjectionTimeAtDocumentStart,//注入后的脚本创建文档元素,但在其他任何内容已经被加载。
+    WKUserScriptInjectionTimeAtDocumentEnd//注入脚本文档完成加载后,但在任何子资源可能完成加载。
+}
+NS_ENUM_AVAILABLE(10_10, 8_0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
+    WKNavigationActionPolicyCancel,//取消导航
+    WKNavigationActionPolicyAllow,//允许导航继续
+} NS_ENUM_AVAILABLE(10_10, 8_0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
+    WKNavigationResponsePolicyCancel,//取消导航
+    WKNavigationResponsePolicyAllow,//允许导航继续
+} NS_ENUM_AVAILABLE(10_10, 8_0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
+        <link>http://localhost:4000/study/2016/12/12/WKWebKit%E4%BB%8B%E7%BB%8D/</link>
+        <guid isPermaLink="true">http://localhost:4000/study/2016/12/12/WKWebKit%E4%BB%8B%E7%BB%8D/</guid>
+        
+        <category>WKWebKit</category>
+        
+        <category>WKWebKit介绍</category>
         
         
         <category>study</category>
@@ -584,131 +848,6 @@ NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1
         
         
         <category>tips</category>
-        
-      </item>
-    
-      <item>
-        <title>常用正则表达式</title>
-        <description>&lt;ul&gt;
-  &lt;li&gt;验证用户名和密码：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[a-zA-Z]/w{5,15}$&lt;/code&gt;正确格式：”[A-Z][a-z]_[0-9]”组成,并且第一个字必须为字母6~16位；&lt;/li&gt;
-  &lt;li&gt;验证电话号码：&lt;code class=&quot;highlighter-rouge&quot;&gt;^(//d{3,4}-)//d{7,8}$&lt;/code&gt;正确格式：xxx/xxxx-xxxxxxx/xxxxxxxx；&lt;/li&gt;
-  &lt;li&gt;验证手机号码：&lt;code class=&quot;highlighter-rouge&quot;&gt;^1[34578][0-9]//d{8}$&lt;/code&gt;;&lt;/li&gt;
-  &lt;li&gt;验证身份证号（15位或18位数字）：&lt;code class=&quot;highlighter-rouge&quot;&gt;//d{14}[[0-9],0-9xX]&lt;/code&gt;；&lt;/li&gt;
-  &lt;li&gt;验证Email地址:(&lt;code class=&quot;highlighter-rouge&quot;&gt;^//w+([-+.]//w+)*@//w+([-.]//w+)*/.//w+([-.]//w+)*$&lt;/code&gt;);&lt;/li&gt;
-  &lt;li&gt;只能输入由数字和26个英文字母组成的字符串：(&lt;code class=&quot;highlighter-rouge&quot;&gt;^[A-Za-z0-9]+$&lt;/code&gt;) ;&lt;/li&gt;
-  &lt;li&gt;整数或者小数：^[0-9]+([.]{0,1}[0-9]+){0,1}$&lt;/li&gt;
-  &lt;li&gt;只能输入数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[0-9]*$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入n位的数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^//d{n}$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入至少n位的数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^//d{n,}$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入m~n位的数字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^//d{m,n}$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入某个数字开头：&lt;code class=&quot;highlighter-rouge&quot;&gt;^(0*)$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入有两位小数的正实数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[0-9]+(.[0-9]{2})?$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入有1~3位小数的正实数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[0-9]+(/.[0-9]{1,3})?$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入非零的正整数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^/+?[1-9][0-9]*$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入非零的负整数：&lt;code class=&quot;highlighter-rouge&quot;&gt;^/-[1-9][]0-9&lt;/code&gt;*$。&lt;/li&gt;
-  &lt;li&gt;只能输入长度为3的字符：&lt;code class=&quot;highlighter-rouge&quot;&gt;^.{3}$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入由26个英文字母组成的字符串：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[A-Za-z]+$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入由26个大写英文字母组成的字符串：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[A-Z]+$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入由26个小写英文字母组成的字符串：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[a-z]+$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;验证是否含有^%&amp;amp;’,;=?$/等字符：&lt;code class=&quot;highlighter-rouge&quot;&gt;[^%&amp;amp;',;=?$/x22]+&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;只能输入汉字：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[/u4e00-/u9fa5]{0,}$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;验证URL：&lt;code class=&quot;highlighter-rouge&quot;&gt;^http://([//w-]+/.)+[//w-]+(/[//w-./?%&amp;amp;=]*)?$&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;验证一年的12个月：&lt;code class=&quot;highlighter-rouge&quot;&gt;^(0?[1-9]1[0-2])$&lt;/code&gt;正确格式为：”01”～”09”和”10”～”12”&lt;/li&gt;
-  &lt;li&gt;验证一个月的31天：&lt;code class=&quot;highlighter-rouge&quot;&gt;^((0?[1-9])|((1|2)[0-9])|30|31)$&lt;/code&gt;正确格式为；”01”～”09”、”10”～”29”和“30”~“31”。&lt;/li&gt;
-  &lt;li&gt;获取日期正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;//d{4}[年|/-|/.]//d{/1-/12}[月|/-|/.]//d{/1-/31}日?&lt;/code&gt;
-评注：可用来匹配大多数年月日信息。&lt;/li&gt;
-  &lt;li&gt;匹配双字节字符(包括汉字在内)：&lt;code class=&quot;highlighter-rouge&quot;&gt;[^/x00-/xff]&lt;/code&gt;
-评注：可以用来计算字符串的长度（一个双字节字符长度计+2，ASCII字符计1）&lt;/li&gt;
-  &lt;li&gt;匹配空白行的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;/n/s*/r&lt;/code&gt;
-评注：可以用来删除空白行&lt;/li&gt;
-  &lt;li&gt;匹配HTML标记的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;(/S*?)[^&amp;gt;]*&amp;gt;.*?|&amp;lt;.*? /&amp;gt;&lt;/code&gt;
-评注：网上流传的版本太糟糕，上面这个也仅仅能匹配部分，对于复杂的嵌套标记依旧无能为力&lt;/li&gt;
-  &lt;li&gt;匹配首尾空白字符的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;^/s*|/s*$&lt;/code&gt;
-评注：可以用来删除行首行尾的空白字符(包括空格、制表符、换页符等等)，非常有用的表达式&lt;/li&gt;
-  &lt;li&gt;匹配网址URL的正则表达式：&lt;code class=&quot;highlighter-rouge&quot;&gt;[a-zA-z]+://[^/s]*&lt;/code&gt;
-评注：网上流传的版本功能很有限，上面这个基本可以满足需求&lt;/li&gt;
-  &lt;li&gt;匹配帐号是否合法(字母开头，允许5-16字节，允许字母数字下划线)：&lt;code class=&quot;highlighter-rouge&quot;&gt;^[a-zA-Z][a-zA-Z0-9_]{4,15}$&lt;/code&gt;
-评注：表单验证时很实用&lt;/li&gt;
-  &lt;li&gt;匹配腾讯QQ号：&lt;code class=&quot;highlighter-rouge&quot;&gt;[1-9][0-9]/{4,/}&lt;/code&gt;评注：腾讯QQ号从10 000 开始&lt;/li&gt;
-  &lt;li&gt;匹配中国邮政编码：&lt;code class=&quot;highlighter-rouge&quot;&gt;[1-9]//d{5}(?!/d)&lt;/code&gt;评注：中国邮政编码为6位数字&lt;/li&gt;
-  &lt;li&gt;匹配ip地址：&lt;code class=&quot;highlighter-rouge&quot;&gt;((2[0-4]//d|25[0-5]|[01]?//d//d?)/.){3}(2[0-4]//d|25[0-5]|[01]?//d//d?)&lt;/code&gt;。评注：提取ip地址时有用&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Wed, 24 Aug 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/tips/2016/08/24/%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
-        <guid isPermaLink="true">http://localhost:4000/tips/2016/08/24/%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
-        
-        <category>正则</category>
-        
-        <category>常用正则表达式</category>
-        
-        
-        <category>tips</category>
-        
-      </item>
-    
-      <item>
-        <title>界面中有键盘事件时的UI处理</title>
-        <description>&lt;ul&gt;
-  &lt;li&gt;界面操作的时候经常需要进行输入操作，键盘会有遮挡UI的情况，这是就需要对键盘进行监听，做对应处理&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;控制器加入对键盘事件的监听，控制器加入代码&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[NSNotificationCenter defaultCenter]addObserver:selfselector:@selector(keyboardWillAppear:) name:UIKeyboardWillShowNotification object:nil];
-[[NSNotificationCenter defaultCenter]addObserver:selfselector:@selector(keyboardWillDisappear:) name:UIKeyboardWillHideNotification object:nil];	    
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;实现键盘出现和消失的代理并计算键盘高度，按需求操作UI&lt;/p&gt;
-
-    &lt;p&gt;键盘出现和消失&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)keyboardWillAppear:(NSNotification *)notification{
-
-    float keyboardH = [self keyboardEndingFrameHeight:notification.userInfo];
-    [UIView animateWithDuration:0.2 animations:^{
-    	self.contentView.frame = CGRectMake(0,kDeviceHeight-contentView.height-keyboardH,kDeviceWidth,contentView.height);
-    }];
-}
-
--(void)keyboardWillDisappear:(NSNotification *)note {
-
-    self.contentView.frame = CGRectMake(0,kDeviceHeight-contentView.height,kDeviceWidth,contentView.height);
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;下面也是最重要的方法，获取键盘高度&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(CGFloat)keyboardEndingFrameHeight:(NSDictionary *)userInfo {
-
-    CGRect keyboardEndingUncorrectedFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey]CGRectValue];
-
-    CGRect keyboardEndingFrame = [selfconvertRect:keyboardEndingUncorrectedFrame fromView:nil];
-
-    return keyboardEndingFrame.size.height;
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-</description>
-        <pubDate>Mon, 08 Aug 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/ui/2016/08/08/%E7%95%8C%E9%9D%A2%E4%B8%AD%E6%9C%89%E9%94%AE%E7%9B%98%E4%BA%8B%E4%BB%B6%E6%97%B6%E7%9A%84UI%E5%A4%84%E7%90%86/</link>
-        <guid isPermaLink="true">http://localhost:4000/ui/2016/08/08/%E7%95%8C%E9%9D%A2%E4%B8%AD%E6%9C%89%E9%94%AE%E7%9B%98%E4%BA%8B%E4%BB%B6%E6%97%B6%E7%9A%84UI%E5%A4%84%E7%90%86/</guid>
-        
-        <category>iOS</category>
-        
-        <category>键盘</category>
-        
-        <category>界面中有键盘事件时的UI处理</category>
-        
-        
-        <category>UI</category>
         
       </item>
     

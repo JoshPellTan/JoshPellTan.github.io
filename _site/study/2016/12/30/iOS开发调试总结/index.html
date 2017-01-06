@@ -108,10 +108,11 @@
 
         
 
-        <span itemprop="articleBody"><p>软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS 10开发，语言就用OC，IDE就用Xcode，来唠唠开发调试</p>
+        <span itemprop="articleBody"><p>软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试</p>
 
-<p>###一、NSLog打印
-NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。</p>
+<h3 id="一nslog打印">一、NSLog打印</h3>
+
+<p>NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>#define JFLog(format, ...) do { \
     fprintf(stderr,"&lt;%s : %d&gt; %s\n", \
@@ -122,11 +123,11 @@ NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调
 } while (0)
 </code></pre>
 </div>
-<p>###二、生命周期方法init、dealloc
-在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。</p>
+<h3 id="二生命周期方法initdealloc">二、生命周期方法init、dealloc</h3>
+<p>在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。</p>
 
-<p>###三、查看代码运行时间
-有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行</p>
+<h3 id="三查看代码运行时间">三、查看代码运行时间</h3>
+<p>有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>#define CODE_START NSDate *startTime = [NSDate date]
 #define CODE_END   NSLog(@"Time:%f",-[startTime timeIntervalSinceNow])
@@ -139,16 +140,16 @@ NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调
 <p>控制台打印：
 <img src="http://pic.yupoo.com/joshpell/G72XQEDV/GRPz7.png" alt="Thumper" /></p>
 
-<p>###四、僵尸对象
-iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&gt;Scheme–&gt;Edit Scheme. 勾选Enable Zombie Objects即可。
+<h3 id="四僵尸对象">四、僵尸对象</h3>
+<p>iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&gt;Scheme–&gt;Edit Scheme. 勾选Enable Zombie Objects即可。
 <img src="http://pic.yupoo.com/joshpell/G738nBWj/6MlYo.png" alt="Thumper" /></p>
 
-<p>###五、Analyze分析器
-Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。
+<h3 id="五analyze分析器">五、Analyze分析器</h3>
+<p>Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。
 <img src="http://pic.yupoo.com/joshpell/G73a9gTh/AuFpd.png" alt="Thumper" />
 <img src="http://pic.yupoo.com/joshpell/G73a9kFw/MHxeo.png" alt="Thumper" /></p>
 
-<p>###六、断点</p>
+<h3 id="六断点">六、断点</h3>
 <ul>
   <li>普通断点</li>
 </ul>
@@ -181,8 +182,8 @@ Analyze分析器是一种静态分析工具，可以对当前程序进行静态�
 控制台输入如下：
 <img src="http://pic.yupoo.com/joshpell/G73kIC82/FWnAt.png" alt="Thumper" /></p>
 
-<p>###七、异常断点
-断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
+<h3 id="七异常断点">七、异常断点</h3>
+<p>断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
 添加异常断点：
 <img src="http://pic.yupoo.com/joshpell/G73rC3cb/WnJa4.png" alt="Thumper" />
 若有异常则会出现下面图样的情况，点击进行查看：
@@ -268,7 +269,7 @@ var disqus_shortname = "cartenoire"; // required: replace example with your foru
     Mail me <i class="fa fa-heart"></i> by <a href="mailto:joshpell@163.com">163mail</a> 
   </div>
   <div class="col-md-6">
-    Star me on <a href="https://github.com/JoshPellTan/JoshPellTan.github.io">Github</a> &nbsp;<i class="fa fa-github-alt"></i>
+    Star me on <a href="https://github.com/JoshPellTan">Github</a> &nbsp;<i class="fa fa-github-alt"></i>
   </div>
 </div>
 

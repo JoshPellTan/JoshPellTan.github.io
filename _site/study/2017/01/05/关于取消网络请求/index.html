@@ -4,7 +4,7 @@
     <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SDWebImage的缓存图片</title>
+<title>关于取消网络请求</title>
 <meta name="description" content="When you think you can stop learning, is a time when you are going to be washed out.">
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -88,13 +88,13 @@
       </div>
       
 
-      <h1 class="header" itemprop="name">SDWebImage的缓存图片</h1>
+      <h1 class="header" itemprop="name">关于取消网络请求</h1>
 
       <div class="author">
         <small><i>
           
-          on <span itemprop="datePublished" content="2014-08-28">July 27, 2016</span>
-           under Efficiency
+          on <span itemprop="datePublished" content="2014-08-28">January 5, 2017</span>
+           under study
         </i></small>
       </div>
 
@@ -108,18 +108,58 @@
 
         
 
-        <span itemprop="articleBody"><h3 id="为了避免浪费流量以及提高显示图片效率使用sdwebimage经常需要使用它的缓存图片">为了避免浪费流量，以及提高显示图片效率，使用SDWebImage经常需要使用它的缓存图片</h3>
-<div class="highlighter-rouge"><pre class="highlight"><code>UIImage *pickImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:urlStr];
-        if (pickImage) {
+        <span itemprop="articleBody"><p>今天猛地一下突然想到很久以前遇到的一个面试问题，如果一个网络请求已经发送，但是请求还没有完成，这时我想取消这个请求怎么办？刚刚查了查资料，自己也想了想，下面就从这个需求说起。</p>
 
-            _picImageView.image = pickImage;
+<ul>
+  <li>这个需求有何意义？</li>
+</ul>
 
-        }else{
+<p>如果说这只是一个单纯地面试题，那么它将毫无意义，那如果不是呢？一个完整的网络请求是由客户端向服务器发起http请求，再由服务器发送responseObject给客户端（中间的其他关于握手传送的数据包我们暂且不论），这就包含了上行流量和下行流量，这些都是会包含在用户总流量中的（说到这儿大家是不是开始有自己的想法了呢？）。如果我们在请求返回之前cancel掉这个网络请求的话，那么客户端会发送一个reset packet来断开当前http连接，阻止后续流量的产生。</p>
 
-            [_picImageViewsetImageWithURL:[NSURLURLWithString:urlStr] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];	
+<p><strong>所以,如果不cancel请求，完成之后的回调会找delegate，若是weak引用，Controller被释放后delegate也变为nil，业务流程释放，还算比较安全。但也会浪费用户的一些流量，这也是为什么很多app看着体量小，但是会大量消耗用户流量的原因。而且假如Controller未被释放或者代理不是weak引用，那么回调后的一些后续操作就可能引发一些安全问题。因此，一个较成熟的APP都应该将这种优化APP并且能提高用户体验的优化考虑进去。</strong></p>
+
+<ul>
+  <li>如何实现对请求的取消操作（以常用的AFNetwork为例）</li>
+</ul>
+
+<p>1.取消所有网络操作</p>
+
+<p>首先拿到AFHTTPSessionManager(注意做成全局单例)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- (AFHTTPSessionManager *)manager  
+{  
+    if (!_manager) {  
+        _manager = [AFHTTPSessionManager manager];  
+    }  
+    return _manager;  
+}
 </code></pre>
 </div>
+<p>当需要执行取消所有网络操作时假如下面代码即可</p>
 
+<div class="highlighter-rouge"><pre class="highlight"><code>[self.manager.operationQueue cancelAllOperations]; 
+</code></pre>
+</div>
+<p>2.取消单个网络操作</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>NSString *urlStr = @"";//你的请求url
+NSURLSessionTask *task = [manager GET:urlStr parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+    }];
+</code></pre>
+</div>
+<p>在你需要执行取消操作的地方假如代码</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>if(self.task) {
+	[self.task cancel];//取消当前界面的数据请求.
+}
+</code></pre>
+</div>
+<p>(o゜▽゜)o☆[BINGO!]完成！</p>
 </span>
 
         
@@ -135,7 +175,7 @@
         <div class="tags">
           <small>
           <i class="fa fa-tags"></i>
-            SDWebImage, 缓存, SDWebImage取缓存图片
+            网络请求, 优化, 关于取消网络请求
           </small>
         </div>
         

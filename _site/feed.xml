@@ -5,16 +5,87 @@
     <description>When you think you can stop learning, is a time when you are going to be washed out.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 30 Dec 2016 16:31:20 +0800</pubDate>
-    <lastBuildDate>Fri, 30 Dec 2016 16:31:20 +0800</lastBuildDate>
+    <pubDate>Fri, 06 Jan 2017 12:35:01 +0800</pubDate>
+    <lastBuildDate>Fri, 06 Jan 2017 12:35:01 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
-        <title>iOS开发调试总结</title>
-        <description>&lt;p&gt;软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS 10开发，语言就用OC，IDE就用Xcode，来唠唠开发调试&lt;/p&gt;
+        <title>关于取消网络请求</title>
+        <description>&lt;p&gt;今天猛地一下突然想到很久以前遇到的一个面试问题，如果一个网络请求已经发送，但是请求还没有完成，这时我想取消这个请求怎么办？刚刚查了查资料，自己也想了想，下面就从这个需求说起。&lt;/p&gt;
 
-&lt;p&gt;###一、NSLog打印
-NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;这个需求有何意义？&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;如果说这只是一个单纯地面试题，那么它将毫无意义，那如果不是呢？一个完整的网络请求是由客户端向服务器发起http请求，再由服务器发送responseObject给客户端（中间的其他关于握手传送的数据包我们暂且不论），这就包含了上行流量和下行流量，这些都是会包含在用户总流量中的（说到这儿大家是不是开始有自己的想法了呢？）。如果我们在请求返回之前cancel掉这个网络请求的话，那么客户端会发送一个reset packet来断开当前http连接，阻止后续流量的产生。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;所以,如果不cancel请求，完成之后的回调会找delegate，若是weak引用，Controller被释放后delegate也变为nil，业务流程释放，还算比较安全。但也会浪费用户的一些流量，这也是为什么很多app看着体量小，但是会大量消耗用户流量的原因。而且假如Controller未被释放或者代理不是weak引用，那么回调后的一些后续操作就可能引发一些安全问题。因此，一个较成熟的APP都应该将这种优化APP并且能提高用户体验的优化考虑进去。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;如何实现对请求的取消操作（以常用的AFNetwork为例）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1.取消所有网络操作&lt;/p&gt;
+
+&lt;p&gt;首先拿到AFHTTPSessionManager(注意做成全局单例)&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (AFHTTPSessionManager *)manager  
+{  
+    if (!_manager) {  
+        _manager = [AFHTTPSessionManager manager];  
+    }  
+    return _manager;  
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;当需要执行取消所有网络操作时假如下面代码即可&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[self.manager.operationQueue cancelAllOperations]; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;2.取消单个网络操作&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSString *urlStr = @&quot;&quot;;//你的请求url
+NSURLSessionTask *task = [manager GET:urlStr parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+    }];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在你需要执行取消操作的地方假如代码&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if(self.task) {
+	[self.task cancel];//取消当前界面的数据请求.
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;(o゜▽゜)o☆[BINGO!]完成！&lt;/p&gt;
+</description>
+        <pubDate>Thu, 05 Jan 2017 20:12:29 +0800</pubDate>
+        <link>http://localhost:4000/study/2017/01/05/%E5%85%B3%E4%BA%8E%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/</link>
+        <guid isPermaLink="true">http://localhost:4000/study/2017/01/05/%E5%85%B3%E4%BA%8E%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/</guid>
+        
+        <category>网络请求</category>
+        
+        <category>优化</category>
+        
+        <category>关于取消网络请求</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>iOS开发调试总结</title>
+        <description>&lt;p&gt;软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试&lt;/p&gt;
+
+&lt;h3 id=&quot;一nslog打印&quot;&gt;一、NSLog打印&lt;/h3&gt;
+
+&lt;p&gt;NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define JFLog(format, ...) do { \
     fprintf(stderr,&quot;&amp;lt;%s : %d&amp;gt; %s\n&quot;, \
@@ -25,11 +96,11 @@ NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调
 } while (0)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;p&gt;###二、生命周期方法init、dealloc
-在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。&lt;/p&gt;
+&lt;h3 id=&quot;二生命周期方法initdealloc&quot;&gt;二、生命周期方法init、dealloc&lt;/h3&gt;
+&lt;p&gt;在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。&lt;/p&gt;
 
-&lt;p&gt;###三、查看代码运行时间
-有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行&lt;/p&gt;
+&lt;h3 id=&quot;三查看代码运行时间&quot;&gt;三、查看代码运行时间&lt;/h3&gt;
+&lt;p&gt;有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define CODE_START NSDate *startTime = [NSDate date]
 #define CODE_END   NSLog(@&quot;Time:%f&quot;,-[startTime timeIntervalSinceNow])
@@ -42,16 +113,16 @@ NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调
 &lt;p&gt;控制台打印：
 &lt;img src=&quot;http://pic.yupoo.com/joshpell/G72XQEDV/GRPz7.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;###四、僵尸对象
-iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&amp;gt;Scheme–&amp;gt;Edit Scheme. 勾选Enable Zombie Objects即可。
+&lt;h3 id=&quot;四僵尸对象&quot;&gt;四、僵尸对象&lt;/h3&gt;
+&lt;p&gt;iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&amp;gt;Scheme–&amp;gt;Edit Scheme. 勾选Enable Zombie Objects即可。
 &lt;img src=&quot;http://pic.yupoo.com/joshpell/G738nBWj/6MlYo.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;###五、Analyze分析器
-Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&amp;gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。
+&lt;h3 id=&quot;五analyze分析器&quot;&gt;五、Analyze分析器&lt;/h3&gt;
+&lt;p&gt;Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&amp;gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。
 &lt;img src=&quot;http://pic.yupoo.com/joshpell/G73a9gTh/AuFpd.png&quot; alt=&quot;Thumper&quot; /&gt;
 &lt;img src=&quot;http://pic.yupoo.com/joshpell/G73a9kFw/MHxeo.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;###六、断点&lt;/p&gt;
+&lt;h3 id=&quot;六断点&quot;&gt;六、断点&lt;/h3&gt;
 &lt;ul&gt;
   &lt;li&gt;普通断点&lt;/li&gt;
 &lt;/ul&gt;
@@ -84,8 +155,8 @@ Analyze分析器是一种静态分析工具，可以对当前程序进行静态�
 控制台输入如下：
 &lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIC82/FWnAt.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;###七、异常断点
-断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
+&lt;h3 id=&quot;七异常断点&quot;&gt;七、异常断点&lt;/h3&gt;
+&lt;p&gt;断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
 添加异常断点：
 &lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rC3cb/WnJa4.png&quot; alt=&quot;Thumper&quot; /&gt;
 若有异常则会出现下面图样的情况，点击进行查看：
@@ -807,44 +878,6 @@ NSArray *tArray = [tMlist sortedArrayUsingComparator:^NSComparisonResult(id obj1
         <category>破解</category>
         
         <category>cornerstone永久破解</category>
-        
-        
-        <category>tips</category>
-        
-      </item>
-    
-      <item>
-        <title>代码的特殊注释</title>
-        <description>&lt;p&gt;用“///”和“#param mark”来给代码做注释很常见，下面介绍几个不常见的注释方法，中高级程序员必备！&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;TODO: + 说明：
-如果代码中有该标识，说明在标识处有功能代码待编写，待实现的功能在说明中会简略说明。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;FIXME: + 说明：
-如果代码中有该标识，说明标识处代码需要修正，甚至代码是错误的，不能工作，需要修复，如何修正会在说明中简略说明。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;XXX: + 说明：
-如果代码中有该标识，说明标识处代码虽然实现了功能，但是实现的方法有待商榷，希望将来能改进，要改进的地方会在说明中简略说明。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;eclipse中特殊的注释：
-在eclipse中，TODO、FIXME和XXX都会被eclipse的task视图所收集。在项目发布前，检查一下task视图是一个很好的习惯。此外，在eclipse中，我们可自定义自己的特殊注释标签。如在C/C++中，进入window—&amp;gt;preferences—&amp;gt;C/C++—&amp;gt;Task Tags窗口即可添加特殊标签，默认只有TODO、FIXME和XXX。&lt;/p&gt;
-
-</description>
-        <pubDate>Sun, 09 Oct 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/tips/2016/10/09/%E4%BB%A3%E7%A0%81%E7%9A%84%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/</link>
-        <guid isPermaLink="true">http://localhost:4000/tips/2016/10/09/%E4%BB%A3%E7%A0%81%E7%9A%84%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/</guid>
-        
-        <category>代码规范</category>
-        
-        <category>特殊注释</category>
-        
-        <category>OC代码的特殊注释</category>
         
         
         <category>tips</category>

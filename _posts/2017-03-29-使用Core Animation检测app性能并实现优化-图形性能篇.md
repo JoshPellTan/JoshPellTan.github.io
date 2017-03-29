@@ -1,0 +1,88 @@
+---
+layout:     post
+title:      使用Core Animation检测app性能并实现优化-图形性能篇
+date:       2017-03-07 08:08:13
+summary:    Wellcome To My Blog.
+categories: study
+thumbnail: cogs
+tag:
+ - 优化
+ - 性能
+ - 使用Core Animation检测app性能并实现优化
+---
+
+很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。
+
+**Core Animation启动运行**
+
+- 打开Xcode对当前项目Profile，点击Product再点击Profile
+
+- 这时就会打开 Profiling Template 选项对话框：
+
+![Thumper](http://pic.yupoo.com/joshpell/GkyID56s/cTkiV.png =300x150)
+
+- 选择Core Animation即可
+
+- 点击红色运行按钮启动App，随后操作App就能看到FPS和CPU等性能信息了
+
+**但是你看到这些信息了，发现了问题，该如何优化呢，下面就用Core Animation来一个个优化**
+
+在右下角面板的 Display Settings 区域，我们可以看到多个 Debug Options
+
+![Thumper](http://pic.yupoo.com/joshpell/GkyOR7HR/cVyUv.png =150x200)
+接下啦一个一个看。
+
+```Color Blended Layers```
+
+这个选项选项基于渲染程度对屏幕中的混合区域进行绿到红的高亮显示，越红表示性能越差，会对帧率等指标造成较大的影响。红色通常是由于多个半透明图层叠加引，而且无用的图层叠加越多，颜色越红。所以对这个做性能优化就是尽量保证图层叠加少，并尽量减少对透明度的使用。下面就是优化后的App界面与微信朋友圈的对比，可以看出这个性能比微信还更胜一筹。
+
+![Thumper](http://pic.yupoo.com/joshpell/GkyRvewn/RaG2h.png =100x170)
+![Thumper](http://pic.yupoo.com/joshpell/GkyRv5Yh/OuADL.png =100x170)
+
+```Color Hits Green and Misses Red```
+当 UIView.layer.shouldRasterize = YES 时，耗时的图片绘制会被缓存，并当做一个简单的扁平图片来呈现。这时候，如果页面的其他区块(比如 UITableViewCell 的复用)使用缓存直接命中，就显示绿色，反之，如果不命中，这时就显示红色。红色越多，性能越差。因为栅格化生成缓存的过程是有开销的，如果缓存能被大量命中和有效使用，则总体上会降低开销，反之则意味着要频繁生成新的缓存，这会让性能问题雪上加霜。
+所以这里的这个缓存就需要慎重使用，而我们App包括微信QQ支付宝等我看也基本没有使用这个方式。而我们App的statusBar会经常闪红色，这是因为我使用了一个CPU和FPS的实时查看工具，需要经常刷新显示，所以就没啥解决的。
+
+![Thumper](http://pic.yupoo.com/joshpell/GkyZYqCd/ElGuJ.png =100x170)
+
+```Color Copied Images```
+
+对于 GPU 不支持的色彩格式的图片只能由 CPU 来处理，把这样的图片标为蓝色。蓝色越多，性能越差。因为，我们不希望在滚动视图的时候，由 CPU 来处理图片，这样可能会对主线程造成阻塞。看了App好几个页面，发现根本不会出现这里所说的蓝色，但我查看支付宝QQ就发现了几个蓝色的地方，不知道是他们有特殊的考虑还是没发现这问题，但问题也特少，影响不大。图就不上了
+
+```Color Non-Standard Surface Formats```
+
+这个性能发现基本上没有资料能查到，打开这个性能检测后，发现App上很多浅灰色色块，并且有个规律，它们都是没有设置背景色的区域，后来自己设置了背景色就没有色块了，但我不知道是前者还是后者性能好，希望知道的人解答一下。但我发现QQ支付宝这些大型的App也没有对这些做处理，而且发现苹果原生界面也有很多这种灰色色块，所以我也没有对当前App的这些问题做处理，上一组图看看效果。
+
+![Thumper](http://pic.yupoo.com/joshpell/GkzdBMc7/Mmfig.png =100x170)
+![Thumper](http://pic.yupoo.com/joshpell/GkzdBFRr/b2Y5.png =100x170)
+
+```Color Immediately```
+
+通常 Core Animation Instruments 以每毫秒 10 次的频率更新图层调试颜色。对某些效果来说，这显然太慢了。这个选项就可以用来设置每帧都更新（可能会影响到渲染性能，而且会导致帧率测量不准，所以不要一直都设置它）。这是一个辅助调试工具，本身是没有啥效果的，需要联合其他调试类别。
+
+```Color Misaligned Images```
+
+这个选项检查了图片是否被缩放，以及像素是否对齐。被放缩的图片会被标记为黄色，像素不对齐则会标注为紫色。黄色、紫色越多，性能越差。主要是将控件按照图片大小来设定大小，如点赞、评论、分割线和聊天按钮，还有就是头像图片在下载的时候就从cdn下载自己需要的大小，这样图片的黄色缩放问题就没了；再就是控件的宽高最好是整数,因为苹果的屏幕最小单位是1像素，如果有小数了，设备显示就会多次再计算，再选择一个整数像素来显示。而单张大图由于需求原因，暂时没有做处理。下面就是前后对比图：
+
+![Thumper](http://pic.yupoo.com/joshpell/GkAwlA1A/enGsr.png =100x170)
+![Thumper](http://pic.yupoo.com/joshpell/GkAwlFTd/ZlQk2.png =100x170)
+
+```Color Offscreen-Rendered Yellow```
+
+这个选项会把那些离屏渲染的图层显示为黄色。黄色越多，性能越差。这些显示为黄色的图层很可能需要用 shadowPath 或者 shouldRasterize 来优化。这里只需要少使用图层的clipsToBounds和layer层的masksToBounds方法即可。
+
+```color compositing fast-path blue```
+
+官方说明：“Places a blue overlay over content that is detached from the compositor.”标记由硬件绘制的路径为蓝色，蓝色越多越好，可以对直接使用OpenGL绘制的图层进行高亮。对OpenGL没什么研究，所以这里没办法给出方法，大家只需要记住蓝色越多越好就ok。
+
+```Flash Updated Regions```
+
+这个选项会把重绘的内容显示为黄色。不该出现的黄色越多，性能越差。通常我们希望只是更新的部分被标记完黄色。当你滑动app视图的时候屏幕就是黄色的，建议大家少用这个调试，因为——>闪得眼睛疼！
+
+我们也可以使用```OpenGL ES Analysis```来监测图形的相关性能。谢谢支持！
+
+
+
+
+
+

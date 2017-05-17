@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+  <title>仿微信朋友圈视频剪切功能</title>
+  <meta name="description" content="写在前面">
+  <meta name="author" content="JoshPell">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="仿微信朋友圈视频剪切功能">
+  <meta name="twitter:description" content="写在前面">
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="仿微信朋友圈视频剪切功能">
+  <meta property="og:description" content="写在前面">
+  
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="/2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/">
+  <link rel="alternate" type="application/rss+xml" title="谭健" href="/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+
+<script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=2854006074878156134' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+
+
+<!-- 百度统计 -->
+  
+
+<!-- google 统计 -->
+  
+
+</head>
+
+
+  <body style="height:1000px;">
+
+   <meta name="baidu-site-verification" content="0L5MKMrHOb" />
+
+    <span class="mobile btn-mobile-menu">        
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/#blog" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      标签
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+      </div>
+    </span>
+
+
+    <header class="panel-cover panel-cover--collapsed">
+<style type="text/css">
+body {background-image:url(http://7sbmib.com1.z0.glb.clouddn.com/body_background1.png);}
+p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_background1.png); padding: 20px;}
+</style>
+  
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">            
+            <a href="/#blog" title="前往 谭健 的主页" class="blog-button">
+                <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+                <div class="info">
+                    <div class="info-back">
+                        <h1> 
+                            
+                                JoshPellTan
+                            
+                        </h1>
+                        <p>
+                           
+                                iOS/H5/CSS
+                            
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for 谭健" class="blog-button">谭健</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">人生只有必然，没有偶然</span>
+        
+        <hr class="panel-cover__divider" style="height:1px;border:none;border-top:1px solid #555555;"/>
+        <p class="panel-cover__description">欢迎来到我的个人网站~</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" style="height:1px;border:none;border-top:1px solid #555555;"/>
+        
+        
+        
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                  <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                  <li class="navigation__item"><a href="/tags" title="tags">标签</a></li>
+                
+                  <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>          
+        </div>
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-disabled"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- latex公式支持代码 end -->
+
+<!-- 代码高亮设置 begin 
+<link rel="stylesheet" href="/css/pygments-default.css">
+ 代码高亮设置 end -->
+
+
+<article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">仿微信朋友圈视频剪切功能</h1>
+    <div class="post-meta" style="color:#FF6633">
+      <img src="/images/calendar.png" width="20px"/> 
+      <time datetime="2017-03-07 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-03-07</time>  
+         
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+
+    <p>写在前面</p>
+
+<p>公司项目最近有个小视频功能，上传的视频最长只有15秒，所以需要实现一个视频剪辑的功能。发现微信有这个功能，便准备仿微信的交互写一个，结果遇到不少坑，分享给大家让大家少走弯路。撸起袖子说干就干。</p>
+
+<p>分析需求</p>
+
+<p>我们先看一看微信的界面</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-d6fc6ea37b3fd2f3.PNG?imageMogr2/auto-orient/strip" width="200" height="350" alt="photos" /></p>
+
+<p><strong><em>微信视频裁剪界面</em></strong></p>
+
+<p>1.页面下部拖动左边和右边的白色竖条控制剪切视频的开始和结束时间，预览界面跟随拖动位置跳到视频相应帧画面,控制视频长度最长15秒，最短5秒</p>
+
+<p>2.拖动下部图片预览条，视频预览画面跳转到左边白条停留处的帧画面</p>
+
+<p>3.下部操作区域拖动操作时，视频暂停，松手后视频播放，播放内容为两个白条之间的内容，可以循环播放</p>
+
+<p>4.界面的“取消”返回，“确定”后裁剪视频输出</p>
+
+<p>先上一个我做完的效果截图：</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-e37e40c9c1aa40d0.jpg?imageMogr2/auto-orient/strip" width="200" height="350" alt="photos" /></p>
+
+<p>仿照效果图</p>
+
+<p>我自己设计的控制条跟微信略有不同，微信是最长时间时候左右两个白色竖条离边框都还有一点距离，我这里设计的是两边白条都贴边框，返回按钮和确定裁剪按钮也不同。其实也没差，要说微信那样设计有特殊考虑的话，我只能说我不是交互和视觉设计师😳</p>
+
+<h3 id="section">实现</h3>
+
+<p>1.我这里完整的拖动选择视图是封装的一个<code class="highlighter-rouge">view</code>，上面放一个<code class="highlighter-rouge">scrollView</code>来展示小的预览图片，再上面放两个<code class="highlighter-rouge">image</code>来做视频截取范围的开始和结束指示器。首先需要实现下面缩略图排列以及它的左右滑动，首先需要找到方法获取视频的帧图片。找了一下资料，很多，基本都是同一个方法，所以暂时选取了这个方法。为何说暂时，后面会解释。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>//获取想要时间的帧视频图片
+
++(UIImage *)getCoverImage:(NSURL *)outMovieURL atTime:(CGFloat)time isKeyImage:(BOOL)isKeyImage{
+
+AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outMovieURL options:nil];
+
+NSParameterAssert(asset);
+
+AVAssetImageGenerator *assetImageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+
+assetImageGenerator.appliesPreferredTrackTransform = YES;
+
+assetImageGenerator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+
+__block CGImageRef thumbnailImageRef = NULL;
+
+NSError *thumbnailImageGenerationError = nil;
+
+//tips:下面代码控制时间点的取图是否为关键帧图片，系统为了性能是默认取关键帧图片
+
+CMTime myTime = CMTimeMake(time, 1);
+
+if (!isKeyImage) {
+
+assetImageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+
+assetImageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+
+CMTime duration = asset.duration;
+
+myTime = CMTimeMake(time*30,30);
+
+}
+
+thumbnailImageRef = [assetImageGenerator copyCGImageAtTime:myTime actualTime:NULL error:nil];
+
+if (!thumbnailImageRef){
+
+NSLog(@"thumbnailImageGenerationError %@", thumbnailImageGenerationError);
+
+}
+
+UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc]
+
+initWithCGImage:thumbnailImageRef] : nil;
+
+CGImageRelease(thumbnailImageRef);
+
+return thumbnailImage;
+
+}
+</code></pre>
+</div>
+
+<p>通常开发者认为时间的呈现格式应该是浮点数据，我们一般使用<code class="highlighter-rouge">NSTimeInterval</code>，实际上它是简单的双精度<code class="highlighter-rouge">double</code>类型，只是<code class="highlighter-rouge">typedef</code>了一下，但是由于浮点型数据计算很容易导致精度的丢失，在一些要求高精度的应用场景显然不适合，于是苹果在<code class="highlighter-rouge">Core Media</code>框架中定义了<code class="highlighter-rouge">CMTime</code>数据类型作为时间的格式</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>typedef struct{
+
+	CMTimeValue    value;
+	
+	CMTimeScale    timescale;
+	
+	CMTimeFlags    flags;
+	
+	CMTimeEpoch    epoch;
+
+} CMTime;
+</code></pre>
+</div>
+
+<p>显然，<code class="highlighter-rouge">CMTime</code>定义是一个C语言的结构体，<code class="highlighter-rouge">CMTime</code>是以分数的形式表示时间，<code class="highlighter-rouge">value</code>表示分子，<code class="highlighter-rouge">timescale</code>表示分母，<code class="highlighter-rouge">flags</code>是位掩码，表示时间的指定状态。<code class="highlighter-rouge">CMTimeMake(3, 1)</code>结果为3。
+我是默认一个完整屏幕宽度为15秒的截取长度，在视频的每秒取一张帧图片作为底部预览小图，起初我是用循环视频时长秒数，每次用上面方法取一张图片，再用<code class="highlighter-rouge">UIImageView</code>放置这张图片，最后再计算<code class="highlighter-rouge">imageView</code>的位置添加到<code class="highlighter-rouge">scrollView</code>上。结果这是一个坑，视频只有二三十秒还好，如果比较长则会创建很多个<code class="highlighter-rouge">imageView</code>，内存暴涨，导致卡顿或者直接crash。后来想到了绘图，这样就不会请求内存多次分配空间，从而解决内存暴涨问题。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">@interface</span> <span class="nc">WZScrollView</span> <span class="p">:</span> <span class="nc">UIScrollView</span>
+
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">strong</span><span class="p">)</span> <span class="n">UIImage</span> <span class="o">*</span><span class="n">image</span><span class="p">;</span>
+
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">)</span> <span class="n">CGRect</span> <span class="o">*</span><span class="n">rect</span><span class="p">;</span>
+
+<span class="k">-</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">drawImage</span><span class="p">:(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span> <span class="nf">inRect</span><span class="p">:(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">rect</span><span class="p">;</span>
+
+<span class="k">@end</span>
+
+<span class="k">@implementation</span> <span class="nc">WZScrollView</span>
+
+<span class="k">-</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">drawRect</span><span class="p">:(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">rect</span><span class="p">{</span>
+
+	<span class="p">[</span><span class="n">super</span> <span class="nf">drawRect</span><span class="p">:</span><span class="n">rect</span><span class="p">];</span>
+	
+	<span class="p">[</span><span class="n">_image</span> <span class="nf">drawInRect</span><span class="p">:</span><span class="n">rect</span><span class="p">];</span>
+
+<span class="p">}</span>
+
+<span class="k">-</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">drawImage</span><span class="p">:(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nv">image</span> <span class="nf">inRect</span><span class="p">:(</span><span class="n">CGRect</span><span class="p">)</span><span class="nv">rect</span><span class="p">{</span>
+
+	<span class="n">_image</span> <span class="o">=</span> <span class="n">image</span><span class="p">;</span>
+	
+	<span class="n">_rect</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">rect</span>
+	
+	<span class="p">[</span><span class="n">self</span> <span class="nf">setNeedsDisplayInRect</span><span class="p">:</span><span class="n">rect</span><span class="p">];</span>
+
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>结果发现直接画图到<code class="highlighter-rouge">scrollView</code>上后，在你拖动<code class="highlighter-rouge">scrollView</code>的时候它始终会只显示前面15张图片的效果，o(╯□╰)o！！！测试了一下，滚动是有效果的，但是体验不好啊。后来把上面的继承类从<code class="highlighter-rouge">UIScrollView</code>改成了<code class="highlighter-rouge">UIView</code>，把图片绘制到<code class="highlighter-rouge">view</code>上再加到<code class="highlighter-rouge">scrollView</code>上，设置好<code class="highlighter-rouge">contentSize</code>，问题解决。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>@interface WZScrollView : UIView
+</code></pre>
+</div>
+
+<p>接下来就是左右开始和结束的指示图片了，由于图片太小会有可能接收不到点击事件，所以我这里的切图在开始处指示图片的右边和结束指示图片的左边多裁一部分透明范围，这样指示器的面积就比你看到的大了，方便操作。接下来就是它们的拖动操作，最开始我使用的是view的<code class="highlighter-rouge">touchesMoved：withEvent:</code>来让图片改变x值从而跟随手指移动。结果发现，手速稍快或者触点稍微偏移就会导致图片位置改变停止，体验和性能都不行。后来改用拖动手势<code class="highlighter-rouge">UIPanGestureRecognizer</code>就完美解决了此问题，这里代码多是逻辑处理问题，包括拖动范围何时会让相应图片进行位置改变的响应，上下的白色线条位置和长度改变等等。但这里需要注意三个问题：a.拖动手势的回调方法里面的改变距离和原视图位置的x值会指数相加，每次回调都应该将视图的<code class="highlighter-rouge">translation</code>置0。b.需要每次回调都计算开始和结束位置的时间点，让其有实时性。c.拖动结束时需要让播放器循环播放两个时间点间的视频内容。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>-(void)panAction:(UIPanGestureRecognizer *)panGR{
+
+//伪代码：根据需求改变开始和结束指示图片的位置
+
+if(panGR.state == UIGestureRecognizerStateChanged){
+
+[panGR setTranslation:CGPointZero inView:self.superview];
+
+}
+
+[self calculateForTimeNodes];//实时计算裁剪时间
+
+if (panGR.state == UIGestureRecognizerStateEnded) {
+
+//伪代码：指示播放器播放相应视频片段代码
+
+}
+//计算开始结束时间点
+
+-(void)calculateForTimeNodes{
+
+CGPoint offset = _scrollView.contentOffset;
+
+_startTime =(offset.x+self.startView.frame.origin.x)*15*1.0f/self.bounds.size.width;
+
+_endTime = (offset.x + self.endView.frame.origin.x + KendTimeButtonWidth) * 15 * 1.0f/self.bounds.size.width;
+
+CGFloat imageTime = _startTime;//预览时间点
+
+if (_chooseType == imageTypeEnd) {
+
+imageTime = _endTime;
+
+}
+
+if (self.getTimeRange) {
+
+self.getTimeRange(_startTime,_endTime,imageTime);//控制预览播放界面的当前画面（这里是一个播放页传过来的block的调用）
+
+}
+</code></pre>
+</div>
+
+<p>2.拖动scrollView时，默认是展示开始时间点的视频帧画面，在<code class="highlighter-rouge">scrollViewDidScroll:</code>方法中调用<code class="highlighter-rouge">calculateForTimeNodes</code>方法即可实时更新开始、结束和预览3个时间点参数，这一步的很多逻辑都封装到第一步的一些方法中了，所以这一步比较简单。</p>
+
+<p>3.拖动时暂停播放，松手后播放相应时间范围视频内容，可以循环播放。关于开始和结束指示图片的拖动状态可以用上面提到的<code class="highlighter-rouge">panGR.state == UIGestureRecognizerStateEnded</code>来判断，进入判断说明松手了，没有则还在拖动。而scrollView的拖动和停止直接调用它的代理就行了，这里不赘述，不明白可以在demo里面查看。这里遇到个坑是因为前面在视频预览页面拖动的时候需要有当前的视频帧画面用作预览，而开始是<code class="highlighter-rouge">getCoverImage: atTime: isKeyImage:</code>这个方法来获取帧图片的，当拖动时就显示图片图层，停止拖动就隐藏图片图层，进而显示下面的视频图层。结果这个方法比较消耗cpu，会导致卡顿情况，还会经常因为cpu过高直接crash。后来发现AVPlayer里面有一个<code class="highlighter-rouge">seekToTime: toleranceBefore: toleranceAfter: completionHandler:</code>方法，作用是让视频跳到某个时间点开始播放。我去,这么简单我却饶了好大一个弯，所以大家一定要在使用类的时候要养成多看原类文件的好习惯，可以少跳抗，囧！！！其实AVPlayer还有一个<code class="highlighter-rouge">seekToTime:</code>方法,我不使用它的原因是它有一个自己的最小时间单位（貌似是关键帧），用它不会实时改变播放器画面。</p>
+
+<p>视频拖动时：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[_player pause];
+
+[_player seekToTime:CMTimeMake(time*30, 30) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+
+}];
+</code></pre>
+</div>
+
+<p>拖动停止时：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[_player seekToTime:CMTimeMake(_startTime*30, 30) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+
+[_player play];
+
+}];
+</code></pre>
+</div>
+
+<p>4.最后就是对视频进行裁剪了，这里的这个方法不是我写的，是网上找的别人的代码，但是原代码有个小问题，就是输出的视频文件方向改变了。在这里我用了下面3行代码来保证输出视频的方向跟原视频保持一致</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>AVURLAsset *asset = [AVURLAsset assetWithURL:videoUrl];
+
+AVAssetTrack *assetVideoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo]firstObject];
+
+[compositionVideoTrack setPreferredTransform:assetVideoTrack.preferredTransform];
+</code></pre>
+</div>
+
+<p>我这里视频裁剪后的输出视频路径是固定的，所以我封装的方法里面的回调是没有参数的，码友如果需要可以自行改装：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>+ (void)addBackgroundMiusicWithVideoUrlStr:(NSURL *)videoUrl audioUrl:(NSURL *)audioUrl andCaptureVideoWithRange:(TimeRange)videoRange completion:(void(^)(void))completionHandle；
+</code></pre>
+</div>
+
+<p>大家如果下demo来看的话会发现我在这个方法调用时在回调里面多加了一个保存视频方法到里面，是由于我的项目需求。这个方法会新建一个以项目名称命名的相册，用来存放剪切后的视频，回调会传回一个PHAsset对象（项目需求），这个就是赠送节目了😁。</p>
+
+<p>这里是<a href="https://github.com/JoshPellTan/TJVideoCutDemo">demo</a>下载地址，如果对你有用的话别忘了star一个😁。</p>
+
+<p>好久没动swift了，本来想写一个swift版练一练，后面再说吧哈哈。。。</p>
+
+  </section>
+</article>
+<br>
+<section>
+  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+</section>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+    <title>打赏</title>
+    <style type="text/css">
+        .content{width:80%;margin:10px auto;}
+                .hide_box{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+        .shang_box{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+        .shang_box img{border:none;border-width:0;}
+        .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+        .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+        .shang_close{float:right;display:inline-block;}
+                .shang_logo{display:block;text-align:center;margin:20px auto;}
+        .shang_tit{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/dsimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+        .shang_tit p{color:#a3a3a3;text-align:center;font-size:16px;}
+        .shang_payimg{width:140px;padding:10px;border:6px solid #EA5F00;margin:0 auto;border-radius:3px;height:140px;}
+        .shang_payimg img{display:block;text-align:center;width:140px;height:140px; }
+        .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+        .radiobox{width: 16px;height: 16px;background: url('/dsimg/radio2.jpg');display: block;float: left;margin-top: 5px;margin-right: 14px;}
+        .checked .radiobox{background:url('/dsimg/radio1.jpg');}
+        .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:280px;}
+        .shang_payselect .pay_item{display:inline-block;margin-right:10px;float:left;}
+        .shang_info{clear:both;}
+		.shang_info p,.shang_info a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+    </style>
+</head>
+
+<body>
+    <div class="content">
+    <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏</a></p>
+    <div class="hide_box"></div>
+    <div class="shang_box">
+    	<a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/dsimg/close.jpg" alt="取消" /></a>
+        <img class="shang_logo" src="/dsimg/logos.png" alt="谭健" />
+    	<div class="shang_tit">
+    		<p>感谢您的支持，我会继续努力的!</p>
+    	</div>
+    	<div class="shang_payimg">
+    		<img src="/dsimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+    	</div>
+    		<div class="pay_explain">扫码打赏，你说多少就多少</div>
+    	<div class="shang_payselect">
+    		<div class="pay_item checked" data-id="alipay">
+	    		<span class="radiobox"></span>
+	    		<span class="pay_logo"><img src="/dsimg/alipay.jpg" alt="支付宝" /></span>
+    		</div>
+    		<div class="pay_item" data-id="weipay">
+	    		<span class="radiobox"></span>
+	    		<span class="pay_logo"><img src="/dsimg/wechat.jpg" alt="微信" /></span>
+    		</div>
+    	</div>
+    	<div class="shang_info">
+    		<p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+    		<p>Powered by <a href="JoshPellTan.cc" target="_blank" title="谭健">谭健</a>，分享从这里开始，精彩与您同在</p>
+    	</div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+    	$(".pay_item").click(function(){
+    		$(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+    		var dataid=$(this).attr('data-id');
+    		$(".shang_payimg img").attr("src","/dsimg/"+dataid+"img.jpg");
+    		$("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+    	});
+    });
+    function dashangToggle(){
+    	$(".hide_box").fadeToggle();
+    	$(".shang_box").fadeToggle();
+    }
+    </script>
+</body>
+</html>
+
+<section>
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2017/02/%E5%85%B3%E4%BA%8E%E4%BF%AE%E6%94%B9%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B8%A6%E7%9A%84%E5%AF%BC%E8%88%AA%E6%A0%8F/" data-toggle="tooltip" data-placement="top" title="关于修改系统自带的导航栏">上一篇：  <span>关于修改系统自带的导航栏</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/" data-toggle="tooltip" data-placement="top" title="检测app性能并实现优化-图形性能篇">下一篇：  <span>检测app性能并实现优化-图形性能篇</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+
+
+<br>
+
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="" data-title="仿微信朋友圈视频剪切功能 " data-url="JoshPell.cc//2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"JoshPell"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+<link href="/css/top.css/" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js?v=1.83.min/" type="text/javascript"></script>
+<script src="/js/top.js/"></script>
+<div style="display: none;" id="rocket-to-top">
+<div style="opacity:0;display: block;" class="level-2"></div>
+<div class="level-3"></div>
+</div
+
+
+
+
+            <section class="footer">
+    <footer>
+        <div class = "footer_div">  
+        <nav class="cover-navigation navigation--social">
+          <ul class="navigation">
+
+          
+          <!-- Weibo -->
+          <li class="navigation__item_social">
+            <a href="http://weibo.com/FONKY_TJ" title="@FONKY_TJ 的微博" target="_blank">
+              <i class='social fa fa-weibo fa-2x'></i>
+              <span class="label">Weibo</span>
+            </a>
+          </li>
+          
+
+          
+          <!-- Github -->
+          <li class="navigation__item_social">
+            <a href="https://github.com/JoshPellTan" title="@JoshPellTan 的 Github" target="_blank">
+              <i class='social fa fa-github fa-2x'></i>
+              <span class="label">Github</span>
+            </a>
+          </li>
+          
+          
+          
+
+          
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+          <!-- Email -->
+          <li class="navigation__item_social">
+            <a href="mailto:joshpelltan@gmail.com" title="Contact me">
+              <i class='social fa fa-envelope fa-2x'></i>
+              <span class="label">Email</span>
+            </a>
+          </li>
+          
+
+          </ul>
+        </nav>
+
+        </div>
+
+
+
+        <div class = "footer_div">  
+           <p class="copyright text-muted">
+            Copyright &copy; 谭健 2017 Theme by <a href="http://JoshPell.cc/">JoshPell</a> |
+            <iframe
+                style="margin-left: 2px; margin-bottom:-5px;"
+                frameborder="0" scrolling="0" width="91px" height="20px"
+                src="https://ghbtns.com/github-btn.html?user=JoshPell&repo=joshpeltan.github.io&type=star&count=true" >
+            </iframe>|
+            
+<!-- cnzz -->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261874359'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1261874359%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+</p>
+        	<div align="right">
+    			<link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<!-- 访问统计 -->
+ 
+      Total <span id="busuanzi_value_site_pv"></span> views.
+您是我的第<span id="busuanzi_value_site_uv"></span> 个访客..
+<span id="busuanzi_value_page_pv"></span> Hits
+  
+          </span>
+        </div>
+        <div>
+    </footer>
+</section>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+
+
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+    
+<!-- 
+
+
+
+<link href="/css/top.css/" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js?v=1.83.min/" type="text/javascript"></script>
+<script src="/js/top.js/"></script>
+<div style="display: none;" id="rocket-to-top">
+<div style="opacity:0;display: block;" class="level-2"></div>
+<div class="level-3"></div>
+</div>-->
+
+
+<!--小人只在首页显示 start*-->
+<div id="spig" class="spig">
+    <div id="message">正在加载中……</div>
+    <div id="mumu" class="mumu"></div>
+</div>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/js/jquery.xiaoren.js"></script>
+<script type="text/javascript" src="/js/spig.js"></script>
+<link rel="stylesheet" href="/css/xiaoren.css" type="text/css"/>
+<script type="text/javascript">
+var isindex = true;
+var visitor = true;
+</script>
+
+
+</body>
+
+</html>

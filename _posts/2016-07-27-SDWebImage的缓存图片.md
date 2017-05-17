@@ -13,6 +13,7 @@ tags:
 
 
 ### 为了避免浪费流量，以及提高显示图片效率，使用SDWebImage经常需要使用它的缓存图片
+
 	UIImage *pickImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:urlStr];
             if (pickImage) {
 

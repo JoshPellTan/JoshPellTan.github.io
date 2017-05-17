@@ -1,56 +1,27 @@
-# Carte Noire
+# leopard
 
-A simple Jekyll theme for blogging. Not named after the coffee.
+[leopard](http://robotkang.cc) 是一个简洁的博客模板，如果你也喜欢请 Star ，你的 Star 是我持续更新的动力, 谢谢 😄.
 
-![Homepage](http://i.imgur.com/xlmHArV.png)
+### 使用条件
 
-### Article
-![Article](http://i.imgur.com/8rD8FfC.png)
+Jekyll 支持 Mac 、Windows、ubuntu 、Linux 操作系统                     
+Jekyll 需要依赖：Ruby、bundler
 
-### Disqus Comments
-![Comments](http://i.imgur.com/TBZHQwF.png)
+#### 获取博客模板
 
-### Posts grouped by year
-![All Posts](http://i.imgur.com/9bNs2Sc.png)
+> $ git clone https://github.com/MengZheK/kangblog.github.io.git
 
-### JavaScript Search
-![Search](http://i.imgur.com/yQqMeSl.png)
+或者直接[下载博客](https://github.com/MengZheK/kangblog.github.io/archive/master.zip)   
 
-### Menu by mmenu
-![Menu](http://i.imgur.com/SClrNSH.png)
+进kangblog.github.io/ 目录下， 开启本地服务 
 
-## Contact
-If you wish to contact me regarding this theme please raise an issue on GitHub,
-tweet me [@_jacobtomlinson](http://www.twitter.com/_jacobtomlinson) or email me
-[jacob@jacobtomlinson.co.uk](mailto:jacob@jacobtomlinson.co.uk).
+> $ bundle exec jekyll server
 
-## Contribution
-Pull requests are very welcome.
+在浏览器输入 [127.0.0.1:4000](127.0.0.1:4000) ， 就可以看到博客效果了。
 
-## Theme
-This jekyll theme has been created from scratch. Ideas and inspiration are taken
-from other places but the code is my own.
+### 提示
+如果在部署博客的时候发现问题，可以直接在[message](https://robotkang.cc/liuyan/)里面提问。        
 
-## Tools and Libraries
-The following tools and libraries are used in this theme
 
-### JavaScript
- * [jQuery](http://jquery.com/)
- * [MMenu](http://mmenu.frebsite.nl/)
- * [HighlightJS](https://highlightjs.org/)
- * [Simple Jekyll Search](https://github.com/christian-fei/Simple-Jekyll-Search)
-
-### CSS
- * [Bootstrap](http://getbootstrap.com/)
- * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
-
-### Social
- * [AddThis](http://www.addthis.com/)
- * [Disqus](https://disqus.com/)
-
-### Other
- * [Real Favicon Generator](http://realfavicongenerator.net/)
- * [Google Analytics](http://www.google.com/analytics/)
-
-## License
-The jekyll theme, HTML, CSS and JavaScript is licensed under GPLv3 (unless stated otherwise in the file).
+#### 感谢   
+本博客在[Jekyll搭建个人博客](http://baixin.io/2016/10/jekyll_tutorials1/)和[Vno Jekyll](https://github.com/onevcat/vno-jekyll)基础上修改的。  

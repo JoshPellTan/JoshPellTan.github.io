@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+  <title>检测app性能并实现优化-图形性能篇</title>
+  <meta name="description" content="很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。">
+  <meta name="author" content="JoshPell">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="检测app性能并实现优化-图形性能篇">
+  <meta name="twitter:description" content="很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。">
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="检测app性能并实现优化-图形性能篇">
+  <meta property="og:description" content="很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。">
+  
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="/2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/">
+  <link rel="alternate" type="application/rss+xml" title="谭健" href="/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+
+<script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=2854006074878156134' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+
+
+<!-- 百度统计 -->
+  
+
+<!-- google 统计 -->
+  
+
+</head>
+
+
+  <body style="height:1000px;">
+
+   <meta name="baidu-site-verification" content="0L5MKMrHOb" />
+
+    <span class="mobile btn-mobile-menu">        
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/#blog" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      标签
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+      </div>
+    </span>
+
+
+    <header class="panel-cover panel-cover--collapsed">
+<style type="text/css">
+body {background-image:url(http://7sbmib.com1.z0.glb.clouddn.com/body_background1.png);}
+p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_background1.png); padding: 20px;}
+</style>
+  
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">            
+            <a href="/#blog" title="前往 谭健 的主页" class="blog-button">
+                <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+                <div class="info">
+                    <div class="info-back">
+                        <h1> 
+                            
+                                JoshPellTan
+                            
+                        </h1>
+                        <p>
+                           
+                                iOS/H5/CSS
+                            
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for 谭健" class="blog-button">谭健</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">人生只有必然，没有偶然</span>
+        
+        <hr class="panel-cover__divider" style="height:1px;border:none;border-top:1px solid #555555;"/>
+        <p class="panel-cover__description">欢迎来到我的个人网站~</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" style="height:1px;border:none;border-top:1px solid #555555;"/>
+        
+        
+        
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                  <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                  <li class="navigation__item"><a href="/tags" title="tags">标签</a></li>
+                
+                  <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>          
+        </div>
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-disabled"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- latex公式支持代码 end -->
+
+<!-- 代码高亮设置 begin 
+<link rel="stylesheet" href="/css/pygments-default.css">
+ 代码高亮设置 end -->
+
+
+<article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">检测app性能并实现优化-图形性能篇</h1>
+    <div class="post-meta" style="color:#FF6633">
+      <img src="/images/calendar.png" width="20px"/> 
+      <time datetime="2017-03-29 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-03-29</time>  
+         
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+
+    <p>很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。</p>
+
+<p><strong>Core Animation启动运行</strong></p>
+
+<p>1.打开Xcode对当前项目Profile，点击Product再点击Profile</p>
+
+<p>2.这时就会打开 Profiling Template 选项对话框：</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-5c7213dbefc19c86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="400" height="250" alt="photos" /></p>
+
+<p>3.选择Core Animation即可</p>
+
+<p>4.点击红色运行按钮启动App，随后操作App就能看到FPS和CPU等性能信息了</p>
+
+<p><strong>但是你看到这些信息了，发现了问题，该如何优化呢，下面就用Core Animation来一个个优化</strong></p>
+
+<p>在右下角面板的 Display Settings 区域，我们可以看到多个 Debug Options</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-4c4211d0669f0082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="250" height="300" alt="photos" /></p>
+
+<p>接下来一个一个看。</p>
+
+<h4 id="color-blended-layers"><code class="highlighter-rouge">Color Blended Layers</code></h4>
+
+<p>这个选项选项基于渲染程度对屏幕中的混合区域进行绿到红的高亮显示，越红表示性能越差，会对帧率等指标造成较大的影响。红色通常是由于多个半透明图层叠加引，而且无用的图层叠加越多，颜色越红。所以对这个做性能优化就是尽量保证图层叠加少，并尽量减少对透明度的使用。下面就是优化后的App界面与微信朋友圈的对比，可以看出这个性能比微信还更胜一筹。</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-4c4211d0669f0082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" />
+<img src="http://upload-images.jianshu.io/upload_images/1709525-765097aa49b36c8f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" /></p>
+
+<h4 id="color-hits-green-and-misses-red"><code class="highlighter-rouge">Color Hits Green and Misses Red</code></h4>
+<p>当 UIView.layer.shouldRasterize = YES 时，耗时的图片绘制会被缓存，并当做一个简单的扁平图片来呈现。这时候，如果页面的其他区块(比如 UITableViewCell 的复用)使用缓存直接命中，就显示绿色，反之，如果不命中，这时就显示红色。红色越多，性能越差。因为栅格化生成缓存的过程是有开销的，如果缓存能被大量命中和有效使用，则总体上会降低开销，反之则意味着要频繁生成新的缓存，这会让性能问题雪上加霜。
+所以这里的这个缓存就需要慎重使用，而我们App包括微信QQ支付宝等我看也基本没有使用这个方式。而我们App的statusBar会经常闪红色，这是因为我使用了一个CPU和FPS的实时查看工具，需要经常刷新显示，所以就没啥解决的。</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-12b7a6991f4f3798.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" /></p>
+
+<h4 id="color-copied-images"><code class="highlighter-rouge">Color Copied Images</code></h4>
+
+<p>对于 GPU 不支持的色彩格式的图片只能由 CPU 来处理，把这样的图片标为蓝色。蓝色越多，性能越差。因为，我们不希望在滚动视图的时候，由 CPU 来处理图片，这样可能会对主线程造成阻塞。看了App好几个页面，发现根本不会出现这里所说的蓝色，但我查看支付宝QQ就发现了几个蓝色的地方，不知道是他们有特殊的考虑还是没发现这问题，但问题也特少，影响不大。图就不上了</p>
+
+<h4 id="color-non-standard-surface-formats"><code class="highlighter-rouge">Color Non-Standard Surface Formats</code></h4>
+
+<p>这个性能发现基本上没有资料能查到，打开这个性能检测后，发现App上很多浅灰色色块，并且有个规律，它们都是没有设置背景色的区域，后来自己设置了背景色就没有色块了，但我不知道是前者还是后者性能好，希望知道的人解答一下。但我发现QQ支付宝这些大型的App也没有对这些做处理，而且发现苹果原生界面也有很多这种灰色色块，所以我也没有对当前App的这些问题做处理，上一组图看看效果。</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-d42c2ca9e40002d6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" />
+<img src="http://upload-images.jianshu.io/upload_images/1709525-bcc1746f40cdae32.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" /></p>
+
+<h4 id="color-immediately"><code class="highlighter-rouge">Color Immediately</code></h4>
+
+<p>通常 Core Animation Instruments 以每毫秒 10 次的频率更新图层调试颜色。对某些效果来说，这显然太慢了。这个选项就可以用来设置每帧都更新（可能会影响到渲染性能，而且会导致帧率测量不准，所以不要一直都设置它）。这是一个辅助调试工具，本身是没有啥效果的，需要联合其他调试类别。</p>
+
+<h4 id="color-misaligned-images"><code class="highlighter-rouge">Color Misaligned Images</code></h4>
+
+<p>这个选项检查了图片是否被缩放，以及像素是否对齐。被放缩的图片会被标记为黄色，像素不对齐则会标注为紫色。黄色、紫色越多，性能越差。主要是将控件按照图片大小来设定大小，如点赞、评论、分割线和聊天按钮，还有就是头像图片在下载的时候就从cdn下载自己需要的大小，这样图片的黄色缩放问题就没了；再就是控件的宽高最好是整数,因为苹果的屏幕最小单位是1像素，如果有小数了，设备显示就会多次再计算，再选择一个整数像素来显示。而单张大图由于需求原因，暂时没有做处理。下面就是前后对比图：</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/1709525-cd7afd6abffcaa27.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" />
+<img src="http://upload-images.jianshu.io/upload_images/1709525-595fe2819f937070.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" width="200" height="300" alt="photos" /></p>
+
+<h4 id="color-offscreen-rendered-yellow"><code class="highlighter-rouge">Color Offscreen-Rendered Yellow</code></h4>
+
+<p>这个选项会把那些离屏渲染的图层显示为黄色。黄色越多，性能越差。这些显示为黄色的图层很可能需要用 shadowPath 或者 shouldRasterize 来优化。这里只需要少使用图层的clipsToBounds和layer层的masksToBounds方法即可。</p>
+
+<h4 id="color-compositing-fast-path-blue"><code class="highlighter-rouge">color compositing fast-path blue</code></h4>
+
+<p>官方说明：“Places a blue overlay over content that is detached from the compositor.”标记由硬件绘制的路径为蓝色，蓝色越多越好，可以对直接使用OpenGL绘制的图层进行高亮。对OpenGL没什么研究，所以这里没办法给出方法，大家只需要记住蓝色越多越好就ok。</p>
+
+<h4 id="flash-updated-regions"><code class="highlighter-rouge">Flash Updated Regions</code></h4>
+
+<p>这个选项会把重绘的内容显示为黄色。不该出现的黄色越多，性能越差。通常我们希望只是更新的部分被标记完黄色。当你滑动app视图的时候屏幕就是黄色的，建议大家少用这个调试，因为——&gt;闪得眼睛疼！</p>
+
+<p>我们也可以使用<code class="highlighter-rouge">OpenGL ES Analysis</code>来监测图形的相关性能。谢谢支持！</p>
+
+
+  </section>
+</article>
+<br>
+<section>
+  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+</section>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+    <title>打赏</title>
+    <style type="text/css">
+        .content{width:80%;margin:10px auto;}
+                .hide_box{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+        .shang_box{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+        .shang_box img{border:none;border-width:0;}
+        .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+        .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+        .shang_close{float:right;display:inline-block;}
+                .shang_logo{display:block;text-align:center;margin:20px auto;}
+        .shang_tit{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/dsimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+        .shang_tit p{color:#a3a3a3;text-align:center;font-size:16px;}
+        .shang_payimg{width:140px;padding:10px;border:6px solid #EA5F00;margin:0 auto;border-radius:3px;height:140px;}
+        .shang_payimg img{display:block;text-align:center;width:140px;height:140px; }
+        .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+        .radiobox{width: 16px;height: 16px;background: url('/dsimg/radio2.jpg');display: block;float: left;margin-top: 5px;margin-right: 14px;}
+        .checked .radiobox{background:url('/dsimg/radio1.jpg');}
+        .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:280px;}
+        .shang_payselect .pay_item{display:inline-block;margin-right:10px;float:left;}
+        .shang_info{clear:both;}
+		.shang_info p,.shang_info a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+    </style>
+</head>
+
+<body>
+    <div class="content">
+    <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏</a></p>
+    <div class="hide_box"></div>
+    <div class="shang_box">
+    	<a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/dsimg/close.jpg" alt="取消" /></a>
+        <img class="shang_logo" src="/dsimg/logos.png" alt="谭健" />
+    	<div class="shang_tit">
+    		<p>感谢您的支持，我会继续努力的!</p>
+    	</div>
+    	<div class="shang_payimg">
+    		<img src="/dsimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+    	</div>
+    		<div class="pay_explain">扫码打赏，你说多少就多少</div>
+    	<div class="shang_payselect">
+    		<div class="pay_item checked" data-id="alipay">
+	    		<span class="radiobox"></span>
+	    		<span class="pay_logo"><img src="/dsimg/alipay.jpg" alt="支付宝" /></span>
+    		</div>
+    		<div class="pay_item" data-id="weipay">
+	    		<span class="radiobox"></span>
+	    		<span class="pay_logo"><img src="/dsimg/wechat.jpg" alt="微信" /></span>
+    		</div>
+    	</div>
+    	<div class="shang_info">
+    		<p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+    		<p>Powered by <a href="JoshPellTan.cc" target="_blank" title="谭健">谭健</a>，分享从这里开始，精彩与您同在</p>
+    	</div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+    	$(".pay_item").click(function(){
+    		$(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+    		var dataid=$(this).attr('data-id');
+    		$(".shang_payimg img").attr("src","/dsimg/"+dataid+"img.jpg");
+    		$("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+    	});
+    });
+    function dashangToggle(){
+    	$(".hide_box").fadeToggle();
+    	$(".shang_box").fadeToggle();
+    }
+    </script>
+</body>
+</html>
+
+<section>
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/" data-toggle="tooltip" data-placement="top" title="仿微信朋友圈视频剪切功能">上一篇：  <span>仿微信朋友圈视频剪切功能</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2017/05/iOS%E7%9A%84%E9%9D%99%E6%80%81%E4%B8%8E%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90/" data-toggle="tooltip" data-placement="top" title="iOS的静态与动态内存分析">下一篇：  <span>iOS的静态与动态内存分析</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+
+
+<br>
+
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="" data-title="检测app性能并实现优化-图形性能篇 " data-url="JoshPell.cc//2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"JoshPell"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+<link href="/css/top.css/" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js?v=1.83.min/" type="text/javascript"></script>
+<script src="/js/top.js/"></script>
+<div style="display: none;" id="rocket-to-top">
+<div style="opacity:0;display: block;" class="level-2"></div>
+<div class="level-3"></div>
+</div
+
+
+
+
+            <section class="footer">
+    <footer>
+        <div class = "footer_div">  
+        <nav class="cover-navigation navigation--social">
+          <ul class="navigation">
+
+          
+          <!-- Weibo -->
+          <li class="navigation__item_social">
+            <a href="http://weibo.com/FONKY_TJ" title="@FONKY_TJ 的微博" target="_blank">
+              <i class='social fa fa-weibo fa-2x'></i>
+              <span class="label">Weibo</span>
+            </a>
+          </li>
+          
+
+          
+          <!-- Github -->
+          <li class="navigation__item_social">
+            <a href="https://github.com/JoshPellTan" title="@JoshPellTan 的 Github" target="_blank">
+              <i class='social fa fa-github fa-2x'></i>
+              <span class="label">Github</span>
+            </a>
+          </li>
+          
+          
+          
+
+          
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+          <!-- Email -->
+          <li class="navigation__item_social">
+            <a href="mailto:joshpelltan@gmail.com" title="Contact me">
+              <i class='social fa fa-envelope fa-2x'></i>
+              <span class="label">Email</span>
+            </a>
+          </li>
+          
+
+          </ul>
+        </nav>
+
+        </div>
+
+
+
+        <div class = "footer_div">  
+           <p class="copyright text-muted">
+            Copyright &copy; 谭健 2017 Theme by <a href="http://JoshPell.cc/">JoshPell</a> |
+            <iframe
+                style="margin-left: 2px; margin-bottom:-5px;"
+                frameborder="0" scrolling="0" width="91px" height="20px"
+                src="https://ghbtns.com/github-btn.html?user=JoshPell&repo=joshpeltan.github.io&type=star&count=true" >
+            </iframe>|
+            
+<!-- cnzz -->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261874359'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1261874359%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+</p>
+        	<div align="right">
+    			<link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<!-- 访问统计 -->
+ 
+      Total <span id="busuanzi_value_site_pv"></span> views.
+您是我的第<span id="busuanzi_value_site_uv"></span> 个访客..
+<span id="busuanzi_value_page_pv"></span> Hits
+  
+          </span>
+        </div>
+        <div>
+    </footer>
+</section>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+
+
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+    
+<!-- 
+
+
+
+<link href="/css/top.css/" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js?v=1.83.min/" type="text/javascript"></script>
+<script src="/js/top.js/"></script>
+<div style="display: none;" id="rocket-to-top">
+<div style="opacity:0;display: block;" class="level-2"></div>
+<div class="level-3"></div>
+</div>-->
+
+
+<!--小人只在首页显示 start*-->
+<div id="spig" class="spig">
+    <div id="message">正在加载中……</div>
+    <div id="mumu" class="mumu"></div>
+</div>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/js/jquery.xiaoren.js"></script>
+<script type="text/javascript" src="/js/spig.js"></script>
+<link rel="stylesheet" href="/css/xiaoren.css" type="text/css"/>
+<script type="text/javascript">
+var isindex = true;
+var visitor = true;
+</script>
+
+
+</body>
+
+</html>

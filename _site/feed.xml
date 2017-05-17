@@ -1,13 +1,1278 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Josh Pell'Page</title>
-    <description>When you think you can stop learning, is a time when you are going to be washed out.</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 19 Jan 2017 16:51:52 +0800</pubDate>
-    <lastBuildDate>Thu, 19 Jan 2017 16:51:52 +0800</lastBuildDate>
-    <generator>Jekyll v3.3.1</generator>
+    <title>谭健</title>
+    <description>欢迎来到我的个人网站~</description>
+    <link>/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Wed, 17 May 2017 18:30:36 +0800</pubDate>
+    <lastBuildDate>Wed, 17 May 2017 18:30:36 +0800</lastBuildDate>
+    <generator>Jekyll v3.1.1</generator>
+    
+      <item>
+        <title>编程思想小觑</title>
+        <description>&lt;p&gt;最近在研究RAC,发现编程思想这一个很有趣且有用的东西，就大概研究了一下“链式编程”、“函数式编程”、“响应式编程”几种主要的编程思想，发现对提高代码质量和业务水平很有帮助，下面就挨个介绍一下，也可以直接看我的&lt;a href=&quot;https://github.com/JoshPellTan/ThinkingInPerl.git&quot;&gt;DEMO&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;链式编程&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;&lt;em&gt;思想特点&lt;/em&gt;：&lt;/h4&gt;
+&lt;p&gt;是将多个操作（多行代码）通过点号(.)链接在一起成为一句代码,使代码可读性好。类似a(1).b(2).c(3)，方法的返回值是block,block必须有返回值（本身对象），block参数（需要操作的值）&lt;/p&gt;
+
+&lt;h4 id=&quot;section-2&quot;&gt;&lt;em&gt;代表&lt;/em&gt;：&lt;/h4&gt;
+&lt;p&gt;masonry框架、SDAutoLayout框架。&lt;/p&gt;
+
+&lt;h4 id=&quot;demo&quot;&gt;&lt;em&gt;demo&lt;/em&gt;:&lt;/h4&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;TJChainedModeClass *chainedMode1 = [TJChainedModeClass new];
+chainedMode1.addName(@&quot;jackson&quot;).addNickname(@&quot;josh&quot;).addAge(5).addHeadImg(nil);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;其中&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chainedMode1.addName(@&quot;jackson&quot;).addNickname(@&quot;josh&quot;).addAge(5).addHeadImg(nil);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;每一步点操作都会返回一个TJChainedModeClass实例对象，这样就可直接调取下一个点属性操作&lt;/p&gt;
+
+&lt;p&gt;这里贴出一个点操作函数，其他的都是类似形式&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef TJChainedModeClass *(^configerString)(NSString *string);//这里的configerString是在.h文件中定义的返回值为本类对象的一个block,放这里方便查看
+
+-(configerString)addName{
+    
+    if (!_addName) {
+        
+        __weak typeof(self) weakSelf = self;
+        return ^(NSString *string){
+            
+            weakSelf.name = string;
+            return weakSelf;
+        };
+    }
+    
+    return _addName;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-3&quot;&gt;响应式编程&lt;/h3&gt;
+
+&lt;h4 id=&quot;section-4&quot;&gt;&lt;em&gt;思想特点&lt;/em&gt;：&lt;/h4&gt;
+&lt;p&gt;不需要考虑调用顺序，只需要知道考虑结果，类似于蝴蝶效应，产生一个事件，会影响很多东西，这些事件像流一样的传播出去，然后影响结果，借用面向对象的一句话，万物皆是流。是把操作尽量写成一系列嵌套的函数或者方法调用。
+#### &lt;em&gt;代表&lt;/em&gt;：
+KVO运用、ReactiveCocoa(也做函数响应式编程)。&lt;/p&gt;
+
+&lt;h4 id=&quot;demo-1&quot;&gt;&lt;em&gt;demo&lt;/em&gt;&lt;/h4&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;这里我选用KVO的方式来实现，其实方法很多，可以参考RAC。我这里是给本类的reactNum添加属性监听，有改变外部调用的地方也会执行block，而另外一个属性normalNum的改变则不会引起这种改变
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;.h中代码:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;assign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reactNum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;assign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;normalNum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reactBlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;.m实现:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(instancetype)init{
+    self = [super init];
+    
+    [self addObserver:self forKeyPath:@&quot;reactNum&quot; options:NSKeyValueObservingOptionNew context:nil];
+    
+    return self;
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary&amp;lt;NSKeyValueChangeKey,id&amp;gt; *)change context:(void *)context{
+    
+    self.reactBlock(self.normalNum,self.reactNum);
+    
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;调用：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)reactProgramming{
+    
+    //类中的reactNum数值发生变化时，会调用打印方法
+    TJReactiveProgrammingClass *reactObj = [TJReactiveProgrammingClass new];
+    _reactObj = reactObj;
+    
+    //[reactObj TJ_addObserver:self forKeyPath:@&quot;reactNum&quot; options:NSKeyValueObservingOptionNew  context:nil];
+    reactObj.reactBlock = ^(int normalNum,int reactNum){
+        
+        NSLog(@&quot;normalNum:%d----reactNum:%d&quot;,normalNum,reactNum);
+        
+    };
+}
+//点击测试效果
+-(void)touchesBegan:(NSSet&amp;lt;UITouch *&amp;gt; *)touches withEvent:(UIEvent *)event{
+    
+    _reactObj.reactNum = arc4random() % 100;//改变时会响应
+    //_reactObj.normalNum = arc4random() % 100;//改变时不会响应
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-5&quot;&gt;函数式编程&lt;/h3&gt;
+
+&lt;p&gt;什么是函数式编程？函数式编程在iOS中是借由block实现的，通过声明一个block，类似于定义了一个“函数”，再将这个“函数”传递给调用的方法，以此来实现对调用该方法时中间一些过程或者对结果处理的“自定义”，而其内部的其他环节完全不需要暴露给调用者。实际上，调用者也根本不需要知道。&lt;/p&gt;
+
+&lt;p&gt;咱们来看一个例子：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[self.playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.picView);
+        make.width.height.mas_equalTo(50);
+    }];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;从中可以看出，Masonry中实现自动布局的关键类MASConstraintMaker，他的实例并不是调用者自己创建的，而是通过调用方法mas_makeConstraints:（这里是用了Category），其参数block中的参数传递过来的。&lt;/p&gt;
+
+&lt;p&gt;也就是说，通过mas_makeConstraints:这个方法，我们不需要知道MASConstraintMaker的实例是怎么创建的，也不需要知道具体是怎么实现了给View添加了自动布局，唯一需要的是实现（传递）一个block，在block里按照Masonry的方式指定需要添加的约束就可以了。&lt;/p&gt;
+
+&lt;p&gt;这种实现方式就是本篇要说的函数式编程。&lt;/p&gt;
+
+&lt;h4 id=&quot;section-6&quot;&gt;&lt;em&gt;函数式编程本质&lt;/em&gt;:&lt;/h4&gt;
+&lt;p&gt;就是往方法中传入Block,方法中嵌套Block调用，把代码聚合起来管理
+#### &lt;em&gt;函数式编程特点&lt;/em&gt;：
+每个方法必须有返回值（本身对象）,把函数或者Block当做参数,block参数（需要操作的值）block返回值（操作结果）
+#### &lt;em&gt;代表&lt;/em&gt;：
+Masonry、ReactiveCocoa(也做函数响应式编程)。&lt;/p&gt;
+
+&lt;h4 id=&quot;demo-2&quot;&gt;&lt;em&gt;demo&lt;/em&gt;：&lt;/h4&gt;
+
+&lt;p&gt;现在有个类，它有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;NSString *finalString&lt;/code&gt;属性，我不想暴露给外部，在.h文件中我定义一个能传入外部blick的方法，和一个可以操作这个属性值的方法（可能类的内部需要这种操作，但又不想把属性暴露）&lt;/p&gt;
+
+&lt;p&gt;.h代码：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;makeTool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TJFunctionalProgrammingClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TJFunctionalProgrammingClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;readonly&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FunctionalAction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;.m加入一个私有属性：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;finalString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;.m方法实现:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+(NSString *)makeTool:(void (^)(TJFunctionalProgrammingClass *tool))block{
+    
+    if (block) {
+        TJFunctionalProgrammingClass *tool = [[TJFunctionalProgrammingClass alloc]init];
+        
+        block(tool);
+        
+        return tool.finalString;
+    }
+    
+    return nil;
+}
+
+-(Function)FunctionalAction{
+    
+    __weak typeof(self) weakself = self;
+    return ^(NSArray&amp;lt;NSString *&amp;gt; *strings ){
+        
+        if (strings.count&amp;gt;0) {
+            weakself.finalString = [NSString stringWithFormat:@&quot;FunctionalProgramming + %@&quot;,[strings componentsJoinedByString:@&quot;-&quot;]];
+        }else{
+            weakself.finalString = @&quot;FunctionalProgramming + nil&quot;;
+        }
+        
+        return weakself;
+    };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;调用：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSString *str = [TJFunctionalProgrammingClass makeTool:^(TJFunctionalProgrammingClass *tool) {
+       
+        tool.FunctionalAction(@[@&quot;张三&quot;,@&quot;李四&quot;,@&quot;王五&quot;]);
+        
+    }];
+    
+    NSLog(@&quot;functionalProgramming----%@&quot;,str);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Tue, 16 May 2017 16:08:13 +0800</pubDate>
+        <link>/2017/05/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E5%B0%8F%E8%A7%91/</link>
+        <guid isPermaLink="true">/2017/05/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E5%B0%8F%E8%A7%91/</guid>
+        
+        <category>编程思想</category>
+        
+        <category>链式编程</category>
+        
+        <category>响应式编程</category>
+        
+        <category>函数式编程</category>
+        
+        <category>编程思想小觑</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>iOS启动速度的优化</title>
+        <description>&lt;p&gt;最近我们APP安卓端做了个小优化，将网络框架做了更换，并且减少了启动时候的一些初始化。然后CTO拿着一个安卓手机过来对我说，安卓优化后比你们快多了。啥？不可能，苹果手机大几千呢！玩儿呢？！不服，下班拿了一个安卓2000多块的手机跟我的苹果手机做了一下APP打开比较，苹果完败！必须不服，咱也要优化打开速度！&lt;/p&gt;
+
+&lt;p&gt;很多地方说测一下&lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt;方法到&lt;code class=&quot;highlighter-rouge&quot;&gt;- (BOOL)Application:(UIApplication *)Application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions&lt;/code&gt;方法的时间就是APP的打开时间了，虽然能一定程度上反映这个指标，但是不严谨。&lt;/p&gt;
+
+&lt;p&gt;t(App总启动时间) = t1(main()之前的加载时间) + t2(main()之后的加载时间)。 t1 = 系统dylib(动态链接库)和自身App可执行文件的加载； t2 = main方法执行之后到AppDelegate类中的- (BOOL)Application:(UIApplication *)Application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions方法执行结束前这段时间，主要是构建第一个界面，并完成渲染展示。&lt;/p&gt;
+
+&lt;h3 id=&quot;main&quot;&gt;main()调用之前的加载过程&lt;/h3&gt;
+
+&lt;p&gt;App开始启动后， 系统首先加载可执行文件（自身App的所有.o文件的集合），然后加载动态链接库dyld，dyld是一个专门用来加载动态链接库的库。 执行从dyld开始，dyld从可执行文件的依赖开始, 递归加载所有的依赖动态链接库。 
+动态链接库包括：iOS 中用到的所有系统 framework，加载OC runtime方法的libobjc，系统级别的libSystem，例如libdispatch(GCD)和libsystem_blocks (Block)。&lt;/p&gt;
+
+&lt;p&gt;其实无论对于系统的动态链接库还是对于App本身的可执行文件而言，他们都算是image（镜像），而每个App都是以image(镜像)为单位进行加载的，那么image究竟包括哪些呢？&lt;/p&gt;
+
+&lt;h3 id=&quot;image&quot;&gt;什么是image&lt;/h3&gt;
+
+&lt;p&gt;1.executable可执行文件 比如.o文件。 
+2.dylib 动态链接库 framework就是动态链接库和相应资源包含在一起的一个文件夹结构。 
+3.bundle 资源文件 只能用dlopen加载，不推荐使用这种方式加载。&lt;/p&gt;
+
+&lt;p&gt;除了我们App本身的可行性文件，系统中所有的framework比如UIKit、Foundation等都是以动态链接库的方式集成进App中的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;系统使用动态链接有几点好处&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;代码共用&lt;/strong&gt;:很多程序都动态链接了这些 lib，但它们在内存和磁盘中中只有一份。 易于维护：由于被依赖的 lib 是程序执行时才链接的，所以这些 lib 很容易做更新，比如libSystem.dylib 是 libSystem.B.dylib 的替身，哪天想升级直接换成libSystem.C.dylib 然后再替换替身就行了。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;减少可执行文件体积&lt;/strong&gt;:相比静态链接，动态链接在编译时不需要打进去，所以可执行文件的体积要小很多。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage0.png&quot; width=&quot;400&quot; height=&quot;400&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如上所示，不同进程之间共用系统dylib的_TEXT区，但是各自维护对应的_DATA区。&lt;/p&gt;
+
+&lt;p&gt;所有动态链接库和我们App中的静态库.a和所有类文件编译后的.o文件最终都是由dyld(the dynamic link editor)即Apple的动态链接器来加载到内存中。每个image都是由一个叫做ImageLoader的类来负责加载（一一对应），那么ImageLoader又是什么呢？&lt;/p&gt;
+
+&lt;h3 id=&quot;imageloader&quot;&gt;什么是ImageLoader&lt;/h3&gt;
+
+&lt;p&gt;image 表示一个二进制文件(可执行文件或 so 文件)，里面是被编译过的符号、代码等，所以 ImageLoader 作用是将这些文件加载进内存，且每一个文件对应一个ImageLoader实例来负责加载。 
+两步走： 在程序运行时它先将动态链接的 image 递归加载 (也就是上面测试栈中一串的递归调用的时刻)。 再从可执行文件 image 递归加载所有符号。&lt;/p&gt;
+
+&lt;p&gt;所有这些都发生在我们真正的main函数执行前。&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;动态链接库加载的具体流程&lt;/h3&gt;
+
+&lt;p&gt;动态链接库的加载步骤具体分为5步：&lt;/p&gt;
+
+&lt;h4 id=&quot;load-dylibs-image-&quot;&gt;&lt;strong&gt;一.load dylibs image&lt;/strong&gt; 读取库镜像文件&lt;/h4&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;在每个动态库的加载过程中，dyld需要：&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.分析所依赖的动态库
+2.找到动态库的mach-o文件
+3.打开文件
+4.验证文件
+5.在系统核心注册文件签名
+6.对动态库的每一个segment调用mmap()&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;通常的，一个App需要加载100到400个dylibs， 但是其中的系统库被优化，可以很快的加载。 针对这一步骤的优化有：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.减少非系统库的依赖
+2.合并非系统库
+3.使用静态资源，比如把代码加入主程&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;rebase-image&quot;&gt;&lt;strong&gt;Rebase image&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;由于ASLR(address space layout randomization)的存在，可执行文件和动态链接库在虚拟内存中的加载地址每次启动都不固定，所以需要这2步来修复镜像中的资源指针，来指向正确的地址。 rebase修复的是指向当前镜像内部的资源指针； 而bind指向的是镜像外部的资源指针。 
+rebase步骤先进行，需要把镜像读入内存，并以page为单位进行加密验证，保证不会被篡改，所以这一步的瓶颈在IO。bind在其后进行，由于要查询符号表，来指向跨镜像的资源，加上在rebase阶段，镜像已被读入和加密验证，所以这一步的瓶颈在于CPU计算。 
+通过命令行可以查看相关的资源指针:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xcrun dyldinfo -rebase -bind -lazy_bind myApp.App/myApp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;优化该阶段的关键在于减少__DATA segment中的指针数量。我们可以优化的点有：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.减少Objc类数量， 减少selector数量
+2.减少C++虚函数数量
+3.转而使用swift stuct（其实本质上就是为了减少符号的数量）&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;bind-image&quot;&gt;&lt;strong&gt;Bind image&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;上部已连带讲解&lt;/p&gt;
+
+&lt;h4 id=&quot;objc-setup&quot;&gt;&lt;strong&gt;Objc setup&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;这一步主要工作是:
+&amp;gt;1.注册Objc类 (class registration)
+&amp;gt;2.把category的定义插入方法列表 (category registration)
+&amp;gt;3.保证每一个selector唯一 (selctor uniquing)
+由于之前2步骤的优化，这一步实际上没有什么可做的。&lt;/p&gt;
+
+&lt;h4 id=&quot;initializers&quot;&gt;&lt;strong&gt;initializers&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;以上三步属于静态调整(fix-up)，都是在修改__DATA segment中的内容，而这里则开始动态调整，开始在堆和堆栈中写入内容。 在这里的工作有：
+&amp;gt;1.Objc的+load()函数
+&amp;gt;2.C++的构造函数属性函数 形如attribute((constructor)) void DoSomeInitializationWork()
+&amp;gt;3.非基本类型的C++静态全局变量的创建(通常是类或结构体)(non-trivial initializer) 比如一个全局静态结构体的构建，如果在构造函数中有繁重的工作，那么会拖慢启动速度
+Objc的load函数和C++的静态构造函数采用由底向上的方式执行，来保证每个执行的方法，都可以找到所依赖的动态库。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage1.png&quot; width=&quot;300&quot; height=&quot;200&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;上图是在自定义的类XXViewController的+load方法断点的调用堆栈，清楚的看到整个调用栈和顺序：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.dyld 开始将程序二进制文件初始化
+2.交由 ImageLoader 读取 image，其中包含了我们的类、方法等各种符号
+3.由于 runtime 向 dyld 绑定了回调，当 image 加载到内存后，dyld 会通知 runtime 进行处理
+4.runtime 接手后调用 mapimages 做解析和处理，接下来 loadimages 中调用 callloadmethods 方法，遍历所有加载进来的 Class，按继承层级依次调用 Class 的 +load 方法和其 Category 的 +load 方法&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;至此，可执行文件中和动态库所有的符号(Class，Protocol，Selector，IMP，…)都已经按格式成功加载到内存中，被 runtime 所管理，再这之后，runtime 的那些方法(动态添加 Class、swizzle 等等才能生效)。&lt;/p&gt;
+
+&lt;p&gt;整个事件由 dyld 主导，完成运行环境的初始化后，配合 ImageLoader 将二进制文件按格式加载到内存， 动态链接依赖库，并由 runtime 负责加载成 objc 定义的结构，所有初始化工作结束后，dyld 调用真正的 main 函数。&lt;/p&gt;
+
+&lt;p&gt;如果程序刚刚被运行过，那么程序的代码会被dyld缓存，因此即使杀掉进程再次重启加载时间也会相对快一点，如果长时间没有启动或者当前dyld的缓存已经被其他应用占据，那么这次启动所花费的时间就要长一点，这就分别是热启动和冷启动的概念，如下图所示:&lt;/p&gt;
+
+&lt;p&gt;```&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage2.png&quot; width=&quot;300&quot; height=&quot;200&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;main-1&quot;&gt;main()函数之前的加载时间衡量&lt;/h3&gt;
+
+&lt;p&gt;苹果官方提供了一种方法，那就是在真机调试的时候勾选dyldPRINTSTATISTICS选项。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage3.png&quot; width=&quot;500&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;会得到如下形式的输出:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage4.png&quot; width=&quot;400&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;对于系统级别的动态链接库，因为苹果做了优化，所以耗时并不多，在这个awesome的例子中，自身App中的代码占用了整体时间的94.2% 我们应用中一次典型的Log如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage5.png&quot; width=&quot;500&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;由此可见，最多的用时还是在image加载和OC类的初始化，共占用总时长的79.3%，精简framework的引入和OC类有优化的空间。&lt;/p&gt;
+
+&lt;p&gt;总结一下：对于main()调用之前的耗时我们可以优化的点有：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.减少不必要的framework，因为动态链接比较耗时
+2.check framework应当设为optional和required，如果该framework在当前App支持的所有iOS系统版本都存在，那么就设为required，否则就设为optional，因为optional会有些额外的检查
+3.合并或者删减一些OC类，关于清理项目中没用到的类，使用工具AppCode代码检查功能，查到当前项目中没有用到的类如下：&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://ofnft8t2g.bkt.clouddn.com/wikiimage6_new.png&quot; width=&quot;500&quot; height=&quot;350&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;然后处理步骤大概如下：
+a.删减一些无用的静态变量
+b.删减没有被调用到或者已经废弃的方法
+方法见：
+&amp;gt;http://stackoverflow.com/questions/35233564/how-to-find-unused-code-in-xcode-7
+&amp;gt;https://developer.Apple.com/library/ios/documentation/ToolsLanguages/Conceptual/Xcode_Overview/CheckingCodeCoverage.html
+c.将不必须在+load方法中做的事情延迟到+initialize中
+d.尽量不要用C++虚函数(创建虚函数表有开销)&lt;/p&gt;
+
+&lt;h3 id=&quot;main-2&quot;&gt;main函数之后加载时间优化记录&lt;/h3&gt;
+
+&lt;p&gt;NSUserDefaults是否是瓶颈?
+苹果官方文档提到NSUserDefaults加载的时候是整个plist配置文件全部load到内存中，但是测试结果显示并不会。 通过符号断点+[NSUserDefaults standardUserDefaults]确定最早一次的+load()从执行到结束耗时1.8ms，可见NSUserDefaults的初始化仅耗时1.8ms，并不是启动耗时的瓶颈。&lt;/p&gt;
+
+&lt;p&gt;为了找到瓶颈，在启动之后的didFinishLauhcning方法开始执行到首页列表页的WZMainViewController的viewDidAppear方法，几乎每个可能比较耗时的流程进行拆分和统计，得到统计数据之后发现： 主要耗时在首页UI构造和渲染(storyboard加载，tabBar/topBar渲染，开屏广告加载/cell注册/日志模块初始化这几个步骤)。&lt;/p&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;&lt;strong&gt;具体优化点&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;1.纯代码方式而不是storyboard加载首页UI。
+2.对didFinishLaunching里的函数考虑能否挖掘可以延迟加载或者懒加载，需要与各个业务方pm和rd共同check 对于一些已经下线的业务，删减冗余代码。对于一些与UI展示无关的业务，如微博认证过期检查、图片最大缓存空间设置等做延迟加载
+3.对实现了+load()方法的类进行分析，尽量将load里的代码延后调用。
+4.上面统计数据显示展示feed的导航控制器页面(WZMainViewController)比较耗时，对于viewDidLoad以及viewWillAppear方法中尽量去尝试少做，晚做，不做。&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 15 May 2017 16:08:13 +0800</pubDate>
+        <link>/2017/05/iOS%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6%E7%9A%84%E4%BC%98%E5%8C%96/</link>
+        <guid isPermaLink="true">/2017/05/iOS%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6%E7%9A%84%E4%BC%98%E5%8C%96/</guid>
+        
+        <category>优化</category>
+        
+        <category>启动速度</category>
+        
+        <category>iOS启动速度的优化</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>iOS的https认证(二)</title>
+        <description>&lt;p&gt;上篇文章讲了iOS和服务器如何从官方机构请求CA证书进行https配置，这里我们来讲讲如何自建证书来配置https，针对AFNetworking网络框架和苹果自带框架NSURLConnection。&lt;/p&gt;
+
+&lt;h3 id=&quot;afnetworking&quot;&gt;AFNetworking&lt;/h3&gt;
+
+&lt;p&gt;1.把服务器给你的自签证的证书放入bundle一般是.cer文件&lt;/p&gt;
+
+&lt;p&gt;2.创建afnnetworking 安全策略对象,并设置发起请求manager的安全策略属性.设置了安全策略属性,afnnetworking会自动扫描bundl里的证书.&lt;/p&gt;
+
+&lt;p&gt;3.最坑的是 iOS9新出的App Transport Security 也就是要我们把所有请求从 HTTP改成HTTPS的家伙, 它竟然不认自签证的证书. 苹果大爷难道真是土豪惯了,以为我们开发者都会买ca的证书吗. 解决办法就是那里还是要设置在Info.plist中添加NSAppTransportSecurity类型Dictionary在NSAppTransportSecurity下添加NSAllowsArbitraryLoads类型 Boolean,值设为YES&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSString *cerPath = [[NSBundle mainBundle] pathForResource:@&quot;https&quot; ofType:@&quot;cer&quot;];
+
+NSData *certData = [NSData dataWithContentsOfFile:cerPath];
+
+//AFSSLPinningModeCertificate 使用证书验证模式
+
+AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
+
+//allowInvalidCertificates 是否允许无效证书（也就是自建的证书），默认为NO
+
+//如果是需要验证自建证书，需要设置为YES
+
+securityPolicy.allowInvalidCertificates = YES;
+
+securityPolicy.validatesDomainName = NO;
+
+NSSet *set = [[NSSet alloc] initWithObjects:certData, nil];
+
+securityPolicy.pinnedCertificates = set;
+
+AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+
+manager.requestSerializer = [AFJSONRequestSerializer serializer];
+
+manager.responseSerializer=[AFJSONResponseSerializer serializer];
+
+manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@&quot;text/html&quot;];
+
+[manager setSecurityPolicy:securityPolicy];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;nsurlconnection&quot;&gt;NSURLConnection&lt;/h3&gt;
+
+&lt;p&gt;NSURLConnection 使用自签证证书支持HTTPS,只需要在实现NSURLConnection的代理方法即可. 参考&lt;a href=&quot;https://gist.github.com/JacksonTian/5855751&quot;&gt;GitHub JacksonTian&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace{
+
+    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    static CFArrayRef certs;
+    if (!certs) {
+        //创建证书data
+        NSData*certData =[NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@&quot;HTTPS&quot; ofType:@&quot;cer&quot;]];
+
+        SecCertificateRef rootcert = SecCertificateCreateWithData(kCFAllocatorDefault,CFBridgingRetain(certData));
+        const void *array[1] = { rootcert };
+        certs = CFArrayCreate(NULL, array, 1, &amp;amp;kCFTypeArrayCallBacks);
+//        CFRelease(rootcert);    // for completeness, really does not matter
+    }
+
+    SecTrustRef trust = [[challenge protectionSpace] serverTrust];
+    int err;
+    SecTrustResultType trustResult = 0;
+    err = SecTrustSetAnchorCertificates(trust, certs);
+    if (err == noErr) {
+        err = SecTrustEvaluate(trust,&amp;amp;trustResult);
+    }
+//    BOOL trusted = (err == noErr) &amp;amp;&amp;amp; ((trustResult == kSecTrustResultProceed)||(trustResult == kSecTrustResultConfirm) || (trustResult == kSecTrustResultUnspecified));
+    BOOL trusted = (err == noErr) &amp;amp;&amp;amp; ((trustResult == kSecTrustResultProceed) || (trustResult == kSecTrustResultUnspecified));
+
+    if (trusted) {
+
+        [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+    }
+    else{
+
+        [challenge.sender cancelAuthenticationChallenge:challenge];
+    }
+
+//CFRelease(trust);
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Thu, 11 May 2017 22:08:13 +0800</pubDate>
+        <link>/2017/05/iOS%E7%9A%84https%E8%AE%A4%E8%AF%81-%E4%BA%8C/</link>
+        <guid isPermaLink="true">/2017/05/iOS%E7%9A%84https%E8%AE%A4%E8%AF%81-%E4%BA%8C/</guid>
+        
+        <category>网络</category>
+        
+        <category>https</category>
+        
+        <category>iOS的https认证(二)</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>iOS的https认证(一)</title>
+        <description>&lt;p&gt;苹果官方在2017年年初要求APP必须配置https（这里可以从&lt;a href=&quot;https://onevcat.com/2016/06/ios-10-ats/&quot;&gt;喵神的博客&lt;/a&gt;了解），可是后来不知啥原因搁浅了，但这个东西终究还是要做的。不然随便一个抓包工具（charles等）随随便便就能抓到你所请求的数据，这些数据如果是明码的后果很严重（不是指明文），可以通过这些数据来判定服务端部署的数据接口，更能够嗅探到服务端的漏洞。而现在绝大部分APP使用的都是AFNetworking这个网络框架，我们就对AFNetworking如何配置https来做探讨。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;服务器端如何实现https&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;这里就不在赘述https的原理了，网上有很多介绍的文章。https之所以安全是因为它采用了SSL/TLS协议的公钥加密法，其运行的基本流程是：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;客户端向服务器端索要并验证公钥；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;双方协商生成”对话密钥”；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;双方采用”对话密钥”进行加密通信。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;其中，第1和2步被称为握手阶段。握手阶段的细节这里就不赘述，我们只需要知道，通过握手阶段，客户端和服务器端主要交换了3个信息：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;1，数字证书。该信息是我们进行开发需要关注的！数字证书包含了公钥等信息，一般由服务器发给客户端，接收方通过验证这个证书是不是由信赖的CA签发，或者与本地的证书相对比，来判断证书是否可信；假如需要双向验证，则服务器和客户端都需要发送数字证书给对方验证；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;2，3个随机数。3个随机数是用于生成对话密钥的，我们不需要关心这细节；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;3，加密通信协议。客户端和服务器端通信需要采取同样的加密通信协议，我们也不需要太关注。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;所以咱们需要做的就是拿到数字证书&lt;a href=&quot;http://kb.cnblogs.com/page/194742/&quot;&gt;数字证书及CA&lt;/a&gt;，这里有两种方式：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;向官方CA认证机构申请证书&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;自建证书，配置给服务器&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;第一种方法是最优的，建立网站的话，直接就会被信任。而服务器作为移动端app的服务器时，也不需要为ATS做过多的适配（正是我所需要积累知识的方向）。虽然说权威的机构认证都是需要钱的，但是如今也不乏存在免费的第三方认证机构。&lt;/p&gt;
+
+&lt;p&gt;第二种方法虽然对于app和服务器间的通讯是可行的，但是如果从网站打开链接时会弹出一个警告提醒，提醒这是一个不受信任的网站，需要用户手动设置信任才行，这种体验会让用户感觉网站不安全。而客户端配置时需要将info.plist文件中将App Transport Security Settings中的Allow Arbitrary Loads设置为YES或者在App Transport Security Settings下添加白名单（新增Exception Domains选项，将自己服务器的域名放进去），这里我要说的是许多人不管三七二十一是直接将Allow Arbitrary Loads设置为YES，这种设置会信任其他所有的http请求，相当于https白做了，所以后者才是可取的。&lt;/p&gt;
+
+&lt;p&gt;这里有一个方法可以快速检测服务器的https特性是否符合ATS的要求：
+控制台输入&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nscurl --ats-diagnostics --verbose https://example.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这个&lt;code class=&quot;highlighter-rouge&quot;&gt;https://example.com&lt;/code&gt;就是你想检测的域名，咱们来试试知乎&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nscurl --ats-diagnostics --verbose https://www.zhihu.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;输出如下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Starting ATS Diagnostics
+
+Configuring ATS Info.plist keys and displaying the result of HTTPS loads to https://www.zhihu.com.
+A test will &quot;PASS&quot; if URLSession:task:didCompleteWithError: returns a nil error.
+================================================================================
+
+Default ATS Secure Connection
+
+---
+ATS Default Connection
+ATS Dictionary:
+{
+}
+Result : PASS
+---
+
+================================================================================
+
+Allowing Arbitrary Loads
+
+---
+Allow All Loads
+ATS Dictionary:
+{
+    NSAllowsArbitraryLoads = true;
+}
+Result : PASS
+---
+
+================================================================================
+
+Configuring TLS exceptions for www.zhihu.com
+
+---
+TLSv1.2
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.2&quot;;
+        };
+    };
+}
+Result : PASS
+---
+
+---
+TLSv1.1
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.1&quot;;
+        };
+    };
+}
+Result : PASS
+---
+
+---
+TLSv1.0
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.0&quot;;
+        };
+    };
+}
+Result : PASS
+---
+
+================================================================================
+
+Configuring PFS exceptions for www.zhihu.com
+
+---
+Disabling Perfect Forward Secrecy
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+================================================================================
+
+Configuring PFS exceptions and allowing insecure HTTP for www.zhihu.com
+
+---
+Disabling Perfect Forward Secrecy and Allowing Insecure HTTP
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionAllowsInsecureHTTPLoads = true;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+================================================================================
+
+Configuring TLS exceptions with PFS disabled for www.zhihu.com
+
+---
+TLSv1.2 with PFS disabled
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.2&quot;;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+---
+TLSv1.1 with PFS disabled
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.1&quot;;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+---
+TLSv1.0 with PFS disabled
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.0&quot;;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+================================================================================
+
+Configuring TLS exceptions with PFS disabled and insecure HTTP allowed for www.zhihu.com
+
+---
+TLSv1.2 with PFS disabled and insecure HTTP allowed
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionAllowsInsecureHTTPLoads = true;
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.2&quot;;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+---
+TLSv1.1 with PFS disabled and insecure HTTP allowed
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionAllowsInsecureHTTPLoads = true;
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.1&quot;;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+
+---
+TLSv1.0 with PFS disabled and insecure HTTP allowed
+ATS Dictionary:
+{
+    NSExceptionDomains =     {
+        &quot;www.zhihu.com&quot; =         {
+            NSExceptionAllowsInsecureHTTPLoads = true;
+            NSExceptionMinimumTLSVersion = &quot;TLSv1.0&quot;;
+            NSExceptionRequiresForwardSecrecy = false;
+        };
+    };
+}
+Result : PASS
+---
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;可以看到知乎在所有测试中的结果都是PASS，知乎对用户的信息安全保护工作做得还是不错的，赞！自己的服务器配置好了https后也可以用这个来进行尝试。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;iOS端如何实现https&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;基于对HTTPS运行机制的理解，我们知道，在iOS客户端实现与服务器的https通信，前提条件是你的服务器是一个提供了https的服务器。如果前提得以满足，那么iOS客户端就需要向服务器发出请求索要公钥，而后验证公钥，然后进行握手，最后开始加密通信。那么，具体怎么做呢？难倒这些都需要我自己实现吗？肯定不是的，这种基础性工作，苹果早就做好了，著名的第三方库AFNetworking也早就做好了。&lt;/p&gt;
+
+&lt;p&gt;1.删除掉info.plist文件中App Transport Security Settings及其子项Allow Arbitrary Loads，让ATS恢复到默认状态。&lt;/p&gt;
+
+&lt;p&gt;2.修改主域名为项目的https域名&lt;/p&gt;
+
+&lt;p&gt;由此可知，对于符合ATS要求的HTTPS服务器，在iOS端不需要对ATS做特殊的适配就能和HTTPS服务器进行通信。而要符合ATS要求，则需要老老实实地创建证书请求，然后到权威机构认证，随之配置到服务器。是不是超级简单？&lt;/p&gt;
+
+&lt;p&gt;对于自建证书的方法和配置下篇文章再讲。&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 11 May 2017 16:08:13 +0800</pubDate>
+        <link>/2017/05/iOS%E7%9A%84https%E8%AE%A4%E8%AF%81-%E4%B8%80/</link>
+        <guid isPermaLink="true">/2017/05/iOS%E7%9A%84https%E8%AE%A4%E8%AF%81-%E4%B8%80/</guid>
+        
+        <category>网络</category>
+        
+        <category>https</category>
+        
+        <category>iOS的https认证(一)</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>iOS的静态与动态内存分析</title>
+        <description>&lt;p&gt;近段时间app处于优化阶段，发现在一些列表页面查看数据久一点就会出现莫名其妙的崩溃。连上Xcode一查，也不是必现，但频率比较高，而且没有崩溃提示，是手机和Xcode直接断开连接。再看着性能指示进行操作，果不其然，每次内存飙升到一定程度就会崩溃。一个app想要走向成熟，这种问题必须解决，这里就需要谈到iOS的静态与动态内存分析&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;静态内存分析&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;优点&lt;/code&gt;：分析内存非常快，已经可以对整个项目的内存进行分析。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;缺点&lt;/code&gt;：不运行程序，直接对代码进行分析。根据代码的上下文语法结构，看语法是否有问题。（不够准确，但是如果通过静态内存分析，有提示出现了内存泄露，需要通过分析代码上下文查看是否有内存泄露）&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;快捷键&lt;/code&gt;：command +shift +b&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;进行方式&lt;/code&gt;：Product – &amp;gt; Analyze&lt;/p&gt;
+
+&lt;h3 id=&quot;instrument&quot;&gt;动态内存分析（Instrument）&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;优点&lt;/code&gt;：真正运行起来的程序，并且可以对某一个操作来具体分析，当用户做了某一个操作时，该操作是否产生了内存泄露（分厂准确，如果提示有内存泄露，基本可以说明代码有问题）&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;缺点&lt;/code&gt;：分析速度非常慢，需要一步一步来分析代码是否有问题，切可能在分析过程中有遗漏代码。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;进行方式&lt;/code&gt;：Product –&amp;gt; Profile –&amp;gt;Leaks –&amp;gt; 选择想要运行的项目 –&amp;gt; Record&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-5cc73c61f7ae76c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;300&quot; height=&quot;200&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-28c2b43923fe13da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;400&quot; height=&quot;200&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-48b146c5196c07d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;400&quot; height=&quot;200&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这样就可以开始动态检测一个项目是否存在内存泄露了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;注意：我们需要进行操作让系统不断去执行所要检测的代码是否存在内存泄露。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;如果有内存泄露的情况就会出现下图情况&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-be4e19b457a6baf9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;400&quot; height=&quot;200&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这里我们在右侧 Stack Trace 拦下点击我们所创建的方法，也就是带人像的方法，这样就能定位到泄露的位置了。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-7fc50ba21788fbcd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;300&quot; height=&quot;50&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;选中某一个泄露位置，之后点击右上角 Xcode 的图标直接回到 Xcode 代码中进行修改，这样我们动态内存分析就完成了&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-5812ead6f94787d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;300&quot; height=&quot;100&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;注意：我们可能会看到这样的情况， All Heap Allocations 是程序真实的内存分配情况，All Anonymous VM则是系统为程序分配的虚拟内存，为的就是当程序有需要的时候，能够及时为程序提供足够的内存空间，而不会现用现创建&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/266345-34d339d54700e6a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300&quot; width=&quot;300&quot; height=&quot;30&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 09 May 2017 16:08:13 +0800</pubDate>
+        <link>/2017/05/iOS%E7%9A%84%E9%9D%99%E6%80%81%E4%B8%8E%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90/</link>
+        <guid isPermaLink="true">/2017/05/iOS%E7%9A%84%E9%9D%99%E6%80%81%E4%B8%8E%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90/</guid>
+        
+        <category>优化</category>
+        
+        <category>内存</category>
+        
+        <category>iOS的静态与动态内存分析</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>检测app性能并实现优化-图形性能篇</title>
+        <description>&lt;p&gt;很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Core Animation启动运行&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;1.打开Xcode对当前项目Profile，点击Product再点击Profile&lt;/p&gt;
+
+&lt;p&gt;2.这时就会打开 Profiling Template 选项对话框：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-5c7213dbefc19c86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;400&quot; height=&quot;250&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;3.选择Core Animation即可&lt;/p&gt;
+
+&lt;p&gt;4.点击红色运行按钮启动App，随后操作App就能看到FPS和CPU等性能信息了&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;但是你看到这些信息了，发现了问题，该如何优化呢，下面就用Core Animation来一个个优化&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;在右下角面板的 Display Settings 区域，我们可以看到多个 Debug Options&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-4c4211d0669f0082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;250&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;接下来一个一个看。&lt;/p&gt;
+
+&lt;h4 id=&quot;color-blended-layers&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Blended Layers&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;这个选项选项基于渲染程度对屏幕中的混合区域进行绿到红的高亮显示，越红表示性能越差，会对帧率等指标造成较大的影响。红色通常是由于多个半透明图层叠加引，而且无用的图层叠加越多，颜色越红。所以对这个做性能优化就是尽量保证图层叠加少，并尽量减少对透明度的使用。下面就是优化后的App界面与微信朋友圈的对比，可以看出这个性能比微信还更胜一筹。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-4c4211d0669f0082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;
+&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-765097aa49b36c8f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;color-hits-green-and-misses-red&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Hits Green and Misses Red&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;当 UIView.layer.shouldRasterize = YES 时，耗时的图片绘制会被缓存，并当做一个简单的扁平图片来呈现。这时候，如果页面的其他区块(比如 UITableViewCell 的复用)使用缓存直接命中，就显示绿色，反之，如果不命中，这时就显示红色。红色越多，性能越差。因为栅格化生成缓存的过程是有开销的，如果缓存能被大量命中和有效使用，则总体上会降低开销，反之则意味着要频繁生成新的缓存，这会让性能问题雪上加霜。
+所以这里的这个缓存就需要慎重使用，而我们App包括微信QQ支付宝等我看也基本没有使用这个方式。而我们App的statusBar会经常闪红色，这是因为我使用了一个CPU和FPS的实时查看工具，需要经常刷新显示，所以就没啥解决的。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-12b7a6991f4f3798.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;color-copied-images&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Copied Images&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;对于 GPU 不支持的色彩格式的图片只能由 CPU 来处理，把这样的图片标为蓝色。蓝色越多，性能越差。因为，我们不希望在滚动视图的时候，由 CPU 来处理图片，这样可能会对主线程造成阻塞。看了App好几个页面，发现根本不会出现这里所说的蓝色，但我查看支付宝QQ就发现了几个蓝色的地方，不知道是他们有特殊的考虑还是没发现这问题，但问题也特少，影响不大。图就不上了&lt;/p&gt;
+
+&lt;h4 id=&quot;color-non-standard-surface-formats&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Non-Standard Surface Formats&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;这个性能发现基本上没有资料能查到，打开这个性能检测后，发现App上很多浅灰色色块，并且有个规律，它们都是没有设置背景色的区域，后来自己设置了背景色就没有色块了，但我不知道是前者还是后者性能好，希望知道的人解答一下。但我发现QQ支付宝这些大型的App也没有对这些做处理，而且发现苹果原生界面也有很多这种灰色色块，所以我也没有对当前App的这些问题做处理，上一组图看看效果。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-d42c2ca9e40002d6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;
+&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-bcc1746f40cdae32.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;color-immediately&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Immediately&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;通常 Core Animation Instruments 以每毫秒 10 次的频率更新图层调试颜色。对某些效果来说，这显然太慢了。这个选项就可以用来设置每帧都更新（可能会影响到渲染性能，而且会导致帧率测量不准，所以不要一直都设置它）。这是一个辅助调试工具，本身是没有啥效果的，需要联合其他调试类别。&lt;/p&gt;
+
+&lt;h4 id=&quot;color-misaligned-images&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Misaligned Images&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;这个选项检查了图片是否被缩放，以及像素是否对齐。被放缩的图片会被标记为黄色，像素不对齐则会标注为紫色。黄色、紫色越多，性能越差。主要是将控件按照图片大小来设定大小，如点赞、评论、分割线和聊天按钮，还有就是头像图片在下载的时候就从cdn下载自己需要的大小，这样图片的黄色缩放问题就没了；再就是控件的宽高最好是整数,因为苹果的屏幕最小单位是1像素，如果有小数了，设备显示就会多次再计算，再选择一个整数像素来显示。而单张大图由于需求原因，暂时没有做处理。下面就是前后对比图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-cd7afd6abffcaa27.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;
+&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-595fe2819f937070.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;color-offscreen-rendered-yellow&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Offscreen-Rendered Yellow&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;这个选项会把那些离屏渲染的图层显示为黄色。黄色越多，性能越差。这些显示为黄色的图层很可能需要用 shadowPath 或者 shouldRasterize 来优化。这里只需要少使用图层的clipsToBounds和layer层的masksToBounds方法即可。&lt;/p&gt;
+
+&lt;h4 id=&quot;color-compositing-fast-path-blue&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;color compositing fast-path blue&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;官方说明：“Places a blue overlay over content that is detached from the compositor.”标记由硬件绘制的路径为蓝色，蓝色越多越好，可以对直接使用OpenGL绘制的图层进行高亮。对OpenGL没什么研究，所以这里没办法给出方法，大家只需要记住蓝色越多越好就ok。&lt;/p&gt;
+
+&lt;h4 id=&quot;flash-updated-regions&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Flash Updated Regions&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;这个选项会把重绘的内容显示为黄色。不该出现的黄色越多，性能越差。通常我们希望只是更新的部分被标记完黄色。当你滑动app视图的时候屏幕就是黄色的，建议大家少用这个调试，因为——&amp;gt;闪得眼睛疼！&lt;/p&gt;
+
+&lt;p&gt;我们也可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;OpenGL ES Analysis&lt;/code&gt;来监测图形的相关性能。谢谢支持！&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 29 Mar 2017 16:08:13 +0800</pubDate>
+        <link>/2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/</link>
+        <guid isPermaLink="true">/2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/</guid>
+        
+        <category>优化</category>
+        
+        <category>性能</category>
+        
+        <category>检测app性能并实现优化-图形性能篇</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>仿微信朋友圈视频剪切功能</title>
+        <description>&lt;p&gt;写在前面&lt;/p&gt;
+
+&lt;p&gt;公司项目最近有个小视频功能，上传的视频最长只有15秒，所以需要实现一个视频剪辑的功能。发现微信有这个功能，便准备仿微信的交互写一个，结果遇到不少坑，分享给大家让大家少走弯路。撸起袖子说干就干。&lt;/p&gt;
+
+&lt;p&gt;分析需求&lt;/p&gt;
+
+&lt;p&gt;我们先看一看微信的界面&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-d6fc6ea37b3fd2f3.PNG?imageMogr2/auto-orient/strip&quot; width=&quot;200&quot; height=&quot;350&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;微信视频裁剪界面&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;1.页面下部拖动左边和右边的白色竖条控制剪切视频的开始和结束时间，预览界面跟随拖动位置跳到视频相应帧画面,控制视频长度最长15秒，最短5秒&lt;/p&gt;
+
+&lt;p&gt;2.拖动下部图片预览条，视频预览画面跳转到左边白条停留处的帧画面&lt;/p&gt;
+
+&lt;p&gt;3.下部操作区域拖动操作时，视频暂停，松手后视频播放，播放内容为两个白条之间的内容，可以循环播放&lt;/p&gt;
+
+&lt;p&gt;4.界面的“取消”返回，“确定”后裁剪视频输出&lt;/p&gt;
+
+&lt;p&gt;先上一个我做完的效果截图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-e37e40c9c1aa40d0.jpg?imageMogr2/auto-orient/strip&quot; width=&quot;200&quot; height=&quot;350&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;仿照效果图&lt;/p&gt;
+
+&lt;p&gt;我自己设计的控制条跟微信略有不同，微信是最长时间时候左右两个白色竖条离边框都还有一点距离，我这里设计的是两边白条都贴边框，返回按钮和确定裁剪按钮也不同。其实也没差，要说微信那样设计有特殊考虑的话，我只能说我不是交互和视觉设计师😳&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;实现&lt;/h3&gt;
+
+&lt;p&gt;1.我这里完整的拖动选择视图是封装的一个&lt;code class=&quot;highlighter-rouge&quot;&gt;view&lt;/code&gt;，上面放一个&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;来展示小的预览图片，再上面放两个&lt;code class=&quot;highlighter-rouge&quot;&gt;image&lt;/code&gt;来做视频截取范围的开始和结束指示器。首先需要实现下面缩略图排列以及它的左右滑动，首先需要找到方法获取视频的帧图片。找了一下资料，很多，基本都是同一个方法，所以暂时选取了这个方法。为何说暂时，后面会解释。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//获取想要时间的帧视频图片
+
++(UIImage *)getCoverImage:(NSURL *)outMovieURL atTime:(CGFloat)time isKeyImage:(BOOL)isKeyImage{
+
+AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outMovieURL options:nil];
+
+NSParameterAssert(asset);
+
+AVAssetImageGenerator *assetImageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+
+assetImageGenerator.appliesPreferredTrackTransform = YES;
+
+assetImageGenerator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+
+__block CGImageRef thumbnailImageRef = NULL;
+
+NSError *thumbnailImageGenerationError = nil;
+
+//tips:下面代码控制时间点的取图是否为关键帧图片，系统为了性能是默认取关键帧图片
+
+CMTime myTime = CMTimeMake(time, 1);
+
+if (!isKeyImage) {
+
+assetImageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+
+assetImageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+
+CMTime duration = asset.duration;
+
+myTime = CMTimeMake(time*30,30);
+
+}
+
+thumbnailImageRef = [assetImageGenerator copyCGImageAtTime:myTime actualTime:NULL error:nil];
+
+if (!thumbnailImageRef){
+
+NSLog(@&quot;thumbnailImageGenerationError %@&quot;, thumbnailImageGenerationError);
+
+}
+
+UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc]
+
+initWithCGImage:thumbnailImageRef] : nil;
+
+CGImageRelease(thumbnailImageRef);
+
+return thumbnailImage;
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;通常开发者认为时间的呈现格式应该是浮点数据，我们一般使用&lt;code class=&quot;highlighter-rouge&quot;&gt;NSTimeInterval&lt;/code&gt;，实际上它是简单的双精度&lt;code class=&quot;highlighter-rouge&quot;&gt;double&lt;/code&gt;类型，只是&lt;code class=&quot;highlighter-rouge&quot;&gt;typedef&lt;/code&gt;了一下，但是由于浮点型数据计算很容易导致精度的丢失，在一些要求高精度的应用场景显然不适合，于是苹果在&lt;code class=&quot;highlighter-rouge&quot;&gt;Core Media&lt;/code&gt;框架中定义了&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTime&lt;/code&gt;数据类型作为时间的格式&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef struct{
+
+	CMTimeValue    value;
+	
+	CMTimeScale    timescale;
+	
+	CMTimeFlags    flags;
+	
+	CMTimeEpoch    epoch;
+
+} CMTime;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;显然，&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTime&lt;/code&gt;定义是一个C语言的结构体，&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTime&lt;/code&gt;是以分数的形式表示时间，&lt;code class=&quot;highlighter-rouge&quot;&gt;value&lt;/code&gt;表示分子，&lt;code class=&quot;highlighter-rouge&quot;&gt;timescale&lt;/code&gt;表示分母，&lt;code class=&quot;highlighter-rouge&quot;&gt;flags&lt;/code&gt;是位掩码，表示时间的指定状态。&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTimeMake(3, 1)&lt;/code&gt;结果为3。
+我是默认一个完整屏幕宽度为15秒的截取长度，在视频的每秒取一张帧图片作为底部预览小图，起初我是用循环视频时长秒数，每次用上面方法取一张图片，再用&lt;code class=&quot;highlighter-rouge&quot;&gt;UIImageView&lt;/code&gt;放置这张图片，最后再计算&lt;code class=&quot;highlighter-rouge&quot;&gt;imageView&lt;/code&gt;的位置添加到&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;上。结果这是一个坑，视频只有二三十秒还好，如果比较长则会创建很多个&lt;code class=&quot;highlighter-rouge&quot;&gt;imageView&lt;/code&gt;，内存暴涨，导致卡顿或者直接crash。后来想到了绘图，这样就不会请求内存多次分配空间，从而解决内存暴涨问题。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;WZScrollView&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;UIScrollView&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;assign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;image&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;inRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;WZScrollView&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;drawRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+	
+	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_image&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;drawInRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;image&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;inRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;_image&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	
+	&lt;span class=&quot;n&quot;&gt;_rect&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;
+	
+	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setNeedsDisplayInRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;结果发现直接画图到&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;上后，在你拖动&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;的时候它始终会只显示前面15张图片的效果，o(╯□╰)o！！！测试了一下，滚动是有效果的，但是体验不好啊。后来把上面的继承类从&lt;code class=&quot;highlighter-rouge&quot;&gt;UIScrollView&lt;/code&gt;改成了&lt;code class=&quot;highlighter-rouge&quot;&gt;UIView&lt;/code&gt;，把图片绘制到&lt;code class=&quot;highlighter-rouge&quot;&gt;view&lt;/code&gt;上再加到&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;上，设置好&lt;code class=&quot;highlighter-rouge&quot;&gt;contentSize&lt;/code&gt;，问题解决。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;@interface WZScrollView : UIView
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;接下来就是左右开始和结束的指示图片了，由于图片太小会有可能接收不到点击事件，所以我这里的切图在开始处指示图片的右边和结束指示图片的左边多裁一部分透明范围，这样指示器的面积就比你看到的大了，方便操作。接下来就是它们的拖动操作，最开始我使用的是view的&lt;code class=&quot;highlighter-rouge&quot;&gt;touchesMoved：withEvent:&lt;/code&gt;来让图片改变x值从而跟随手指移动。结果发现，手速稍快或者触点稍微偏移就会导致图片位置改变停止，体验和性能都不行。后来改用拖动手势&lt;code class=&quot;highlighter-rouge&quot;&gt;UIPanGestureRecognizer&lt;/code&gt;就完美解决了此问题，这里代码多是逻辑处理问题，包括拖动范围何时会让相应图片进行位置改变的响应，上下的白色线条位置和长度改变等等。但这里需要注意三个问题：a.拖动手势的回调方法里面的改变距离和原视图位置的x值会指数相加，每次回调都应该将视图的&lt;code class=&quot;highlighter-rouge&quot;&gt;translation&lt;/code&gt;置0。b.需要每次回调都计算开始和结束位置的时间点，让其有实时性。c.拖动结束时需要让播放器循环播放两个时间点间的视频内容。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)panAction:(UIPanGestureRecognizer *)panGR{
+
+//伪代码：根据需求改变开始和结束指示图片的位置
+
+if(panGR.state == UIGestureRecognizerStateChanged){
+
+[panGR setTranslation:CGPointZero inView:self.superview];
+
+}
+
+[self calculateForTimeNodes];//实时计算裁剪时间
+
+if (panGR.state == UIGestureRecognizerStateEnded) {
+
+//伪代码：指示播放器播放相应视频片段代码
+
+}
+//计算开始结束时间点
+
+-(void)calculateForTimeNodes{
+
+CGPoint offset = _scrollView.contentOffset;
+
+_startTime =(offset.x+self.startView.frame.origin.x)*15*1.0f/self.bounds.size.width;
+
+_endTime = (offset.x + self.endView.frame.origin.x + KendTimeButtonWidth) * 15 * 1.0f/self.bounds.size.width;
+
+CGFloat imageTime = _startTime;//预览时间点
+
+if (_chooseType == imageTypeEnd) {
+
+imageTime = _endTime;
+
+}
+
+if (self.getTimeRange) {
+
+self.getTimeRange(_startTime,_endTime,imageTime);//控制预览播放界面的当前画面（这里是一个播放页传过来的block的调用）
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2.拖动scrollView时，默认是展示开始时间点的视频帧画面，在&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollViewDidScroll:&lt;/code&gt;方法中调用&lt;code class=&quot;highlighter-rouge&quot;&gt;calculateForTimeNodes&lt;/code&gt;方法即可实时更新开始、结束和预览3个时间点参数，这一步的很多逻辑都封装到第一步的一些方法中了，所以这一步比较简单。&lt;/p&gt;
+
+&lt;p&gt;3.拖动时暂停播放，松手后播放相应时间范围视频内容，可以循环播放。关于开始和结束指示图片的拖动状态可以用上面提到的&lt;code class=&quot;highlighter-rouge&quot;&gt;panGR.state == UIGestureRecognizerStateEnded&lt;/code&gt;来判断，进入判断说明松手了，没有则还在拖动。而scrollView的拖动和停止直接调用它的代理就行了，这里不赘述，不明白可以在demo里面查看。这里遇到个坑是因为前面在视频预览页面拖动的时候需要有当前的视频帧画面用作预览，而开始是&lt;code class=&quot;highlighter-rouge&quot;&gt;getCoverImage: atTime: isKeyImage:&lt;/code&gt;这个方法来获取帧图片的，当拖动时就显示图片图层，停止拖动就隐藏图片图层，进而显示下面的视频图层。结果这个方法比较消耗cpu，会导致卡顿情况，还会经常因为cpu过高直接crash。后来发现AVPlayer里面有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;seekToTime: toleranceBefore: toleranceAfter: completionHandler:&lt;/code&gt;方法，作用是让视频跳到某个时间点开始播放。我去,这么简单我却饶了好大一个弯，所以大家一定要在使用类的时候要养成多看原类文件的好习惯，可以少跳抗，囧！！！其实AVPlayer还有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;seekToTime:&lt;/code&gt;方法,我不使用它的原因是它有一个自己的最小时间单位（貌似是关键帧），用它不会实时改变播放器画面。&lt;/p&gt;
+
+&lt;p&gt;视频拖动时：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[_player pause];
+
+[_player seekToTime:CMTimeMake(time*30, 30) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+
+}];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;拖动停止时：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[_player seekToTime:CMTimeMake(_startTime*30, 30) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+
+[_player play];
+
+}];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;4.最后就是对视频进行裁剪了，这里的这个方法不是我写的，是网上找的别人的代码，但是原代码有个小问题，就是输出的视频文件方向改变了。在这里我用了下面3行代码来保证输出视频的方向跟原视频保持一致&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;AVURLAsset *asset = [AVURLAsset assetWithURL:videoUrl];
+
+AVAssetTrack *assetVideoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo]firstObject];
+
+[compositionVideoTrack setPreferredTransform:assetVideoTrack.preferredTransform];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;我这里视频裁剪后的输出视频路径是固定的，所以我封装的方法里面的回调是没有参数的，码友如果需要可以自行改装：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (void)addBackgroundMiusicWithVideoUrlStr:(NSURL *)videoUrl audioUrl:(NSURL *)audioUrl andCaptureVideoWithRange:(TimeRange)videoRange completion:(void(^)(void))completionHandle；
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;大家如果下demo来看的话会发现我在这个方法调用时在回调里面多加了一个保存视频方法到里面，是由于我的项目需求。这个方法会新建一个以项目名称命名的相册，用来存放剪切后的视频，回调会传回一个PHAsset对象（项目需求），这个就是赠送节目了😁。&lt;/p&gt;
+
+&lt;p&gt;这里是&lt;a href=&quot;https://github.com/JoshPellTan/TJVideoCutDemo&quot;&gt;demo&lt;/a&gt;下载地址，如果对你有用的话别忘了star一个😁。&lt;/p&gt;
+
+&lt;p&gt;好久没动swift了，本来想写一个swift版练一练，后面再说吧哈哈。。。&lt;/p&gt;
+</description>
+        <pubDate>Tue, 07 Mar 2017 16:08:13 +0800</pubDate>
+        <link>/2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/</link>
+        <guid isPermaLink="true">/2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/</guid>
+        
+        <category>视频</category>
+        
+        <category>剪切</category>
+        
+        <category>微信</category>
+        
+        <category>仿微信朋友圈视频剪切功能</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>关于修改系统自带的导航栏</title>
+        <description>&lt;p&gt;今天遇到了一个这样的需求，需要在导航栏加上searchBar。但我直接加上之后出现了这种情况：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/Gdhltvrh/QmhKB.png&quot; width=&quot;400&quot; height=&quot;60&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;自己定义的返回按钮距离左边太远，视觉效果不好，但我无论怎么调整这个button的frame都解决不了问题，后来找到了这个解决方案：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//设置导航栏，并调整自定义返回按钮的位置和大小
+UIBarButtonItem * spaceItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+UIBarButtonItem * backItem = [[UIBarButtonItem alloc]initWithCustomView: self.backBtn];
+//将宽度设为负值，否则返回按钮会很宽
+spaceItem.width = -15;
+self.navigationItem.leftBarButtonItems = @[spaceItem,backItem];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;跑代码测试：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/GdhltzI1/vgqjY.png&quot; width=&quot;400&quot; height=&quot;60&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;完美！&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 09 Feb 2017 16:08:13 +0800</pubDate>
+        <link>/2017/02/%E5%85%B3%E4%BA%8E%E4%BF%AE%E6%94%B9%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B8%A6%E7%9A%84%E5%AF%BC%E8%88%AA%E6%A0%8F/</link>
+        <guid isPermaLink="true">/2017/02/%E5%85%B3%E4%BA%8E%E4%BF%AE%E6%94%B9%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B8%A6%E7%9A%84%E5%AF%BC%E8%88%AA%E6%A0%8F/</guid>
+        
+        <category>导航栏</category>
+        
+        <category>关于修改系统自带的导航栏</category>
+        
+        
+        <category>tips</category>
+        
+      </item>
     
       <item>
         <title>关于抱怨和不满</title>
@@ -17,13 +1282,14 @@
 
 &lt;p&gt;许多人的家庭都很普通，没权没钱没势，不可能像国民老公那样先从老爹那儿拿个5亿练练手，又由于父母的社会地位在那儿，遇到事情别人多少都会给点面子，所以比较一下后默默放下了“先赚他一个亿”的小目标。&lt;/p&gt;
 
-&lt;p&gt;但我们这代人基本都受过高等教育，不愿像上一代一样普普通通，总想搞出一番事业（搞事情），却发现不知道第一步怎么走。但在我看来却是我们不敢走这第一步，我们都已成家或将成家，都有家庭，有的已经有了小孩，有几个愿意或者敢放弃那些现在口中的那些不好的工作，放弃一个月几千或者上万的收入，一头扎进一个不知能不能成功抑或不知何时才能成功的创业项目中？相信我们这一代全部都投身创业中，总能成就几个大鳄。&lt;/p&gt;
+&lt;p&gt;但我们这代人基本都受过高等教育，不愿像上一代一样普普通通，总想搞出一番事业（搞事情），却发现不知道第一步怎么走。但在我看来却是我们不敢走这第一步，我们都已成家或将成家，都有家庭，有的已经有了小孩，有几个愿意或者敢放弃那些现在口中的那些不好的工作，放弃一个月几千或者上万的收入，一头扎进一个不知能不能成功亦或不知何时才能成功的创业项目中？相信我们这一代全部都投身创业中，总能成就几个大鳄。&lt;/p&gt;
 
-&lt;p&gt;经常看到这儿一个文章那儿一部视频，都是讲一些成功人士的如何走上成功之路的。但你看看当他们下海加入创业大军时他们是一个什么样的状态，你就不会再这么局促不安了，不是CEO就是CTO，或者就是某国际公司技术核心或者业务核心。这代表什么？代表他们有经验，有技术，有技术，有人脉！比如&lt;a href=&quot;http://baike.baidu.com/view/1240566.htm&quot;&gt;蔡崇信&lt;/a&gt;、&lt;a href=&quot;http://baike.baidu.com/link?url=OXSuqRi80a4MFvxM6brRnpC7UjLvUGJYh1m8MDP_YiWI-xo76wMIoHKUDv8gr6oweepXKCuM-7fUArZRJSrvBzfiE3Wiwxpkphb5wn_iZj7&quot;&gt;雷军&lt;/a&gt;、&lt;a href=&quot;http://baike.baidu.com/link?url=_2UjhZcmVBlUir0E-jqmXw5SZ6J3LlMtE86QPRfczR9P_jlVNeZJhXytS7B4-M-1Z5h4gXWb5s1Iv0XKKNj6jicvBmBKSBA4N5aggqcA4MtkECOCXG8lPKN4vHWdiMCe&quot;&gt;李彦宏&lt;/a&gt;。或许你会说马云，他不就是个老师出身吗？但人家88年做大学老师，那时候大学生都是牛X人，何况大学生的老师，再说，他的口才他的眼界，几个人能比的。所以，他们的成功都是有成功的理由的。&lt;/p&gt;
+&lt;p&gt;经常看到这儿一个文章那儿一部视频，都是讲一些成功人士的如何走上成功之路的。但你看看当他们下海加入创业大军时他们是一个什么样的状态，你就不会再这么局促不安了，不是CEO就是CTO，或者就是某国际公司技术核心或者业务核心。这代表什么？代表他们有经验，有技术，有人脉！比如&lt;a href=&quot;http://baike.baidu.com/view/1240566.htm&quot;&gt;蔡崇信&lt;/a&gt;、&lt;a href=&quot;http://baike.baidu.com/link?url=OXSuqRi80a4MFvxM6brRnpC7UjLvUGJYh1m8MDP_YiWI-xo76wMIoHKUDv8gr6oweepXKCuM-7fUArZRJSrvBzfiE3Wiwxpkphb5wn_iZj7&quot;&gt;雷军&lt;/a&gt;、&lt;a href=&quot;http://baike.baidu.com/link?url=_2UjhZcmVBlUir0E-jqmXw5SZ6J3LlMtE86QPRfczR9P_jlVNeZJhXytS7B4-M-1Z5h4gXWb5s1Iv0XKKNj6jicvBmBKSBA4N5aggqcA4MtkECOCXG8lPKN4vHWdiMCe&quot;&gt;李彦宏&lt;/a&gt;。或许你会说马云，他不就是个老师出身吗？但人家88年做大学老师，那时候大学生都是牛X人，何况大学生的老师，再说，他的口才他的眼界，几个人能比?所以，他们的成功都是有理由的。&lt;/p&gt;
 
 &lt;p&gt;所以当你对现实不满，对境遇有所抱怨的时候，你应该知道，那都是你自己一步一步选择来的。不要相信什么命运使然，那只是很多不愿意直面自己曾经的错误选择的一个借口而已，跟“我们性格很不合适”一样，都是玄学。你只有在努力提升自己的业务水平或者技术水平，并达到一个比你环境水平更高的一个高度后，你才有资格去想更多。&lt;/p&gt;
 
 &lt;p&gt;这句话送给大家，共勉：&lt;/p&gt;
+
 &lt;blockquote&gt;
   &lt;p&gt;如果你不知道自己想做什么，就先把身边的事情做好。不知道自己该去哪里，就先走好现在的路。不知道会遇见谁，就先善待身边的所有人，不知道做的事情有没有意义，至少先确定自己有没有去做，不轻易的打搅别人的小幸福，也不嘲笑别人的梦想。&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -32,15 +1298,15 @@
 
 </description>
         <pubDate>Thu, 19 Jan 2017 16:08:13 +0800</pubDate>
-        <link>http://localhost:4000/study/2017/01/19/%E5%85%B3%E4%BA%8E%E6%8A%B1%E6%80%A8%E5%92%8C%E4%B8%8D%E6%BB%A1/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2017/01/19/%E5%85%B3%E4%BA%8E%E6%8A%B1%E6%80%A8%E5%92%8C%E4%B8%8D%E6%BB%A1/</guid>
+        <link>/2017/01/%E5%85%B3%E4%BA%8E%E6%8A%B1%E6%80%A8%E5%92%8C%E4%B8%8D%E6%BB%A1/</link>
+        <guid isPermaLink="true">/2017/01/%E5%85%B3%E4%BA%8E%E6%8A%B1%E6%80%A8%E5%92%8C%E4%B8%8D%E6%BB%A1/</guid>
         
         <category>essay</category>
         
         <category>关于抱怨和不满</category>
         
         
-        <category>study</category>
+        <category>essay</category>
         
       </item>
     
@@ -48,9 +1314,7 @@
         <title>关于截取app页面长图</title>
         <description>&lt;p&gt;前几天听朋友说他们项目准备加一个功能，就是将页面所有的内容截取出来生成一张长图，我想这是什么需求，有页面分享为嘛要分享长图o(╯□╰)o。后来某天在公司浏览简书的文章的时候无意发现了简书居然有这个功能，然后赶紧打开简书的app，果然app也有这个截长图的功能，事实证明我毕竟不是产品经理的料。后来就开始研究这个东西，查了一些绘图的资料后终于找到方法了，试验后果然可行。&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;普通截图&lt;/li&gt;
-&lt;/ul&gt;
+&lt;h3 id=&quot;section&quot;&gt;普通截图&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CALayer&lt;/code&gt;类有个方法&lt;code class=&quot;highlighter-rouge&quot;&gt;renderInContext:&lt;/code&gt;，这个方法用来截取layer层的图像，传入一个图形上下文，最后再通过图形上下文获取图片的方法&lt;code class=&quot;highlighter-rouge&quot;&gt;UIGraphicsGetImageFromCurrentImageContext()&lt;/code&gt;就可以拿到想要截取的图片了，下面就是截取普通图层的代码：&lt;/p&gt;
 
@@ -59,11 +1323,10 @@
 image = UIGraphicsGetImageFromCurrentImageContext();
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+
 &lt;p&gt;下面来说一下&lt;code class=&quot;highlighter-rouge&quot;&gt;UIGraphicsBeginImageContextWithOptions()&lt;/code&gt;，这个方法作用是开启图形上下文。第一个参数控制截图的大小，一般跟view大小一致，若小于view大小，图片最后会丢失view右边或者下部的一些图像；第二个是透明开关，一般传YES截取的图片质量会高点；第三个参数是缩放因子，一般传1.0，其他的可以自己试试。&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;截取长图（这里针对tableView和collectionView）&lt;/li&gt;
-&lt;/ul&gt;
+&lt;h3 id=&quot;tableviewcollectionview&quot;&gt;截取长图（这里针对tableView和collectionView）&lt;/h3&gt;
 
 &lt;p&gt;可能你不信，截取长图跟上面方法一样，只需要在开启图形上下文时将size设置为tableView或collectionView的contentSize即可，并且将tableview滚到顶部再开始截图，代码如下：&lt;/p&gt;
 
@@ -78,8 +1341,8 @@ image = UIGraphicsGetImageFromCurrentImageContext();
 &lt;p&gt;怎么样很简单吧，你还可以下载我在github上放置的&lt;a href=&quot;https://github.com/JoshPellTan/TJImageCutDemo&quot;&gt;demo&lt;/a&gt;来看看，欢迎star！&lt;/p&gt;
 </description>
         <pubDate>Wed, 11 Jan 2017 16:08:13 +0800</pubDate>
-        <link>http://localhost:4000/study/2017/01/11/%E5%85%B3%E4%BA%8E%E6%88%AA%E5%8F%96app%E9%A1%B5%E9%9D%A2%E9%95%BF%E5%9B%BE/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2017/01/11/%E5%85%B3%E4%BA%8E%E6%88%AA%E5%8F%96app%E9%A1%B5%E9%9D%A2%E9%95%BF%E5%9B%BE/</guid>
+        <link>/2017/01/%E5%85%B3%E4%BA%8E%E6%88%AA%E5%8F%96app%E9%A1%B5%E9%9D%A2%E9%95%BF%E5%9B%BE/</link>
+        <guid isPermaLink="true">/2017/01/%E5%85%B3%E4%BA%8E%E6%88%AA%E5%8F%96app%E9%A1%B5%E9%9D%A2%E9%95%BF%E5%9B%BE/</guid>
         
         <category>长图</category>
         
@@ -89,821 +1352,6 @@ image = UIGraphicsGetImageFromCurrentImageContext();
         
         
         <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>关于取消网络请求</title>
-        <description>&lt;p&gt;今天猛地一下突然想到很久以前遇到的一个面试问题，如果一个网络请求已经发送，但是请求还没有完成，这时我想取消这个请求怎么办？刚刚查了查资料，自己也想了想，下面就从这个需求说起。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;这个需求有何意义？&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;如果说这只是一个单纯地面试题，那么它将毫无意义，那如果不是呢？一个完整的网络请求是由客户端向服务器发起http请求，再由服务器发送responseObject给客户端（中间的其他关于握手传送的数据包我们暂且不论），这就包含了上行流量和下行流量，这些都是会包含在用户总流量中的（说到这儿大家是不是开始有自己的想法了呢？）。如果我们在请求返回之前cancel掉这个网络请求的话，那么客户端会发送一个reset packet来断开当前http连接，阻止后续流量的产生。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;所以,如果不cancel请求，完成之后的回调会找delegate，若是weak引用，Controller被释放后delegate也变为nil，业务流程释放，还算比较安全。但也会浪费用户的一些流量，这也是为什么很多app看着体量小，但是会大量消耗用户流量的原因。而且假如Controller未被释放或者代理不是weak引用，那么回调后的一些后续操作就可能引发一些安全问题。因此，一个较成熟的APP都应该将这种优化APP并且能提高用户体验的优化考虑进去。&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;如何实现对请求的取消操作（以常用的AFNetwork为例）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;1.取消所有网络操作&lt;/p&gt;
-
-&lt;p&gt;首先拿到AFHTTPSessionManager(注意做成全局单例)&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (AFHTTPSessionManager *)manager  
-{  
-    if (!_manager) {  
-        _manager = [AFHTTPSessionManager manager];  
-    }  
-    return _manager;  
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;当需要执行取消所有网络操作时假如下面代码即可&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[self.manager.operationQueue cancelAllOperations]; 
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;2.取消单个网络操作&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSString *urlStr = @&quot;&quot;;//你的请求url
-NSURLSessionTask *task = [manager GET:urlStr parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
-        
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        
-    }];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;在你需要执行取消操作的地方假如代码&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if(self.task) {
-	[self.task cancel];//取消当前界面的数据请求.
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;(o゜▽゜)o☆[BINGO!]完成！&lt;/p&gt;
-</description>
-        <pubDate>Thu, 05 Jan 2017 20:12:29 +0800</pubDate>
-        <link>http://localhost:4000/study/2017/01/05/%E5%85%B3%E4%BA%8E%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2017/01/05/%E5%85%B3%E4%BA%8E%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/</guid>
-        
-        <category>网络请求</category>
-        
-        <category>优化</category>
-        
-        <category>关于取消网络请求</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>iOS开发调试总结</title>
-        <description>&lt;p&gt;软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试&lt;/p&gt;
-
-&lt;h3 id=&quot;一nslog打印&quot;&gt;一、NSLog打印&lt;/h3&gt;
-
-&lt;p&gt;NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define JFLog(format, ...) do { \
-    fprintf(stderr,&quot;&amp;lt;%s : %d&amp;gt; %s\n&quot;, \
-    [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], \
-    __LINE__, __func__); \
-    (NSLog)((format), ##__VA_ARGS__); \
-    fprintf(stderr,&quot;-------\n&quot;); \
-} while (0)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;h3 id=&quot;二生命周期方法initdealloc&quot;&gt;二、生命周期方法init、dealloc&lt;/h3&gt;
-&lt;p&gt;在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。&lt;/p&gt;
-
-&lt;h3 id=&quot;三查看代码运行时间&quot;&gt;三、查看代码运行时间&lt;/h3&gt;
-&lt;p&gt;有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define CODE_START NSDate *startTime = [NSDate date]
-#define CODE_END   NSLog(@&quot;Time:%f&quot;,-[startTime timeIntervalSinceNow])
-//用法
-	CODE_START;
-   //放置被监测代码
-   CODE_END;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;控制台打印：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G72XQEDV/GRPz7.png =500x20&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;四僵尸对象&quot;&gt;四、僵尸对象&lt;/h3&gt;
-&lt;p&gt;iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&amp;gt;Scheme–&amp;gt;Edit Scheme. 勾选Enable Zombie Objects即可。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G738nBWj/6MlYo.png =400x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;五analyze分析器&quot;&gt;五、Analyze分析器&lt;/h3&gt;
-&lt;p&gt;Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&amp;gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73a9gTh/AuFpd.png =400x40&quot; alt=&quot;Thumper&quot; /&gt;
-&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73a9kFw/MHxeo.png =200x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;六断点&quot;&gt;六、断点&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;普通断点&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;断点(Breakpoint)绝对是调试程序的第一大选择，也是有一个基础调试技能。断点打在哪儿当程序运行至此时就会暂停到这里（这一行未被执行）。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73fEqOg/AMPEV.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;点击数字行数就在此行添加断点，再点击一次则取消（还有颜色，但不起断点作用了，可能是提醒你曾经在这里打过断点），调试中还能在下方调试信息区看到参数的值：
-&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73hnyMy/hCXKr.png =400x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;条件断点&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;上面是最普通的断点使用方法，我们还能对断点的属性进行配置，设置条件，让断点更智能化&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73l8Wdq/FkRh.png =200x100&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;点击Edit Breadpoint…就是进入条件断点,以下面代码为例&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)test{
-	for (int i = 0;i &amp;lt; 5; i++){
-		NSLog(@&quot;我的值：%d&quot;,i);
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;我并不想每次循环都有断点，只有在为3时需要，则条件如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIPyS/RcVHi.png =400x300&quot; alt=&quot;Thumper&quot; /&gt;
-&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kILIY/yVUta.png =400x300&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;也可以查看某个方法被调用的次数，设置Action参数如下，注：要选中Automatically continue after evaluating actions。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIHrl/3If2z.png =400x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;控制台输入如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73kIC82/FWnAt.png =400x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;七异常断点&quot;&gt;七、异常断点&lt;/h3&gt;
-&lt;p&gt;断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
-添加异常断点：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rC3cb/WnJa4.png =100x50&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;若有异常则会出现下面图样的情况，点击进行查看：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rC03E/smK06.png =200x100&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;符号断点 Symbolic Breakpoint&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;创建方法跟异常断点一样，符号断点可以在指定的类名或者方法名中执行异常中断
-&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rBXiT/CqOeh.png =100x50&quot; alt=&quot;Thumper&quot; /&gt;
-配置符号断点如下：假如需要在执行到ViewController类的viewDidLoad方法时执行中断。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rBTzl/KRJSx.png =400x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;如果你的Symbol只写了一个函数名，那么就会在出现该函数名的地方就中断执行。如下，就会在运行到doAnimation的时候中断&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G73rBP4N/3bgut.png =400x200&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;以上就是跟大家分享的调试经验啦！&lt;/p&gt;
-</description>
-        <pubDate>Fri, 30 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/study/2016/12/30/iOS%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95%E6%80%BB%E7%BB%93/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2016/12/30/iOS%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95%E6%80%BB%E7%BB%93/</guid>
-        
-        <category>iOS</category>
-        
-        <category>调试</category>
-        
-        <category>iOS开发调试总结</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>RunTime方法交换</title>
-        <description>&lt;p&gt;现在我有个这种需求：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[UIImage imageNamed:@&quot;img1&quot;];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;这个方法在图片不存在是会引起崩溃，这里先提供两种简单点的方法。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;继承&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (UIImage *)imageNamed:(NSString *)name {
-
-    // 恢复系统做法
-    UIImage *image = [super imageNamed:name];
-    if ( image == nil ) {
-        NSLog(@&quot;加载失败&quot;);
-    }
-    return image;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;就是创建一个UIImage的子类，用子类的&lt;code class=&quot;highlighter-rouge&quot;&gt;imageNamed:&lt;/code&gt;方法加载图片&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;分类&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;分类方法挺好，简洁。切记，方法名不能重复系统方法名，可以加个前缀&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (UIImage *)TJ_imageNamed:(NSString *)name {
-
-    // 恢复系统做法
-    UIImage *image = [UIImage imageNamed:name];
-    if ( image == nil ) {
-        NSLog(@&quot;加载失败&quot;);
-    }
-    return image;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;大家看到这儿发现与我们的runtime还没半毛钱关系，稍安勿躁。现在需求变这样：一个项目，已经开发迭代两年，以前都是用UIImage加载图片，但现在项目老大要我们dui这个空图片的崩溃问题进行处理，一看看上面两个方法，懵逼中。。。。。。工程量太大，灯灯灯等！runtime登场：&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;流程&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;提供分类&lt;/li&gt;
-  &lt;li&gt;写一个有这样功能的方法&lt;/li&gt;
-  &lt;li&gt;用这个方法跟系统方法进行方法交换&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;分类中的新方法：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (void)load {
-
-    // 获取类方法
-    // class:获取哪个类的方法
-    // SEL:获取哪
-    Method imageNameMethod = class_getClassMethod(self, @selector(imageNamed:));
-    Method bj_imageNameMethod = class_getClassMethod(self, @selector(TJ_imageNamed:));
-
-    // 交换方法的实现
-    method_exchangeImplementations(imageNameMethod, bj_imageNameMethod);
-}
-
-+ (UIImage *)bj_imageNamed:(NSString *)name {
-
-    UIImage *image = [UIImage bj_imageNamed:name];
-
-    if (image == nil) {
-        NSLog(@&quot;加载失败！\n&quot;);
-    }
-
-    return image;
-}
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;主线程直接调用：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[UIImage imageNamed:@&quot;img1&quot;];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;方法交换示意图：
-&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5XK4VgE/rDp9G.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/study/2016/12/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2016/12/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/</guid>
-        
-        <category>runtime</category>
-        
-        <category>方法交换</category>
-        
-        <category>RunTime方法交换</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>RunTime动态添加方法和属性</title>
-        <description>&lt;h3 id=&quot;动态添加方法&quot;&gt;动态添加方法&lt;/h3&gt;
-
-&lt;p&gt;面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。&lt;/p&gt;
-
-&lt;p&gt;performSelector方法区别于直接调用，直接调用时假如你方法没实现，编译直接报错，而performSelector只会报警告，所以人家是问你runtime动态添加方法的东西。&lt;/p&gt;
-
-&lt;p&gt;动态添加方法是一个很有意义的事情，因为程序在编译的时候，会把所有的方法加到一个方法列表中，但是我们并不是所有的方法都会使用到，耗时耗力。我们应该多利用懒加载的方式，用到某个方法，再添加，不用的方法就不用管它。&lt;/p&gt;
-
-&lt;p&gt;首先我们需要导入#import &amp;lt;objc/message.h&amp;gt;，然后写下下面2个方法：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 当某个类方法只声明，没有实现的时候，会执行下面的方法
-+ (BOOL)resolveClassMethod:(SEL)sel;
-// 当某个对象方法没有只声明，没有实现的时候，会执行下面的方法。
-+ (BOOL)resolveInstanceMethod:(SEL)sel ;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;我们先创建一个函数：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void eat(id self, SEL _cmd,id param1){
-    NSLog(@&quot;调用%@---%@---%@&quot;,self,NSStringFromSelector(_cmd),param1);
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;讲解一下，每一个函数，都有2个默认的隐式参数，一个是谁调用了自己，一个是SEL，SEL就是对方法的一种包装。包装的SEL类型数据它对应相应的方法地址,找到方法地址就可以调用方法。后面的id类型的param1是我写的一个参数，因为是C语言的函数，我们无法创建NS之类的类型，这里我就用id类型来接参数。&lt;/p&gt;
-
-&lt;p&gt;接下来，根据官方文档我们可以添加下面的代码做判断，使得在找不到eat方法的时候，可以执行我们动态添加的eat方法，注意，上面的函数名可以随意写，只需要在下面添加方法的时候做好关联就好：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 外界调用一个没有实现的对象方法-
-// resolveInstanceMethod中sel是没有实现的参数
-+ (BOOL)resolveInstanceMethod:(SEL)sel{
-
-    NSLog(@&quot;%@&quot;,NSStringFromSelector(sel));
-//    if (sel == @selector(eat)) {}这句话等同下面的判断
-
-    if ([NSStringFromSelector(sel) isEqualToString:@&quot;eat:&quot;] ) {
-        // 这里添加方法
-        // 给哪个类
-        //SEL:方法名
-        //IMP:方法的实现（函数的入口-函数的指针-函数的名）
-        //type :方法类型
-        class_addMethod(self, sel, (IMP)eat, &quot;v@:@&quot;); 
-        returnYES;
-    }
-    return [super resolveInstanceMethod:sel];
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;这里介绍一下OBJC_EXPORT BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)这个函数的参数意义&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Class cls:就是你给哪个类添加的这个方法
-SEL name：就是方法名字是啥，默认进入方法的时候，肯定是方法上带的参数sel没有，所以我们这里传入的是sel。
-(IMP)eat：这里需要我们传入一个IMP，啥实IMP,IMP就是方法的实现（函数的入口-函数的指针-函数的名）大家这里意会下
- const char *types，这里我们可以好好说一说。我先说下意思，*v@:@*的意思就是，返回类型是void,参数是id,SEL,id。具体大家参考上面我写的函数以及函数说明。
-
-如果想查到这些代表啥意思，可以打开苹果文档，输入Type Encodings，选择我箭头所指。查询。
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/G5YKO1rz/BI7j7.png&quot; alt=&quot;Thumper&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;动态添加属性&quot;&gt;动态添加属性&lt;/h3&gt;
-&lt;p&gt;通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。&lt;/p&gt;
-
-&lt;p&gt;默认我们在创建分类的时候，添加一个成员属性后，大家往往会发现，直接调用这个类的点语法，我们获取不了属性,为什么呢？&lt;/p&gt;
-
-&lt;p&gt;因为默认分类创建的属性，不会执行set和get方法。如果我们一定要获取到这个属性，我们应该怎么做呢？这里有2种方法，一种就是添加一个静态变量，重写它的set和get方法.另外一种就是通过运行时，添加这个属性。这里我只讲第二种，代码如下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 声明一个char型的key
-static char nameKey;
-
-- (void)setName:(NSString *)name
-{
-    // 属性跟对象有关联-就是添加属性
-
-    // object:对象
-    // key:属性名，根据key去获取到值
-    // value:值
-    // policy：策略
-    objc_setAssociatedObject(self, &amp;amp;nameKey, name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;这里我讲一下OBJC_EXPORT void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)这个方法。&lt;/p&gt;
-
-&lt;p&gt;这个方法的字面意思就是把一个值，通过一个key绑定到一个类中，最后设置一下保存的策略。代码的意思是，把name的值，通过nameKey绑定到当前类，保存的是nonatomic的copy类型。
-补充一下最后一个参数（策略）：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// assign类型
-   OBJC_ASSOCIATION_ASSIGN = 0,
-// 非原子性Retain--&amp;gt;相当于Strong
-    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
-// 非原子性 copy-
-    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,
-// 原子性Retain
-    OBJC_ASSOCIATION_RETAIN = 01401,
-// 原子性copy
-    OBJC_ASSOCIATION_COPY
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;取得动态绑定属性的方法如下:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (NSString *)name
-{
-    return objc_getAssociatedObject(self, &amp;amp;nameKey);
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;简单的解释就是通过self这个类的，nameKey这个key,我们就可以取到nameKey相对应的值了。这就是如何通过runtime来动态的给类添加属性了，帅哥，你可以试试了！&lt;/p&gt;
-
-</description>
-        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/study/2016/12/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2016/12/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/</guid>
-        
-        <category>runtime</category>
-        
-        <category>动态添加</category>
-        
-        <category>RunTime动态添加方法和属性</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>xib作为cell时的复用问题</title>
-        <description>&lt;p&gt;apple鼓励大家使用图形化界面开发，这样效率更高，但我们在使用xib新建cell的时候会遇到问题,xib新建时是没有&lt;code class=&quot;highlighter-rouge&quot;&gt;initWithStyle: reuseIdentifier:&lt;/code&gt;这个方法的，但为了效率cell还是需要复用，所以就需要用下面方法来新建cell了：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    MyCustomCell * cell = [tableView dequeueReusableCellWithIdentifier:@&quot;myCell&quot;];
-    if (!cell){
-    
-        [tableView registerNib:[UINib nibWithNibName:@&quot;MyCustomCell&quot; bundle:nil] forCellReuseIdentifier:@&quot;myCell&quot;];
-        cell = [tableView dequeueReusableCellWithIdentifier:@&quot;myCell&quot;];
-    }
-    return cell;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-</description>
-        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/tips/2016/12/12/xib%E4%BD%9C%E4%B8%BAcell%E6%97%B6%E7%9A%84%E5%A4%8D%E7%94%A8%E9%97%AE%E9%A2%98/</link>
-        <guid isPermaLink="true">http://localhost:4000/tips/2016/12/12/xib%E4%BD%9C%E4%B8%BAcell%E6%97%B6%E7%9A%84%E5%A4%8D%E7%94%A8%E9%97%AE%E9%A2%98/</guid>
-        
-        <category>xib</category>
-        
-        <category>复用</category>
-        
-        <category>xib作为cell时的复用问题</category>
-        
-        
-        <category>tips</category>
-        
-      </item>
-    
-      <item>
-        <title>WKWebKit介绍</title>
-        <description>&lt;p&gt;苹果在iOS8推出了一个新的框架&lt;code class=&quot;highlighter-rouge&quot;&gt;WKWebKit&lt;/code&gt;，更好地内存优化、更快的加载速度和更丰富的接口让它成为了开发者手中的香馍馍，替代UIWebView就变得顺理成章。&lt;/p&gt;
-
-&lt;p&gt;UIWebView&amp;amp;UIWebDelegate这两个东西在WKWebKit中被重构成16个类、3个协议&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Classes&lt;/em&gt;&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;WKBackForwardList：历史记录列表，可以通过后退和前进动作访问到；（- itemAtIndex: 该类中唯一方法，用于返回项目在指定的距离当前项目。还有backItem、currentItem、forwardItem、backList、forwardList属性）&lt;/li&gt;
-  &lt;li&gt;WKBackForwardListItem：webView中后退列表里的某一网页；（有URL、title、initialURL三个属性）&lt;/li&gt;
-  &lt;li&gt;WKFrameInfo:包含一个框架在一个网页的信息；（有mainFrame、request、securityOrigin三个属性，其中securityOrigin是一个WKSecurityOrigin对象属性，iOS9之后可使用，是由一个主机名称，协议和端口号组成。）&lt;/li&gt;
-  &lt;li&gt;WKNavigation：包含一个网页加载进度信息；&lt;/li&gt;
-  &lt;li&gt;WKNavigationAction：包含可能让网页导航变化的信息，用于判断是否做出导航变化；（值得注意的是可能会常用的 WKNavigationType这个枚举）&lt;/li&gt;
-  &lt;li&gt;WKNavigationResponse：包含可能让网页导航变化的返回内容信息，用于判断是否做出导航变化；&lt;/li&gt;
-  &lt;li&gt;WKPreferences：概括一个webView的偏好设置；（ minimumFontSize、 javaScriptEnabled、 javaScriptCanOpenWindowsAutomatically三个属性，值得注意的是后两个属性，一个决定是否启用javaScript,另一个是在没有用户交互的情况下，是否JavaScript可以打开windows）&lt;/li&gt;
-  &lt;li&gt;WKProcessPool：表示一个web内容加载池；&lt;/li&gt;
-  &lt;li&gt;WKUserContentController：提供使用JavaScript post信息和注射script的方法。（- addScriptMessageHandler:name: 添加一个消息处理程序脚本 - addUserScript: 添加一个用户脚本 - removeAllUserScripts remove所有用户脚本 —removeScriptMessageHandlerForName: 删除一个消息处理程序的脚本 和一个userScript属性： 与用户相关联的用户脚本内容控制器）&lt;/li&gt;
-  &lt;li&gt;WKScriptMessage: 包含网页发出的信息。（body、webView、frameInfo、name）&lt;/li&gt;
-  &lt;li&gt;WKUserScript：表示可以被网页接受的用户脚本。&lt;/li&gt;
-  &lt;li&gt;WKWebViewConfiguration: 初始化 webview 的设置。（- initWithSource:injectionTime:forMainFrameOnly: 返回一个初始化用户脚本,可以添加到一个用户内容控制器 还有source、injectionTime、forMainFrameOnly）&lt;/li&gt;
-  &lt;li&gt;WKWindowFeatures:指定加载新网页时的窗口属性。(全是窗口属性)&lt;/li&gt;
-  &lt;li&gt;WKWebViewConfiguration:对象是属性的集合用来初始化一个web视图。(属性比较多，不过这个对象在初始化web视图的时候必须会用到)&lt;/li&gt;
-  &lt;li&gt;还有WKWebsiteDataStore&amp;amp;WKWebsiteDataRecord两个类&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Protocols&lt;/em&gt;&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;WKNavigationDelegate:提供了追踪主窗口网页加载过程和判断主窗口和子窗口是否进行页面加载新页面的相关方法。&lt;/li&gt;
-  &lt;li&gt;WKScriptMessageHandler: 提供从网页中收消息的回调方法。&lt;/li&gt;
-  &lt;li&gt;WKUIDelegate: 提供用原生控件显示网页的方法回调。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;WKNavigationDelegate&lt;/em&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didCommitNavigation: 主框架在内容开始到达时调用。&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didFailNavigation:withError: 主框架导航发生错误时调用。&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didFailProvisionalNavigation:withError: 主框架在开始加载数据出现错误时调用&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didFinishNavigation: 主框架导航完成时调用&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didReceiveAuthenticationChallenge:completionHandler: web视图需要响应身份验证时调用&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didReceiveServerRedirectForProvisionalNavigation: 主服务器接受到重定向时调用&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:didStartProvisionalNavigation: 主框架导航开始时调用&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:decidePolicyForNavigationAction:decisionHandler: 决定是否允许或取消一个导航&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ul&gt;
-      &lt;li&gt;webView:decidePolicyForNavigationResponse:decisionHandler: 决定是否允许或取消一个导航后其反应是已知的&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;WKScriptMessageHandler&lt;/em&gt;：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;userContentController:didReceiveScriptMessage:（required）一个脚本从一个网页接收到消息时调用&lt;/li&gt;
-  &lt;li&gt;WKUIDelegate：&lt;/li&gt;
-  &lt;li&gt;webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:创建一个新的webView&lt;/li&gt;
-  &lt;li&gt;webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler: 显示一个JavaScript警告面板。&lt;/li&gt;
-  &lt;li&gt;webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:显示一个JavaScript确认面板。&lt;/li&gt;
-  &lt;li&gt;webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler: 显示一个JavaScript文本输入面板。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;其中一些类中的枚举状态：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKNavigationType) {
-    WKNavigationTypeLinkActivated,//链接的href属性被用户激活。
-    WKNavigationTypeFormSubmitted,//一个表单提交。
-    WKNavigationTypeBackForward,//回到前面的条目列表请求。
-    WKNavigationTypeReload,//网页加载。
-    WKNavigationTypeFormResubmitted,//一个表单提交(例如通过前进,后退,或重新加载)。
-    WKNavigationTypeOther = -1,//导航是发生一些其他原因。
-} NS_ENUM_AVAILABLE(10_10, 8_0);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
-    WKUserScriptInjectionTimeAtDocumentStart,//注入后的脚本创建文档元素,但在其他任何内容已经被加载。
-    WKUserScriptInjectionTimeAtDocumentEnd//注入脚本文档完成加载后,但在任何子资源可能完成加载。
-}
-NS_ENUM_AVAILABLE(10_10, 8_0);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
-    WKNavigationActionPolicyCancel,//取消导航
-    WKNavigationActionPolicyAllow,//允许导航继续
-} NS_ENUM_AVAILABLE(10_10, 8_0);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
-    WKNavigationResponsePolicyCancel,//取消导航
-    WKNavigationResponsePolicyAllow,//允许导航继续
-} NS_ENUM_AVAILABLE(10_10, 8_0);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-</description>
-        <pubDate>Mon, 12 Dec 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/study/2016/12/12/WKWebKit%E4%BB%8B%E7%BB%8D/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2016/12/12/WKWebKit%E4%BB%8B%E7%BB%8D/</guid>
-        
-        <category>WKWebKit</category>
-        
-        <category>WKWebKit介绍</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>emoji表情作为单字符长度的处理</title>
-        <description>&lt;p&gt;我们知道emoji表情是一些特殊格式的字符串，因此我们在计算其长度的时候直接用“xxx.length”即可，但有时候产品经理会要求你把所有的emoji表情都当做一个字符处理，别问我怎么知道的😭😭😭，这里写下来希望大家不要跟我一样到处跳坑&lt;/p&gt;
-
-&lt;p&gt;还是直接上代码&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;获取emoji个数（我这里写到了NSString的类方法中）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-+ (NSInteger)emojiCountInString:(NSString *)string
-{
-    __block NSInteger num = 0;
-    [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
-                               options:NSStringEnumerationByComposedCharacterSequences
-                            usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
-		const unichar hs = [substring characterAtIndex:0];
-		if (0xd800 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0xdbff){
-			if (substring.length &amp;gt; 1) {
-				const unichar ls = [substring characterAtIndex:1];
-			    const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
-				if (0x1d000 &amp;lt;= uc &amp;amp;&amp;amp; uc &amp;lt;= 0x1f918)
-				{
-					num += 1;
-				}
-			}
-		}
-		else if (substring.length &amp;gt; 1)
-		{
-			const unichar ls = [substring characterAtIndex:1];
-			if (ls == 0x20e3 || ls == 0xFE0F || ls == 0xd83c)
-			{
-				num += 1;
-			}
-		}
-	    else{
-		// non surrogate
-			if (0x2100 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x27ff)
-			{
-			if (0x278b &amp;lt;= hs &amp;amp;&amp;amp; 0x2792 &amp;gt;= hs)
-			{
-				//不为emoji
-			}
-			else
-			{
-				num += 1;
-			}
-		}
-		else if (0x2B05 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2b07)
-		{
-			num += 1;
-		}
-		else if (0x2934 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2935)
-		{
-			num += 1;
-		}
-		else if (0x3297 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x3299)
-		{
-			num += 1;
-		}
-		else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50 || hs == 0xd83e)
-		{
-			num += 1;
-		}
-	}
-	}];
-    return num;
-}
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;字符串去掉emoji&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-+ (NSString *)getStringWithoutEmoji:(NSString *)string
-{
-    __block NSString *tempStr = string;
-    [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
-                               options:NSStringEnumerationByComposedCharacterSequences
-                            usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
-                                const unichar hs = [substring characterAtIndex:0];
-                                // surrogate pair
-                                if (0xd800 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0xdbff)
-                                {
-                                    if (substring.length &amp;gt; 1)
-                                    {
-                                        const unichar ls = [substring characterAtIndex:1];
-                                        const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
-                                        if (0x1d000 &amp;lt;= uc &amp;amp;&amp;amp; uc &amp;lt;= 0x1f918)
-                                        {
-
-                                            tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                        }
-                                    }
-                                }
-                                else if (substring.length &amp;gt; 1)
-                                {
-                                    const unichar ls = [substring characterAtIndex:1];
-                                    if (ls == 0x20e3 || ls == 0xFE0F || ls == 0xd83c)
-                                    {
-                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                    }
-                                }
-                                else
-                                {
-                                    // non surrogate
-                                    if (0x2100 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x27ff)
-                                    {
-                                        if (0x278b &amp;lt;= hs &amp;amp;&amp;amp; 0x2792 &amp;gt;= hs)
-                                        {
-                                            //不为emoji
-                                        }
-                                        else
-                                        {
-                                            tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                        }
-                                    }
-                                    else if (0x2B05 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2b07)
-                                    {
-                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                    }
-                                    else if (0x2934 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x2935)
-                                    {
-                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                    }
-                                    else if (0x3297 &amp;lt;= hs &amp;amp;&amp;amp; hs &amp;lt;= 0x3299)
-                                    {
-                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                    }
-                                    else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50 || hs == 0xd83e)
-                                    {
-                                        tempStr = [tempStr stringByReplacingOccurrencesOfString:substring withString:@&quot;&quot;];
-                                    }
-                                }
-                            }];
-    return tempStr;
-}
-
-
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-  &lt;li&gt;获取把emoji表情当成单个字符长度处理后的字符串长度&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(NSInteger)lengthWithEmojiString{
-    NSInteger emojiLen = [NSString emojiCountInString:self];
-    NSString * normalStr = [NSString getStringWithoutEmoji:self];
-    NSInteger strLengh = normalStr.length+emojiLen;
-    return strLengh;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-</description>
-        <pubDate>Tue, 08 Nov 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/study/2016/11/08/emoji%E8%A1%A8%E6%83%85%E4%BD%9C%E4%B8%BA%E5%8D%95%E5%AD%97%E7%AC%A6%E9%95%BF%E5%BA%A6%E7%9A%84%E5%A4%84%E7%90%86/</link>
-        <guid isPermaLink="true">http://localhost:4000/study/2016/11/08/emoji%E8%A1%A8%E6%83%85%E4%BD%9C%E4%B8%BA%E5%8D%95%E5%AD%97%E7%AC%A6%E9%95%BF%E5%BA%A6%E7%9A%84%E5%A4%84%E7%90%86/</guid>
-        
-        <category>emoji</category>
-        
-        <category>长度</category>
-        
-        <category>emoji表情作为单字符长度的处理</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>block中weakSelf和strongSelf的简化</title>
-        <description>&lt;p&gt;我们知道在block中使用全局变量需要考虑到循环引用问题，这时就会引入weakSelf和strongSelf，具体用法不多说，网上很多介绍的文章，比如&lt;a href=&quot;http://www.jianshu.com/p/701da54bd78c&quot;&gt;深入研究Block用weakSelf、strongSelf、@weakify、@strongify解决循环引用&lt;/a&gt;
-  但是频繁的书写weakSelf和strongSelf会让人觉得代码重复，但是这个东西又不好抽取。经过多方打探，找到一个特别简便的方法，你不用再考虑weakSelf和strongSelf的书写，直接使用self代替即可。在文件中加入下面的宏即可。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define weakify(...) \
-    ext_keywordify \
-    metamacro_foreach_cxt(ext_weakify_,, __weak, __VA_ARGS__)
-#define strongify(...) \
-    ext_keywordify \
-    _Pragma(&quot;clang diagnostic push&quot;) \
-    _Pragma(&quot;clang diagnostic ignored \&quot;-Wshadow\&quot;&quot;) \
-    metamacro_foreach(ext_strongify_,, __VA_ARGS__) \
-    _Pragma(&quot;clang diagnostic pop&quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-</description>
-        <pubDate>Tue, 18 Oct 2016 16:08:08 +0800</pubDate>
-        <link>http://localhost:4000/efficiency/2016/10/18/block%E4%B8%ADweakSelf%E5%92%8CstrongSelf%E7%9A%84%E7%AE%80%E5%8C%96/</link>
-        <guid isPermaLink="true">http://localhost:4000/efficiency/2016/10/18/block%E4%B8%ADweakSelf%E5%92%8CstrongSelf%E7%9A%84%E7%AE%80%E5%8C%96/</guid>
-        
-        <category>循环引用</category>
-        
-        <category>block</category>
-        
-        <category>self</category>
-        
-        <category>block中weakSelf和strongSelf的简化</category>
-        
-        
-        <category>Efficiency</category>
         
       </item>
     

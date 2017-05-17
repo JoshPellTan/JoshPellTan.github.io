@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+  <title>iOS启动速度的优化</title>
+  <meta name="description" content="最近我们APP安卓端做了个小优化，将网络框架做了更换，并且减少了启动时候的一些初始化。然后CTO拿着一个安卓手机过来对我说，安卓优化后比你们快多了。啥？不可能，苹果手机大几千呢！玩儿呢？！不服，下班拿了一个安卓2000多块的手机跟我的苹果手机做了一下APP打开比较，苹果完败！必须不服，咱也要优化打开速度！">
+  <meta name="author" content="JoshPell">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="iOS启动速度的优化">
+  <meta name="twitter:description" content="最近我们APP安卓端做了个小优化，将网络框架做了更换，并且减少了启动时候的一些初始化。然后CTO拿着一个安卓手机过来对我说，安卓优化后比你们快多了。啥？不可能，苹果手机大几千呢！玩儿呢？！不服，下班拿了一个安卓2000多块的手机跟我的苹果手机做了一下APP打开比较，苹果完败！必须不服，咱也要优化打开速度！">
+  
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="iOS启动速度的优化">
+  <meta property="og:description" content="最近我们APP安卓端做了个小优化，将网络框架做了更换，并且减少了启动时候的一些初始化。然后CTO拿着一个安卓手机过来对我说，安卓优化后比你们快多了。啥？不可能，苹果手机大几千呢！玩儿呢？！不服，下班拿了一个安卓2000多块的手机跟我的苹果手机做了一下APP打开比较，苹果完败！必须不服，咱也要优化打开速度！">
+  
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="/2017/05/iOS%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6%E7%9A%84%E4%BC%98%E5%8C%96/">
+  <link rel="alternate" type="application/rss+xml" title="谭健" href="/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+
+<script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=2854006074878156134' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+
+
+<!-- 百度统计 -->
+  
+
+<!-- google 统计 -->
+  
+
+</head>
+
+
+  <body style="height:1000px;">
+
+   <meta name="baidu-site-verification" content="0L5MKMrHOb" />
+
+    <span class="mobile btn-mobile-menu">        
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/#blog" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      标签
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+      </div>
+    </span>
+
+
+    <header class="panel-cover panel-cover--collapsed">
+<style type="text/css">
+body {background-image:url(http://7sbmib.com1.z0.glb.clouddn.com/body_background1.png);}
+p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_background1.png); padding: 20px;}
+</style>
+  
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">            
+            <a href="/#blog" title="前往 谭健 的主页" class="blog-button">
+                <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+                <div class="info">
+                    <div class="info-back">
+                        <h1> 
+                            
+                                JoshPellTan
+                            
+                        </h1>
+                        <p>
+                           
+                                iOS/H5/CSS
+                            
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for 谭健" class="blog-button">谭健</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">人生只有必然，没有偶然</span>
+        
+        <hr class="panel-cover__divider" style="height:1px;border:none;border-top:1px solid #555555;"/>
+        <p class="panel-cover__description">欢迎来到我的个人网站~</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" style="height:1px;border:none;border-top:1px solid #555555;"/>
+        
+        
+        
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                  <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                  <li class="navigation__item"><a href="/tags" title="tags">标签</a></li>
+                
+                  <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>          
+        </div>
+
+
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-disabled"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- latex公式支持代码 end -->
+
+<!-- 代码高亮设置 begin 
+<link rel="stylesheet" href="/css/pygments-default.css">
+ 代码高亮设置 end -->
+
+
+<article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">iOS启动速度的优化</h1>
+    <div class="post-meta" style="color:#FF6633">
+      <img src="/images/calendar.png" width="20px"/> 
+      <time datetime="2017-05-15 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-05-15</time>  
+         
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+
+    <p>最近我们APP安卓端做了个小优化，将网络框架做了更换，并且减少了启动时候的一些初始化。然后CTO拿着一个安卓手机过来对我说，安卓优化后比你们快多了。啥？不可能，苹果手机大几千呢！玩儿呢？！不服，下班拿了一个安卓2000多块的手机跟我的苹果手机做了一下APP打开比较，苹果完败！必须不服，咱也要优化打开速度！</p>
+
+<p>很多地方说测一下<code class="highlighter-rouge">main</code>方法到<code class="highlighter-rouge">- (BOOL)Application:(UIApplication *)Application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</code>方法的时间就是APP的打开时间了，虽然能一定程度上反映这个指标，但是不严谨。</p>
+
+<p>t(App总启动时间) = t1(main()之前的加载时间) + t2(main()之后的加载时间)。 t1 = 系统dylib(动态链接库)和自身App可执行文件的加载； t2 = main方法执行之后到AppDelegate类中的- (BOOL)Application:(UIApplication *)Application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions方法执行结束前这段时间，主要是构建第一个界面，并完成渲染展示。</p>
+
+<h3 id="main">main()调用之前的加载过程</h3>
+
+<p>App开始启动后， 系统首先加载可执行文件（自身App的所有.o文件的集合），然后加载动态链接库dyld，dyld是一个专门用来加载动态链接库的库。 执行从dyld开始，dyld从可执行文件的依赖开始, 递归加载所有的依赖动态链接库。 
+动态链接库包括：iOS 中用到的所有系统 framework，加载OC runtime方法的libobjc，系统级别的libSystem，例如libdispatch(GCD)和libsystem_blocks (Block)。</p>
+
+<p>其实无论对于系统的动态链接库还是对于App本身的可执行文件而言，他们都算是image（镜像），而每个App都是以image(镜像)为单位进行加载的，那么image究竟包括哪些呢？</p>
+
+<h3 id="image">什么是image</h3>
+
+<p>1.executable可执行文件 比如.o文件。 
+2.dylib 动态链接库 framework就是动态链接库和相应资源包含在一起的一个文件夹结构。 
+3.bundle 资源文件 只能用dlopen加载，不推荐使用这种方式加载。</p>
+
+<p>除了我们App本身的可行性文件，系统中所有的framework比如UIKit、Foundation等都是以动态链接库的方式集成进App中的。</p>
+
+<p><strong>系统使用动态链接有几点好处</strong>:</p>
+
+<ul>
+  <li>
+    <p><strong>代码共用</strong>:很多程序都动态链接了这些 lib，但它们在内存和磁盘中中只有一份。 易于维护：由于被依赖的 lib 是程序执行时才链接的，所以这些 lib 很容易做更新，比如libSystem.dylib 是 libSystem.B.dylib 的替身，哪天想升级直接换成libSystem.C.dylib 然后再替换替身就行了。</p>
+  </li>
+  <li>
+    <p><strong>减少可执行文件体积</strong>:相比静态链接，动态链接在编译时不需要打进去，所以可执行文件的体积要小很多。</p>
+  </li>
+</ul>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage0.png" width="400" height="400" alt="photos" /></p>
+
+<p>如上所示，不同进程之间共用系统dylib的_TEXT区，但是各自维护对应的_DATA区。</p>
+
+<p>所有动态链接库和我们App中的静态库.a和所有类文件编译后的.o文件最终都是由dyld(the dynamic link editor)即Apple的动态链接器来加载到内存中。每个image都是由一个叫做ImageLoader的类来负责加载（一一对应），那么ImageLoader又是什么呢？</p>
+
+<h3 id="imageloader">什么是ImageLoader</h3>
+
+<p>image 表示一个二进制文件(可执行文件或 so 文件)，里面是被编译过的符号、代码等，所以 ImageLoader 作用是将这些文件加载进内存，且每一个文件对应一个ImageLoader实例来负责加载。 
+两步走： 在程序运行时它先将动态链接的 image 递归加载 (也就是上面测试栈中一串的递归调用的时刻)。 再从可执行文件 image 递归加载所有符号。</p>
+
+<p>所有这些都发生在我们真正的main函数执行前。</p>
+
+<h3 id="section">动态链接库加载的具体流程</h3>
+
+<p>动态链接库的加载步骤具体分为5步：</p>
+
+<h4 id="load-dylibs-image-"><strong>一.load dylibs image</strong> 读取库镜像文件</h4>
+
+<blockquote>
+  <p>在每个动态库的加载过程中，dyld需要：</p>
+</blockquote>
+
+<blockquote>
+  <p>1.分析所依赖的动态库
+2.找到动态库的mach-o文件
+3.打开文件
+4.验证文件
+5.在系统核心注册文件签名
+6.对动态库的每一个segment调用mmap()</p>
+</blockquote>
+
+<p>通常的，一个App需要加载100到400个dylibs， 但是其中的系统库被优化，可以很快的加载。 针对这一步骤的优化有：</p>
+
+<blockquote>
+  <p>1.减少非系统库的依赖
+2.合并非系统库
+3.使用静态资源，比如把代码加入主程</p>
+</blockquote>
+
+<h4 id="rebase-image"><strong>Rebase image</strong></h4>
+
+<p>由于ASLR(address space layout randomization)的存在，可执行文件和动态链接库在虚拟内存中的加载地址每次启动都不固定，所以需要这2步来修复镜像中的资源指针，来指向正确的地址。 rebase修复的是指向当前镜像内部的资源指针； 而bind指向的是镜像外部的资源指针。 
+rebase步骤先进行，需要把镜像读入内存，并以page为单位进行加密验证，保证不会被篡改，所以这一步的瓶颈在IO。bind在其后进行，由于要查询符号表，来指向跨镜像的资源，加上在rebase阶段，镜像已被读入和加密验证，所以这一步的瓶颈在于CPU计算。 
+通过命令行可以查看相关的资源指针:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>xcrun dyldinfo -rebase -bind -lazy_bind myApp.App/myApp
+</code></pre>
+</div>
+
+<p>优化该阶段的关键在于减少__DATA segment中的指针数量。我们可以优化的点有：</p>
+
+<blockquote>
+  <p>1.减少Objc类数量， 减少selector数量
+2.减少C++虚函数数量
+3.转而使用swift stuct（其实本质上就是为了减少符号的数量）</p>
+</blockquote>
+
+<h4 id="bind-image"><strong>Bind image</strong></h4>
+<p>上部已连带讲解</p>
+
+<h4 id="objc-setup"><strong>Objc setup</strong></h4>
+
+<p>这一步主要工作是:
+&gt;1.注册Objc类 (class registration)
+&gt;2.把category的定义插入方法列表 (category registration)
+&gt;3.保证每一个selector唯一 (selctor uniquing)
+由于之前2步骤的优化，这一步实际上没有什么可做的。</p>
+
+<h4 id="initializers"><strong>initializers</strong></h4>
+
+<p>以上三步属于静态调整(fix-up)，都是在修改__DATA segment中的内容，而这里则开始动态调整，开始在堆和堆栈中写入内容。 在这里的工作有：
+&gt;1.Objc的+load()函数
+&gt;2.C++的构造函数属性函数 形如attribute((constructor)) void DoSomeInitializationWork()
+&gt;3.非基本类型的C++静态全局变量的创建(通常是类或结构体)(non-trivial initializer) 比如一个全局静态结构体的构建，如果在构造函数中有繁重的工作，那么会拖慢启动速度
+Objc的load函数和C++的静态构造函数采用由底向上的方式执行，来保证每个执行的方法，都可以找到所依赖的动态库。</p>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage1.png" width="300" height="200" alt="photos" /></p>
+
+<p>上图是在自定义的类XXViewController的+load方法断点的调用堆栈，清楚的看到整个调用栈和顺序：</p>
+
+<blockquote>
+  <p>1.dyld 开始将程序二进制文件初始化
+2.交由 ImageLoader 读取 image，其中包含了我们的类、方法等各种符号
+3.由于 runtime 向 dyld 绑定了回调，当 image 加载到内存后，dyld 会通知 runtime 进行处理
+4.runtime 接手后调用 mapimages 做解析和处理，接下来 loadimages 中调用 callloadmethods 方法，遍历所有加载进来的 Class，按继承层级依次调用 Class 的 +load 方法和其 Category 的 +load 方法</p>
+</blockquote>
+
+<p>至此，可执行文件中和动态库所有的符号(Class，Protocol，Selector，IMP，…)都已经按格式成功加载到内存中，被 runtime 所管理，再这之后，runtime 的那些方法(动态添加 Class、swizzle 等等才能生效)。</p>
+
+<p>整个事件由 dyld 主导，完成运行环境的初始化后，配合 ImageLoader 将二进制文件按格式加载到内存， 动态链接依赖库，并由 runtime 负责加载成 objc 定义的结构，所有初始化工作结束后，dyld 调用真正的 main 函数。</p>
+
+<p>如果程序刚刚被运行过，那么程序的代码会被dyld缓存，因此即使杀掉进程再次重启加载时间也会相对快一点，如果长时间没有启动或者当前dyld的缓存已经被其他应用占据，那么这次启动所花费的时间就要长一点，这就分别是热启动和冷启动的概念，如下图所示:</p>
+
+<p>```</p>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage2.png" width="300" height="200" alt="photos" /></p>
+
+<h3 id="main-1">main()函数之前的加载时间衡量</h3>
+
+<p>苹果官方提供了一种方法，那就是在真机调试的时候勾选dyldPRINTSTATISTICS选项。</p>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage3.png" width="500" height="300" alt="photos" /></p>
+
+<p>会得到如下形式的输出:</p>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage4.png" width="400" height="300" alt="photos" /></p>
+
+<p>对于系统级别的动态链接库，因为苹果做了优化，所以耗时并不多，在这个awesome的例子中，自身App中的代码占用了整体时间的94.2% 我们应用中一次典型的Log如下：</p>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage5.png" width="500" height="300" alt="photos" /></p>
+
+<p>由此可见，最多的用时还是在image加载和OC类的初始化，共占用总时长的79.3%，精简framework的引入和OC类有优化的空间。</p>
+
+<p>总结一下：对于main()调用之前的耗时我们可以优化的点有：</p>
+
+<blockquote>
+  <p>1.减少不必要的framework，因为动态链接比较耗时
+2.check framework应当设为optional和required，如果该framework在当前App支持的所有iOS系统版本都存在，那么就设为required，否则就设为optional，因为optional会有些额外的检查
+3.合并或者删减一些OC类，关于清理项目中没用到的类，使用工具AppCode代码检查功能，查到当前项目中没有用到的类如下：</p>
+</blockquote>
+
+<p><img src="http://ofnft8t2g.bkt.clouddn.com/wikiimage6_new.png" width="500" height="350" alt="photos" /></p>
+
+<p>然后处理步骤大概如下：
+a.删减一些无用的静态变量
+b.删减没有被调用到或者已经废弃的方法
+方法见：
+&gt;http://stackoverflow.com/questions/35233564/how-to-find-unused-code-in-xcode-7
+&gt;https://developer.Apple.com/library/ios/documentation/ToolsLanguages/Conceptual/Xcode_Overview/CheckingCodeCoverage.html
+c.将不必须在+load方法中做的事情延迟到+initialize中
+d.尽量不要用C++虚函数(创建虚函数表有开销)</p>
+
+<h3 id="main-2">main函数之后加载时间优化记录</h3>
+
+<p>NSUserDefaults是否是瓶颈?
+苹果官方文档提到NSUserDefaults加载的时候是整个plist配置文件全部load到内存中，但是测试结果显示并不会。 通过符号断点+[NSUserDefaults standardUserDefaults]确定最早一次的+load()从执行到结束耗时1.8ms，可见NSUserDefaults的初始化仅耗时1.8ms，并不是启动耗时的瓶颈。</p>
+
+<p>为了找到瓶颈，在启动之后的didFinishLauhcning方法开始执行到首页列表页的WZMainViewController的viewDidAppear方法，几乎每个可能比较耗时的流程进行拆分和统计，得到统计数据之后发现： 主要耗时在首页UI构造和渲染(storyboard加载，tabBar/topBar渲染，开屏广告加载/cell注册/日志模块初始化这几个步骤)。</p>
+
+<h4 id="section-1"><strong>具体优化点</strong></h4>
+
+<p>1.纯代码方式而不是storyboard加载首页UI。
+2.对didFinishLaunching里的函数考虑能否挖掘可以延迟加载或者懒加载，需要与各个业务方pm和rd共同check 对于一些已经下线的业务，删减冗余代码。对于一些与UI展示无关的业务，如微博认证过期检查、图片最大缓存空间设置等做延迟加载
+3.对实现了+load()方法的类进行分析，尽量将load里的代码延后调用。
+4.上面统计数据显示展示feed的导航控制器页面(WZMainViewController)比较耗时，对于viewDidLoad以及viewWillAppear方法中尽量去尝试少做，晚做，不做。</p>
+
+
+  </section>
+</article>
+<br>
+<section>
+  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+</section>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+    <title>打赏</title>
+    <style type="text/css">
+        .content{width:80%;margin:10px auto;}
+                .hide_box{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+        .shang_box{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+        .shang_box img{border:none;border-width:0;}
+        .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+        .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+        .shang_close{float:right;display:inline-block;}
+                .shang_logo{display:block;text-align:center;margin:20px auto;}
+        .shang_tit{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/dsimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+        .shang_tit p{color:#a3a3a3;text-align:center;font-size:16px;}
+        .shang_payimg{width:140px;padding:10px;border:6px solid #EA5F00;margin:0 auto;border-radius:3px;height:140px;}
+        .shang_payimg img{display:block;text-align:center;width:140px;height:140px; }
+        .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+        .radiobox{width: 16px;height: 16px;background: url('/dsimg/radio2.jpg');display: block;float: left;margin-top: 5px;margin-right: 14px;}
+        .checked .radiobox{background:url('/dsimg/radio1.jpg');}
+        .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:280px;}
+        .shang_payselect .pay_item{display:inline-block;margin-right:10px;float:left;}
+        .shang_info{clear:both;}
+		.shang_info p,.shang_info a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+    </style>
+</head>
+
+<body>
+    <div class="content">
+    <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏</a></p>
+    <div class="hide_box"></div>
+    <div class="shang_box">
+    	<a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/dsimg/close.jpg" alt="取消" /></a>
+        <img class="shang_logo" src="/dsimg/logos.png" alt="谭健" />
+    	<div class="shang_tit">
+    		<p>感谢您的支持，我会继续努力的!</p>
+    	</div>
+    	<div class="shang_payimg">
+    		<img src="/dsimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+    	</div>
+    		<div class="pay_explain">扫码打赏，你说多少就多少</div>
+    	<div class="shang_payselect">
+    		<div class="pay_item checked" data-id="alipay">
+	    		<span class="radiobox"></span>
+	    		<span class="pay_logo"><img src="/dsimg/alipay.jpg" alt="支付宝" /></span>
+    		</div>
+    		<div class="pay_item" data-id="weipay">
+	    		<span class="radiobox"></span>
+	    		<span class="pay_logo"><img src="/dsimg/wechat.jpg" alt="微信" /></span>
+    		</div>
+    	</div>
+    	<div class="shang_info">
+    		<p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+    		<p>Powered by <a href="JoshPellTan.cc" target="_blank" title="谭健">谭健</a>，分享从这里开始，精彩与您同在</p>
+    	</div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+    	$(".pay_item").click(function(){
+    		$(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+    		var dataid=$(this).attr('data-id');
+    		$(".shang_payimg img").attr("src","/dsimg/"+dataid+"img.jpg");
+    		$("#shang_pay_txt").text(dataid=="alipay"?"支付宝":"微信");
+    	});
+    });
+    function dashangToggle(){
+    	$(".hide_box").fadeToggle();
+    	$(".shang_box").fadeToggle();
+    }
+    </script>
+</body>
+</html>
+
+<section>
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2017/05/iOS%E7%9A%84https%E8%AE%A4%E8%AF%81-%E4%BA%8C/" data-toggle="tooltip" data-placement="top" title="iOS的https认证(二)">上一篇：  <span>iOS的https认证(二)</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2017/05/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E5%B0%8F%E8%A7%91/" data-toggle="tooltip" data-placement="top" title="编程思想小觑">下一篇：  <span>编程思想小觑</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+
+
+<br>
+
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="" data-title="iOS启动速度的优化 " data-url="JoshPell.cc//2017/05/iOS%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6%E7%9A%84%E4%BC%98%E5%8C%96/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"JoshPell"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+<link href="/css/top.css/" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js?v=1.83.min/" type="text/javascript"></script>
+<script src="/js/top.js/"></script>
+<div style="display: none;" id="rocket-to-top">
+<div style="opacity:0;display: block;" class="level-2"></div>
+<div class="level-3"></div>
+</div
+
+
+
+
+            <section class="footer">
+    <footer>
+        <div class = "footer_div">  
+        <nav class="cover-navigation navigation--social">
+          <ul class="navigation">
+
+          
+          <!-- Weibo -->
+          <li class="navigation__item_social">
+            <a href="http://weibo.com/FONKY_TJ" title="@FONKY_TJ 的微博" target="_blank">
+              <i class='social fa fa-weibo fa-2x'></i>
+              <span class="label">Weibo</span>
+            </a>
+          </li>
+          
+
+          
+          <!-- Github -->
+          <li class="navigation__item_social">
+            <a href="https://github.com/JoshPellTan" title="@JoshPellTan 的 Github" target="_blank">
+              <i class='social fa fa-github fa-2x'></i>
+              <span class="label">Github</span>
+            </a>
+          </li>
+          
+          
+          
+
+          
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+          <!-- Email -->
+          <li class="navigation__item_social">
+            <a href="mailto:joshpelltan@gmail.com" title="Contact me">
+              <i class='social fa fa-envelope fa-2x'></i>
+              <span class="label">Email</span>
+            </a>
+          </li>
+          
+
+          </ul>
+        </nav>
+
+        </div>
+
+
+
+        <div class = "footer_div">  
+           <p class="copyright text-muted">
+            Copyright &copy; 谭健 2017 Theme by <a href="http://JoshPell.cc/">JoshPell</a> |
+            <iframe
+                style="margin-left: 2px; margin-bottom:-5px;"
+                frameborder="0" scrolling="0" width="91px" height="20px"
+                src="https://ghbtns.com/github-btn.html?user=JoshPell&repo=joshpeltan.github.io&type=star&count=true" >
+            </iframe>|
+            
+<!-- cnzz -->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261874359'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1261874359%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+</p>
+        	<div align="right">
+    			<link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<!-- 访问统计 -->
+ 
+      Total <span id="busuanzi_value_site_pv"></span> views.
+您是我的第<span id="busuanzi_value_site_uv"></span> 个访客..
+<span id="busuanzi_value_page_pv"></span> Hits
+  
+          </span>
+        </div>
+        <div>
+    </footer>
+</section>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+
+
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+    
+<!-- 
+
+
+
+<link href="/css/top.css/" rel="stylesheet" type="text/css" />
+<script src="/js/jquery.js?v=1.83.min/" type="text/javascript"></script>
+<script src="/js/top.js/"></script>
+<div style="display: none;" id="rocket-to-top">
+<div style="opacity:0;display: block;" class="level-2"></div>
+<div class="level-3"></div>
+</div>-->
+
+
+<!--小人只在首页显示 start*-->
+<div id="spig" class="spig">
+    <div id="message">正在加载中……</div>
+    <div id="mumu" class="mumu"></div>
+</div>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/js/jquery.xiaoren.js"></script>
+<script type="text/javascript" src="/js/spig.js"></script>
+<link rel="stylesheet" href="/css/xiaoren.css" type="text/css"/>
+<script type="text/javascript">
+var isindex = true;
+var visitor = true;
+</script>
+
+
+</body>
+
+</html>

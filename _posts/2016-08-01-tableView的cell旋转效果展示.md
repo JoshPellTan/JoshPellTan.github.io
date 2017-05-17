@@ -12,8 +12,7 @@ tags:
 
 让人眼前一亮的cell展示效果，只需要加入以下代码：
 
-```
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+	- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
 
     CATransform3D rotation;
     rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4);
@@ -34,7 +33,6 @@ tags:
     [UIView commitAnimations];
 }
 
-```
 如需要其他效果，修改 `rotation = CATransform3DMakeRotation( (90.0*M_PI)/180, 0, 0.7, 0.4)` 参数即可
 
 

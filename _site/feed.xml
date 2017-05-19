@@ -5,9 +5,195 @@
     <description>欢迎来到我的个人网站~</description>
     <link>/</link>
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 18 May 2017 09:56:48 +0800</pubDate>
-    <lastBuildDate>Thu, 18 May 2017 09:56:48 +0800</lastBuildDate>
+    <pubDate>Fri, 19 May 2017 22:33:43 +0800</pubDate>
+    <lastBuildDate>Fri, 19 May 2017 22:33:43 +0800</lastBuildDate>
     <generator>Jekyll v3.1.1</generator>
+    
+      <item>
+        <title>录音与播放以及网络音频播放</title>
+        <description>&lt;p&gt;公司下个版本计划要做音频的录制与播放，这块没怎么接触过，一边学习一边踩坑，下面就给大家做个分享，共同进步。这里也贴出我写的&lt;a href=&quot;&quot;&gt;DEMO&lt;/a&gt;，欢迎使用和star！&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;录音&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;音频任务初始化&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;我们这里用的是NB的AVFoundation框架，这里使用AudioSession来对音频任务做处理，无论是录制还是播放都需要做这一步。初始化任务：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;AVAudioSession *session = [AVAudioSession sharedInstance];
+            NSError *sessionError;
+[session setCategory:AVAudioSessionCategoryPlayAndRecord error:&amp;amp;sessionError];
+if(session == nil){
+    NSLog(@&quot;Error creating session: %@&quot;, [sessionError description]);
+}else{
+    [session setActive:YES error:nil];//激活当前session
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;如果不做初始化，直接使用AudioRecorder的话，录制出来是没有任何声音的，下面几点就是原因，也是它的主要功能：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;1.为app选择输入输出的路由 （通过扬声器还是听筒播放）&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;2.协调音频播放的app之间的关联，以及系统的声音处理&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;3.处理被其他apps打断&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;4.创建一个录音或者播放音乐的任务&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;而这里的参数&lt;code class=&quot;highlighter-rouge&quot;&gt;AVAudioSessionCategoryPlayAndRecord&lt;/code&gt;需要说明一下，可以根据实际情况选择：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* AVAudioSessionCategorySoloAmbient 
+  会停止其他程序的音频播放。当设备被设置为静音模式，app也同样被停止
+* AVAudioSessionCategoryRecord
+  仅用来录音，无法播放音频
+* AVAudioSessionCategoryPlayback 
+ 会停止其它音频播放，并且能在后台播放，锁屏and静音模式下均可
+* AVAudioSessionCategoryPlayAndRecord
+  能播也能录，播放默认声音是从听筒出来
+* AVAudioSessionCategoryAmbient
+  app的声音可与其它app共存，但锁屏和静音情况会被停止，除非当前app是唯一播放的app
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;初始化录音器&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;录音需要调用AVAudioRecorder，下面代码用于初始化录音器：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+playName = [NSString stringWithFormat:@&quot;%@/play.aac&quot;,docDir];
+//录音设置
+recorderSettingsDict =[[NSDictionary alloc] initWithObjectsAndKeys:
+                                   [NSNumber 										numberWithInt:kAudioFormatMPEG4AAC],AVFormatIDKey,
+                                   [NSNumber numberWithInt:8000],AVSampleRateKey,
+                                   [NSNumber numberWithInt:1],AVNumberOfChannelsKey,
+                                   AVAudioQualityHigh,AVEncoderAudioQualityKey,
+                                   nil];
+
+NSError *error = nil;
+//必须真机上测试,模拟器上可能会崩溃
+_recorder = [[AVAudioRecorder alloc] initWithURL:[NSURL URLWithString:playName] settings:recorderSettingsDict error:&amp;amp;error];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;先给大家看一下初始化字典里面的参数：&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AVFormatIDKey&lt;/code&gt;——音频格式，主要有一下支持格式：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kAudioFormatLinearPCM
+kAudioFormatMPEG4AAC
+kAudioFormatAppleLossless
+kAudioFormatAppleMA4
+kAudioFormatiLBC
+kAudioFormatULaw 选择kAudioFormatLinearPCM会将未压缩的音频流写入到文件中.这种格式保真度最高,不过相应的文件也最大.选择诸如kAudioFormatMPEG4AAC或者kAudioFormatAppleMA4的压缩格式会显著缩小文件,也能保证高质量的音频内容。我这里选择的是kAudioFormatMPEG4AAC,而且安卓和苹果都支持播放。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AVSampleRateKey&lt;/code&gt;——采样率，单位HZ，采样率越小声音质量越低，通常有8000/44100/96000，采样率必须要设为11025才能使转化成mp3格式后不会失真&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AVNumberOfChannelsKey&lt;/code&gt;——声道数，1或2，除非使用外部硬件,否则通常应当创建单声道录音。通常单声道足以满足我们录音功能的需要。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AVEncoderAudioQualityKey&lt;/code&gt;——录音音质，是一个枚举值，这里我选AVAudioQualityHigh中等质量。&lt;/p&gt;
+
+&lt;p&gt;更多参考&lt;a href=&quot;http://www.jianshu.com/p/135ca0deceec&quot;&gt;链接&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;开始录制&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_recorder.meteringEnabled = YES;//设置yes才能监测输入的音量大小，可以用作用户界面反馈
+[_recorder record];
+volumeTimer = [NSTimer scheduledTimerWithTimeInterval:volumeObserverMargin target:weakSelf selector:@selector(levelTimer:) userInfo:nil repeats:YES];//新建一个计时器用作测量音量大小
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;监测音量&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//输入声音的分贝大小计算
+[_recorder updateMeters];
+const double ALPHA = 0.05;
+double peakPowerForChannel = pow(10, (0.05 * [_recorder peakPowerForChannel:0]));
+lowPassResults = ALPHA * peakPowerForChannel + (1.0 - ALPHA) * lowPassResults;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;停止录音&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_recorder stop];
+_recorder = nil;
+//结束定时器
+[volumeTimer invalidate];
+volumeTimer = nil;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;播放本地录音&lt;/h3&gt;
+
+&lt;p&gt;这里分两步操作，一是播放本地音频，二是进行进度监听&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;播放本地音频&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[playerLocal play];
+progressTimer = [NSTimer scheduledTimerWithTimeInterval:playerTimeObserverMargin target:self selector:@selector(recorderTimeViewer) userInfo:nil repeats:YES];//新建计时器监听播放进度
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;播放进度监听&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSLog(@&quot;总时长：%f--当前时间点：%f&quot;,_playerLocal.duration,_playerLocal.currentTime);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;播放网络音频&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_songItem = [[AVPlayerItem alloc]initWithURL:url];
+_playerNetwork = [[AVPlayer alloc]initWithPlayerItem:_songItem];
+[_playerNetwork play];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;获取网络资源总时长的方法：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;netAudioTime = CMTimeGetSeconds(_songItem.asset.duration);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;tips&quot;&gt;Tips&lt;/h3&gt;
+
+&lt;p&gt;1..plist文件中加入麦克风请求权限
+2.如果需要播放网络音频，添加&lt;code class=&quot;highlighter-rouge&quot;&gt;App Transport Security Settings&lt;/code&gt;下的&lt;code class=&quot;highlighter-rouge&quot;&gt;Allow Arbitrary Loads&lt;/code&gt;并设置为YES
+3.如果需要app支持后台播放音频，需要打开&lt;code class=&quot;highlighter-rouge&quot;&gt;Capabilities&lt;/code&gt;下面&lt;code class=&quot;highlighter-rouge&quot;&gt;Background Modes&lt;/code&gt;下面的&lt;code class=&quot;highlighter-rouge&quot;&gt;Audio,AirPlay,and Picture in Picture&lt;/code&gt;选项，但是审核的时候苹果如果认为你没有必要打开这个功能，会被拒哦！
+4.不用外接设备录音和播放会声音小，解决办法是播放前加入下面代码：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NSError *audioError = nil;
+BOOL success = [audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&amp;amp;audioError];
+if(!success)
+{
+NSLog(@&quot;error doing outputaudioportoverride - %@&quot;, [audioError localizedDescription]);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Fri, 19 May 2017 16:08:13 +0800</pubDate>
+        <link>/2017/05/%E5%BD%95%E9%9F%B3%E4%B8%8E%E6%92%AD%E6%94%BE%E4%BB%A5%E5%8F%8A%E7%BD%91%E7%BB%9C%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE/</link>
+        <guid isPermaLink="true">/2017/05/%E5%BD%95%E9%9F%B3%E4%B8%8E%E6%92%AD%E6%94%BE%E4%BB%A5%E5%8F%8A%E7%BD%91%E7%BB%9C%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE/</guid>
+        
+        <category>多媒体</category>
+        
+        <category>音频</category>
+        
+        <category>录音与播放以及网络音频播放</category>
+        
+        
+        <category>study</category>
+        
+      </item>
     
       <item>
         <title>编程思想小觑</title>
@@ -1307,51 +1493,6 @@ self.navigationItem.leftBarButtonItems = @[spaceItem,backItem];
         
         
         <category>essay</category>
-        
-      </item>
-    
-      <item>
-        <title>关于截取app页面长图</title>
-        <description>&lt;p&gt;前几天听朋友说他们项目准备加一个功能，就是将页面所有的内容截取出来生成一张长图，我想这是什么需求，有页面分享为嘛要分享长图o(╯□╰)o。后来某天在公司浏览简书的文章的时候无意发现了简书居然有这个功能，然后赶紧打开简书的app，果然app也有这个截长图的功能，事实证明我毕竟不是产品经理的料。后来就开始研究这个东西，查了一些绘图的资料后终于找到方法了，试验后果然可行。&lt;/p&gt;
-
-&lt;h3 id=&quot;section&quot;&gt;普通截图&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CALayer&lt;/code&gt;类有个方法&lt;code class=&quot;highlighter-rouge&quot;&gt;renderInContext:&lt;/code&gt;，这个方法用来截取layer层的图像，传入一个图形上下文，最后再通过图形上下文获取图片的方法&lt;code class=&quot;highlighter-rouge&quot;&gt;UIGraphicsGetImageFromCurrentImageContext()&lt;/code&gt;就可以拿到想要截取的图片了，下面就是截取普通图层的代码：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;UIGraphicsBeginImageContextWithOptions(imageSize, YES, 0.0);
-[view.layer renderInContext:UIGraphicsGetCurrentContext()];
-image = UIGraphicsGetImageFromCurrentImageContext();
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;下面来说一下&lt;code class=&quot;highlighter-rouge&quot;&gt;UIGraphicsBeginImageContextWithOptions()&lt;/code&gt;，这个方法作用是开启图形上下文。第一个参数控制截图的大小，一般跟view大小一致，若小于view大小，图片最后会丢失view右边或者下部的一些图像；第二个是透明开关，一般传YES截取的图片质量会高点；第三个参数是缩放因子，一般传1.0，其他的可以自己试试。&lt;/p&gt;
-
-&lt;h3 id=&quot;tableviewcollectionview&quot;&gt;截取长图（这里针对tableView和collectionView）&lt;/h3&gt;
-
-&lt;p&gt;可能你不信，截取长图跟上面方法一样，只需要在开启图形上下文时将size设置为tableView或collectionView的contentSize即可，并且将tableview滚到顶部再开始截图，代码如下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;UIGraphicsBeginImageContextWithOptions(tableView.contentSize , YES, 0.0);
-tableView.contentOffset = CGPointZero;
-tableView.frame = CGRectMake(0, 0, tableView.contentSize.width, tableView.contentSize.height);
-[tableView.layer renderInContext: UIGraphicsGetCurrentContext()];
-image = UIGraphicsGetImageFromCurrentImageContext();
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;怎么样很简单吧，你还可以下载我在github上放置的&lt;a href=&quot;https://github.com/JoshPellTan/TJImageCutDemo&quot;&gt;demo&lt;/a&gt;来看看，欢迎star！&lt;/p&gt;
-</description>
-        <pubDate>Wed, 11 Jan 2017 16:08:13 +0800</pubDate>
-        <link>/2017/01/%E5%85%B3%E4%BA%8E%E6%88%AA%E5%8F%96app%E9%A1%B5%E9%9D%A2%E9%95%BF%E5%9B%BE/</link>
-        <guid isPermaLink="true">/2017/01/%E5%85%B3%E4%BA%8E%E6%88%AA%E5%8F%96app%E9%A1%B5%E9%9D%A2%E9%95%BF%E5%9B%BE/</guid>
-        
-        <category>长图</category>
-        
-        <category>绘图</category>
-        
-        <category>关于截取app页面长图</category>
-        
-        
-        <category>study</category>
         
       </item>
     

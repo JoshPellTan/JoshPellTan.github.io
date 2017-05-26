@@ -323,6 +323,12 @@ static char nameKey;
 
 <p>简单的解释就是通过self这个类的，nameKey这个key,我们就可以取到nameKey相对应的值了。这就是如何通过runtime来动态的给类添加属性了，帅哥，你可以试试了！</p>
 
+<p>加餐：<a href="http://blog.leichunfeng.com/blog/2015/06/26/objective-c-associated-objects-implementation-principle/">引用博客</a></p>
+
+<p>1,关联对象与被关联对象本身的存储并没有直接的关系，它是存储在单独的哈希表中的；</p>
+
+<p>2,关联对象的五种关联策略与属性的限定符非常类似，在绝大多数情况下，我们都会使用 OBJC_ASSOCIATION_RETAIN_NONATOMIC 的关联策略，这可以保证我们持有关联对象；
+3,关联对象的释放时机与移除时机并不总是一致，比如实验中用关联策略 OBJC_ASSOCIATION_ASSIGN 进行关联的对象，很早就已经被释放了，但是并没有被移除，而再使用这个关联对象时就会造成 Crash 。</p>
 
   </section>
 </article>
@@ -517,11 +523,6 @@ var duoshuoQuery = {short_name:"JoshPell"};
         <div class = "footer_div">  
            <p class="copyright text-muted">
             Copyright &copy; 谭健 2017 Theme by <a href="http://JoshPell.cc/">JoshPell</a> |
-            <iframe
-                style="margin-left: 2px; margin-bottom:-5px;"
-                frameborder="0" scrolling="0" width="91px" height="20px"
-                src="https://ghbtns.com/github-btn.html?user=JoshPell&repo=joshpeltan.github.io&type=star&count=true" >
-            </iframe>|
             
 <!-- cnzz -->
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261874359'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1261874359%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>

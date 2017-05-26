@@ -7,17 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-  <title>iOS开发调试总结</title>
-  <meta name="description" content="软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试">
+  <title>自定义表视图刷新和加载控件</title>
+  <meta name="description" content="听传言说公司准备使用自定义的上拉和下拉控件，以前研究过，但没有用到实际项目中，不管传言是真是假，重新学习，继续进步！这里也贴出我写的DEMO，欢迎使用和Star！">
   <meta name="author" content="JoshPell">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="iOS开发调试总结">
-  <meta name="twitter:description" content="软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试">
+  <meta name="twitter:title" content="自定义表视图刷新和加载控件">
+  <meta name="twitter:description" content="听传言说公司准备使用自定义的上拉和下拉控件，以前研究过，但没有用到实际项目中，不管传言是真是假，重新学习，继续进步！这里也贴出我写的DEMO，欢迎使用和Star！">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="iOS开发调试总结">
-  <meta property="og:description" content="软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试">
+  <meta property="og:title" content="自定义表视图刷新和加载控件">
+  <meta property="og:description" content="听传言说公司准备使用自定义的上拉和下拉控件，以前研究过，但没有用到实际项目中，不管传言是真是假，重新学习，继续进步！这里也贴出我写的DEMO，欢迎使用和Star！">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="/2016/12/iOS%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95%E6%80%BB%E7%BB%93/">
+  <link rel="canonical" href="/2015/05/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%91%E5%8A%A8%E8%A7%86%E5%9B%BE%E5%88%B7%E6%96%B0%E5%92%8C%E5%8A%A0%E8%BD%BD%E6%8E%A7%E4%BB%B6/">
   <link rel="alternate" type="application/rss+xml" title="谭健" href="/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -196,10 +196,10 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
 <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">iOS开发调试总结</h1>
+    <h1 class="post-title">自定义表视图刷新和加载控件</h1>
     <div class="post-meta" style="color:#FF6633">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2016-12-30 16:08:08 +0800" itemprop="datePublished" class="post-meta__date date">2016-12-30</time>  
+      <time datetime="2015-05-26 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2015-05-26</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -208,121 +208,118 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
   <section class="post">
 
-    <p>软件开发工作，调试是必备技能，重要性不多说。而调试方法在不同的平台和语言中大部分都是可以互相迁移借鉴的。不同语言、不同IDE、不同平台的调试，有同性也有个性。本人iOS开发，语言就用OC，IDE就用Xcode，来唠唠开发调试</p>
+    <p>听传言说公司准备使用自定义的上拉和下拉控件，以前研究过，但没有用到实际项目中，不管传言是真是假，重新学习，继续进步！这里也贴出我写的<a href="https://github.com/JoshPellTan/TJRefresh">DEMO</a>，欢迎使用和Star！</p>
 
-<h3 id="nslog">一、NSLog打印</h3>
+<p>刷新和加载控件原理是一样，这里就只讲刷新控件，我们先不去研究效果，先来分析一下功能实现，一个常用的刷新控件工作分以下几步：</p>
 
-<p>NSLog打印是最常用的调试方法，也是初学者最喜欢最简单的调试方法，通过打印信息来查看运行路径和数据等。但打印出的信息比较少，NSLog本身效率也较低，但也不失为一种方法。用下面的宏做NSLog的优化，可以打印类名、所在方法名、详细时间和行号等信息。</p>
+<blockquote>
+  <p>1.拖动表视图下拉，控件跟随滑动视图慢慢出现</p>
+</blockquote>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>#define TJLog(format, ...) do { \
-    fprintf(stderr,"&lt;%s : %d&gt; %s\n", \
-    [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], \
-    __LINE__, __func__); \
-    (NSLog)((format), ##__VA_ARGS__); \
-    fprintf(stderr,"-------\n"); \
-} while (0)
-</code></pre>
-</div>
+<blockquote>
+  <p>2.滑动到限定距离，直接松手就触发刷新动作，开始刷新，刷新效果停留顶端；若未松手继续滑动到限定距离以内，不执行操作</p>
+</blockquote>
 
-<h3 id="initdealloc">二、生命周期方法init、dealloc</h3>
+<blockquote>
+  <p>3.刷新完成，去掉刷新效果，视图恢复原位</p>
+</blockquote>
 
-<p>在ViewController中，有两个生命周期方法我们可以重写，也就是init、dealloc方法。对于监听某些对象的状态很有帮助，特别是在dealloc方法中查看当ViewController退出的时候某个对象有没有release掉。这里也没有啥代码，自己视情况而定。</p>
+<h3 id="section">添加控件到每个滑动视图</h3>
 
-<h3 id="section">三、查看代码运行时间</h3>
+<p>首先如果是给一个成熟的项目加上刷新控件，不可能在每个有滑动视图的类中都去添加刷新控件，怎么办呢？滑动视图都有个共同点，都继承自<code class="highlighter-rouge">UIScroolView</code>，所以这里咱们采用给<code class="highlighter-rouge">UIScroolView</code>类新建一个<code class="highlighter-rouge">TJRefresher</code>的分类，再给分类添加咱们需要的<code class="highlighter-rouge">header</code>和<code class="highlighter-rouge">footer</code>属性，再在我们需要的滑动视图类中调用这两个属性即可。但是分类中是不能直接添加属性的，咋办，直接不行来间接呗，这里就要用到运行时了，前面讲过<a href="https://joshpelltan.github.io/2016/12/RunTime动态添加方法和属性/">如何动态添加属性</a>，这里不再细讲。上代码：</p>
 
-<p>有时候需要做代码优化或者耗时操作，分析效率问题，就需要知道代码的执行时间长短。网上看了看资料，直接使用宏就行</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>static const void *TJRefreshHeaderKey = &amp;TJRefreshHeaderKey;
 
-<div class="highlighter-rouge"><pre class="highlight"><code>#define CODE_START NSDate *startTime = [NSDate date]
-#define CODE_END   NSLog(@"Time:%f",-[startTime timeIntervalSinceNow])
-//用法
-	CODE_START;
-   //放置被监测代码
-   CODE_END;
-</code></pre>
-</div>
+- (void)setHeader:(TJRefreshHeader *)header {
+    
+    if (self.header != header) {
+        [self.header removeFromSuperview];
+        [self insertSubview:header atIndex:0];
+        
+    }
+    objc_setAssociatedObject(self, TJRefreshHeaderKey, header, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
-<p>控制台打印：</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G72XQEDV/GRPz7.png" width="400" height="20" alt="photos" /></p>
-
-<h3 id="section-1">四、僵尸对象</h3>
-
-<p>iOS中把release完但却没有完全消失的对象叫做僵尸对象，这时若再次释放，就会出现异常。苹果对此优化后的ARC对这种情况做了很多优化处理，但偶尔难免还是会出现。开启僵尸对象监听模式后，可以快速定位异常位置，便于我们快速调试。方法：Product–&gt;Scheme–&gt;Edit Scheme. 勾选Enable Zombie Objects即可。</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G738nBWj/6MlYo.png" width="500" height="250" alt="photos" /></p>
-
-<h3 id="analyze">五、Analyze分析器</h3>
-<p>Analyze分析器是一种静态分析工具，可以对当前程序进行静态分析，找出未使用的变量或一些死储存等等。方法：Product–&gt;Analyze.然后就是慢慢等它分析完，如下蓝色的标记就是静态分析的结果。</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G73a9gTh/AuFpd.png" width="500" height="100" alt="photos" />
-<img src="http://pic.yupoo.com/joshpell/G73a9kFw/MHxeo.png" width="400" height="400" alt="photos" /></p>
-
-<h3 id="section-2">六、断点</h3>
-<p>1.普通断点</p>
-
-<p>断点(Breakpoint)绝对是调试程序的第一大选择，也是有一个基础调试技能。断点打在哪儿当程序运行至此时就会暂停到这里（这一行未被执行）。</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G73fEqOg/AMPEV.png" width="400" height="100" alt="photos" /></p>
-
-<p>点击数字行数就在此行添加断点，再点击一次则取消（还有颜色，但不起断点作用了，可能是提醒你曾经在这里打过断点），调试中还能在下方调试信息区看到参数的值：</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G73hnyMy/hCXKr.png" width="400" height="150" alt="photos" /></p>
-
-<p>2.条件断点</p>
-
-<p>上面是最普通的断点使用方法，我们还能对断点的属性进行配置，设置条件，让断点更智能化</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G73l8Wdq/FkRh.png" width="400" height="200" alt="photos" /></p>
-
-<p>点击Edit Breadpoint…就是进入条件断点,以下面代码为例</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>-(void)test{
-	for (int i = 0;i &lt; 5; i++){
-		NSLog(@"我的值：%d",i);
-	}
+- (TJRefreshHeader *)header {
+    return objc_getAssociatedObject(self, &amp;TJRefreshHeaderKey);
 }
 </code></pre>
 </div>
 
-<p>我并不想每次循环都有断点，只有在为3时需要，则条件如下：</p>
+<p>这里我用的是<code class="highlighter-rouge">insertSubview: atIndex:</code>方法而不是<code class="highlighter-rouge">addSubview:</code>，他们的区别是前者是将视图插入同一个层级，并且可以插队，而后者只能是一层一层往上叠。当一个滑动视图同时添加刷新和加载控件时，前者可以保证他们是在一个视图层级，方便统一处理。</p>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73kIPyS/RcVHi.png" width="400" height="300" alt="photos" /></p>
+<h3 id="section-1">监听滑动视图，改变控件状态</h3>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73kILIY/yVUta.png" width="400" height="300" alt="photos" /></p>
+<p>这里需要使用KVO监听滑动视图的滑动距离，有两个选择，一个是放在上面的分类中实现，另一个是放在刷新控件类中实现。前者需要刷新控件暴露很多方法和属性供外部调用，后者只需要将当前滑动视图传递给刷新控件类进行操作即可，权衡后选后者。</p>
 
-<p>也可以查看某个方法被调用的次数，设置Action参数如下，注：要选中Automatically continue after evaluating actions。</p>
+<p>首先重写<code class="highlighter-rouge">UIView</code>类的方法，将滑动视图取到当前类暂存，并根据该视图调整控件的位置：</p>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73kIHrl/3If2z.png" width="400" height="200" alt="photos" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>- (void)willMoveToSuperview:(UIView *)newSuperview {
+    [super willMoveToSuperview:newSuperview];
+    
+    if (newSuperview &amp;&amp; [newSuperview isKindOfClass:[UIScrollView class]]) {
+        
+        [self removeObserver];
+        self.scrollView = (UIScrollView *)newSuperview;
+        self.center = CGPointMake(self.scrollView.bounds.size.width*0.5, -TJRefreshPullLen*0.5);
+       
+        [self addObserver];
+    }else {
+        [self removeObserver];
+    }
+}
+</code></pre>
+</div>
 
-<p>控制台输入如下：</p>
+<p>这里添加KVO时添加了两个属性监听，<code class="highlighter-rouge">contentOffset</code>和<code class="highlighter-rouge">contentSize</code>，需要说明的是，在刷新控件中其实只需要监听前者即可，后者的监听是在做加载控件的时候，需要根据父滑动视图的内容大小来确定控件位置和计算控件所在状态。这也是两个控件最大的不同。</p>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73kIC82/FWnAt.png" width="400" height="200" alt="photos" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>[self.scrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    [self.scrollView addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:nil];
+</code></pre>
+</div>
 
-<h3 id="section-3">七、异常断点</h3>
-<p>断点功能不止于上面所述，iOS开发者都遇到过，我们程序因为异常而crash代码就直接跑到main函数了。很多时候开发者不知道从何下手，下面就是讲用异常断点来让代码终止在出现异常的那一行
-添加异常断点：</p>
+<p>接下来将监听到的偏移值进行处理，小于极限值什么都不做，大于极限值时松手则进行刷新操作：</p>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73rC3cb/WnJa4.png" width="200" height="300" alt="photos" /></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>CGFloat value = (layerStrokenValue-(TJRefreshPullLen-TJRefreshHeaderHeight)*0.5)/((TJRefreshPullLen+TJRefreshHeaderHeight)*0.5);
 
-<p>若有异常则会出现下面图样的情况，点击进行查看：</p>
+//如果不是正在刷新，则渐变动画
+if (!self.animating) {
+    
+    self.draftShapeLayer.strokeEnd = value;
+    self.squareShapeLayer.strokeEnd = value;
+    self.lineShapeLayer1.strokeEnd = value*2;
+    self.lineShapeLayer2.strokeEnd = (value-0.5)*2;
+    self.wordsShapeLayer.strokeEnd = value;
 
-<p><img src="http://pic.yupoo.com/joshpell/G73rC03E/smK06.png" width="200" height="80" alt="photos" /></p>
+}
+//如果到达临界点，则执行刷新动画
+if (value &gt; 1 &amp;&amp; !self.animating &amp;&amp; !self.scrollView.dragging){
+    [self startAnimation];
+    if (self.handle) {
+        self.handle();
+    }
+}
+</code></pre>
+</div>
 
-<p>1.符号断点 Symbolic Breakpoint</p>
+<p>这里控件需要暴露一个方法在刷新结束时供滑动视图调用：</p>
 
-<p>创建方法跟异常断点一样，符号断点可以在指定的类名或者方法名中执行异常中断</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>- (void)endRefreshing {
+    
+    [self stopAnimation];
+    NSLog(@"结束刷新");
+}
+</code></pre>
+</div>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73rBXiT/CqOeh.png" width="150" height="200" alt="photos" /></p>
+<h3 id="ui">加载控件的UI</h3>
 
-<p>配置符号断点如下：假如需要在执行到ViewController类的viewDidLoad方法时执行中断。</p>
+<p>这里我仿了一个今日头条的刷新控件效果，用到了iOS9和swift3.0后才推出的<code class="highlighter-rouge">CAShapeLayer</code>，结合<code class="highlighter-rouge">UIBezierPath</code>绘制出了图形的线条和路径，再通过上面的滑动监听去控制线条颜色的填充百分比。这一步骤没有太复杂的逻辑，熟悉上面两个类的使用即可，不细讲，有兴趣可以研究<a href="https://github.com/JoshPellTan/TJRefresh">demo</a>。我还添加了一个文字转贝塞尔曲线的方法，也可以研究一下。</p>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73rBTzl/KRJSx.png" width="400" height="200" alt="photos" /></p>
+<p>到这里一个刷新控件就定制完成了，只贴出了一些需要注意的地方的代码，加载控件添加也类似。这里只实现了一个效果，后期如果碰到了好的效果，我还会继续添加的（前提是我会😁）。</p>
 
-<p>如果你的Symbol只写了一个函数名，那么就会在出现该函数名的地方就中断执行。如下，就会在运行到doAnimation的时候中断</p>
+<p>广告时间：觉得不错，欢迎<a href="https://github.com/JoshPellTan/TJRefresh">Star</a>！</p>
 
-<p><img src="http://pic.yupoo.com/joshpell/G73rBP4N/3bgut.png" width="400" height="200" alt="photos" /></p>
-
-<p>以上就是跟大家分享的调试经验啦！</p>
 
   </section>
 </article>
@@ -412,14 +409,9 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 <section>
        <ul class="pager">
         
-        <li class="previous">
-            <a href="/2016/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/" data-toggle="tooltip" data-placement="top" title="RunTime方法交换">上一篇：  <span>RunTime方法交换</span>
-            </a>
-        </li>
-        
         
         <li class="next">
-            <a href="/2017/01/%E5%85%B3%E4%BA%8E%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/" data-toggle="tooltip" data-placement="top" title="关于取消网络请求">下一篇：  <span>关于取消网络请求</span>
+            <a href="/2016/07/%E8%87%AA%E9%80%89%E6%9F%90%E5%87%A0%E4%B8%AA%E8%A7%92%E8%BF%9B%E8%A1%8C%E5%9C%86%E8%A7%92%E8%A3%81%E5%89%AA/" data-toggle="tooltip" data-placement="top" title="自选某几个角进行圆角裁剪">下一篇：  <span>自选某几个角进行圆角裁剪</span>
             </a>
         </li>
         
@@ -432,7 +424,7 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 <br>
 
 <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="" data-title="iOS开发调试总结 " data-url="JoshPell.cc//2016/12/iOS%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95%E6%80%BB%E7%BB%93/"></div>
+	<div class="ds-thread" data-thread-key="" data-title="自定义表视图刷新和加载控件 " data-url="JoshPell.cc//2015/05/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%91%E5%8A%A8%E8%A7%86%E5%9B%BE%E5%88%B7%E6%96%B0%E5%92%8C%E5%8A%A0%E8%BD%BD%E6%8E%A7%E4%BB%B6/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">

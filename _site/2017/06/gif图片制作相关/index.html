@@ -7,17 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-  <title>RunTime动态添加方法和属性</title>
-  <meta name="description" content="动态添加方法">
+  <title>gif图片制作相关</title>
+  <meta name="description" content="今年是GIF图片诞生30周年，而且一直对iOS的GIF图片比较感兴趣，前两天就花了点时间研究了一下，在此跟大家分享，共同学习，共同进步！大家也可以直接看DEMO，里面在关键地方都有注释。">
   <meta name="author" content="JoshPell">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="RunTime动态添加方法和属性">
-  <meta name="twitter:description" content="动态添加方法">
+  <meta name="twitter:title" content="gif图片制作相关">
+  <meta name="twitter:description" content="今年是GIF图片诞生30周年，而且一直对iOS的GIF图片比较感兴趣，前两天就花了点时间研究了一下，在此跟大家分享，共同学习，共同进步！大家也可以直接看DEMO，里面在关键地方都有注释。">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="RunTime动态添加方法和属性">
-  <meta property="og:description" content="动态添加方法">
+  <meta property="og:title" content="gif图片制作相关">
+  <meta property="og:description" content="今年是GIF图片诞生30周年，而且一直对iOS的GIF图片比较感兴趣，前两天就花了点时间研究了一下，在此跟大家分享，共同学习，共同进步！大家也可以直接看DEMO，里面在关键地方都有注释。">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="/2016/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/">
+  <link rel="canonical" href="/2017/06/gif%E5%9B%BE%E7%89%87%E5%88%B6%E4%BD%9C%E7%9B%B8%E5%85%B3/">
   <link rel="alternate" type="application/rss+xml" title="JoshPell" href="/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -196,10 +196,10 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
 <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">RunTime动态添加方法和属性</h1>
+    <h1 class="post-title">gif图片制作相关</h1>
     <div class="post-meta" style="color:#FF6633">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2016-12-12 16:08:08 +0800" itemprop="datePublished" class="post-meta__date date">2016-12-12</time>  
+      <time datetime="2017-06-19 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-06-19</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -208,127 +208,112 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
   <section class="post">
 
-    <h3 id="section">动态添加方法</h3>
+    <p>今年是GIF图片诞生30周年，而且一直对iOS的GIF图片比较感兴趣，前两天就花了点时间研究了一下，在此跟大家分享，共同学习，共同进步！
+大家也可以直接看<a href="https://github.com/JoshPellTan/TJGifMaker">DEMO</a>，里面在关键地方都有注释。</p>
 
-<p>面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。</p>
+<h3 id="gif">gif图片本质</h3>
+<p>GIF图片其实和jpg图片一样，是一种流行的图形文件格式。但大家不要以为GIF都是动图，它也是有静态的，只不过我们通常看到的都是动的图片，所以下意识地人为GIF都是动图。</p>
 
-<p>performSelector方法区别于直接调用，直接调用时假如你方法没实现，编译直接报错，而performSelector只会报警告，所以人家是问你runtime动态添加方法的东西。</p>
+<h3 id="gif-1">gif动图</h3>
+<p>我们主要来研究GIF动图，其实它就是一个图片连续播放的效果而已，只不过这不是我们手动来实现的，各个平台已经对它进行了适配，只要是动图它就能动起来而已。tom猫不知大家玩过没有，它就用的是自己手动展示多张连环图片的方法来实现的动画。</p>
 
-<p>动态添加方法是一个很有意义的事情，因为程序在编译的时候，会把所有的方法加到一个方法列表中，但是我们并不是所有的方法都会使用到，耗时耗力。我们应该多利用懒加载的方式，用到某个方法，再添加，不用的方法就不用管它。</p>
+<h3 id="gif-2">gif动图制作</h3>
 
-<p>首先我们需要导入<code class="highlighter-rouge">#import &lt;objc/message.h&gt;</code>，然后写下下面2个方法：</p>
+<p>这里提供两种方法，一种是偏底层一点需要使用<code class="highlighter-rouge">Core</code>框架的方法，另一种是读<code class="highlighter-rouge">SDWebImage</code>源码找到的苹果封装好的方法.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// 当某个类方法只声明，没有实现的时候，会执行下面的方法
-+ (BOOL)resolveClassMethod:(SEL)sel;
-// 当某个对象方法没有只声明，没有实现的时候，会执行下面的方法。
-+ (BOOL)resolveInstanceMethod:(SEL)sel ;
-</code></pre>
-</div>
+<p>1.</p>
 
-<p>我们先创建一个函数：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>    //创建gif路
+    NSURL * gifPath = [self gifPathURL];
 
-<div class="highlighter-rouge"><pre class="highlight"><code>void eat(id self, SEL _cmd,id param1){
-    NSLog(@"调用%@---%@---%@",self,NSStringFromSelector(_cmd),param1);
-}
-</code></pre>
-</div>
+    //图像目标
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)gifPath, kUTTypeGIF, imagePathArray.count, NULL);
+    
+    //gif设置
+    NSDictionary *fileProperties = @{
+                                     (__bridge id)kCGImagePropertyGIFDictionary:
+                                         @{(__bridge id)kCGImagePropertyGIFLoopCount: @0},
+                                     (NSString*)kCGImagePropertyGIFHasGlobalColorMap:[NSNumber numberWithBool:YES],
+                                     (NSString *)kCGImagePropertyColorModel:(NSString *)kCGImagePropertyColorModelRGB,
+                                     (NSString*)kCGImagePropertyDepth:[NSNumber numberWithInt:8]};
+    //a float (not double!) in seconds, rounded to centiseconds in the GIF data
+    NSDictionary *frameProperties = @{
+                                      (__bridge id)kCGImagePropertyGIFDictionary:
+                                          @{(__bridge id)kCGImagePropertyGIFDelayTime: [NSNumber numberWithFloat:duration]}};
+    
+    CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)fileProperties);
+    
+    //合成gif
+    for (UIImage *image in imagePathArray)
+    {
 
-<p>讲解一下，每一个函数，都有2个默认的隐式参数，一个是谁调用了自己，一个是SEL，SEL就是对方法的一种包装。包装的SEL类型数据它对应相应的方法地址,找到方法地址就可以调用方法。后面的id类型的param1是我写的一个参数，因为是C语言的函数，我们无法创建NS之类的类型，这里我就用id类型来接参数。</p>
-
-<p>接下来，根据官方文档我们可以添加下面的代码做判断，使得在找不到eat方法的时候，可以执行我们动态添加的eat方法，注意，上面的函数名可以随意写，只需要在下面添加方法的时候做好关联就好：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// 外界调用一个没有实现的对象方法-
-// resolveInstanceMethod中sel是没有实现的参数
-+ (BOOL)resolveInstanceMethod:(SEL)sel{
-
-    NSLog(@"%@",NSStringFromSelector(sel));
-//    if (sel == @selector(eat)) {}这句话等同下面的判断
-
-    if ([NSStringFromSelector(sel) isEqualToString:@"eat:"] ) {
-        // 这里添加方法
-        // 给哪个类
-        //SEL:方法名
-        //IMP:方法的实现（函数的入口-函数的指针-函数的名）
-        //type :方法类型
-        class_addMethod(self, sel, (IMP)eat, "v@:@"); 
-        returnYES;
+        CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef)frameProperties);
     }
-    return [super resolveInstanceMethod:sel];
-}
+    
+    CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)frameProperties);
+    if (!CGImageDestinationFinalize(destination)) {
+        NSLog(@"failed to finalize image destination");
+    }
+    
+    CFRelease(destination);
 </code></pre>
 </div>
 
-<p>这里介绍一下<code class="highlighter-rouge">OBJC_EXPORT BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)</code>这个函数的参数意义:</p>
+<p>2.</p>
 
-<p>Class cls:就是你给哪个类添加的这个方法</p>
-
-<p>SEL name：就是方法名字是啥，默认进入方法的时候，肯定是方法上带的参数sel没有，所以我们这里传入的是sel。</p>
-
-<p>(IMP)eat：这里需要我们传入一个IMP，啥实IMP,IMP就是方法的实现（函数的入口-函数的指针-函数的名）大家这里意会下</p>
-
-<p>const char <em>types，这里我们可以好好说一说。我先说下意思，</em>v@:@*的意思就是，返回类型是void,参数是id,SEL,id。具体大家参考上面我写的函数以及函数说明。</p>
-
-<p>如果想查到这些代表啥意思，可以打开苹果文档，输入Type Encodings，选择我箭头所指，查询。</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G5YKO1rz/BI7j7.png" alt="Thumper" /></p>
-
-<h3 id="section-1">动态添加属性</h3>
-<p>通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。</p>
-
-<p>默认我们在创建分类的时候，添加一个成员属性后，大家往往会发现，直接调用这个类的点语法，我们获取不了属性,为什么呢？</p>
-
-<p>因为默认分类创建的属性，不会执行set和get方法。如果我们一定要获取到这个属性，我们应该怎么做呢？这里有2种方法，一种就是添加一个静态变量，重写它的set和get方法.另外一种就是通过运行时，添加这个属性。这里我只讲第二种，代码如下：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// 声明一个char型的key
-static char nameKey;
-
-- (void)setName:(NSString *)name
-{
-    // 属性跟对象有关联-就是添加属性
-
-    // object:对象
-    // key:属性名，根据key去获取到值
-    // value:值
-    // policy：策略
-    objc_setAssociatedObject(self, &amp;nameKey, name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
+<div class="highlighter-rouge"><pre class="highlight"><code>UIImage *animatedImage;
+    CGFloat totalTime;
+    if (!duration) {
+        
+        totalTime = (3.0f / 10.0f) * imageArr.count;
+    }else{
+     
+        duration = duration * imageArr.count;
+    }
+    
+    animatedImage = [UIImage animatedImageWithImages:imageArr duration:duration];
 </code></pre>
 </div>
 
-<p>这里我讲一下·OBJC_EXPORT void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)·这个方法。
-这个方法的字面意思就是把一个值，通过一个key绑定到一个类中，最后设置一下保存的策略。代码的意思是，把name的值，通过nameKey绑定到当前类，保存的是nonatomic的copy类型。
-补充一下最后一个参数（策略）：</p>
+<h3 id="gif-3">gif图片分解</h3>
+<p>GIF动图是多张图片合成的，当然也有方法将其中的图片一张一张分解出来，注释比较详细，就不多说了。代码：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// assign类型
-   OBJC_ASSOCIATION_ASSIGN = 0,
-// 非原子性Retain--&gt;相当于Strong
-    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
-// 非原子性 copy-
-    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,
-// 原子性Retain
-    OBJC_ASSOCIATION_RETAIN = 01401,
-// 原子性copy
-    OBJC_ASSOCIATION_COPY
+<div class="highlighter-rouge"><pre class="highlight"><code>//用于保存所有图片
+NSMutableArray *imgObjects = [NSMutableArray array];
+
+//1.gif转换成data
+NSData *gifData=[NSData dataWithContentsOfFile:gifPath];
+
+//2.通过data获取image的数据源
+CGImageSourceRef source =CGImageSourceCreateWithData((CFDataRef)gifData, NULL);
+
+//3.获取gif帧数
+size_t count = CGImageSourceGetCount(source);
+for (int i=0; i&lt;count; i++) {
+    
+//4.获取单帧图片
+CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
+    
+//5.根据CGImageRef获取图片
+//[UIScreen mainScreen].scale    是计算屏幕分辨率的
+//UIImageOrientationUp           指定新的图像的绘制方向
+UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    
+//6.释放CGImageRef对象
+CGImageRelease(imageRef);
+
+[imgObjects addObject:image];
+//释放source
+CFRelease(source);
 </code></pre>
 </div>
 
-<p>取得动态绑定属性的方法如下:</p>
+<h3 id="giftips">gif使用tips</h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>- (NSString *)name
-{
-    return objc_getAssociatedObject(self, &amp;nameKey);
-}
-</code></pre>
-</div>
+<p>GIF动图的合成和分解比较简单，但使用过程中会有一些小问题，比如你想把制作的GIF放到微信中跟好友秀一下，那么你就必须要控制GIF图片的大小和质量了，否则会失败。还有如何直接用视频制作GIF，取视频中的帧图片拿来合成即可，如何取视频图片我在<a href="https://joshpelltan.github.io/2017/03/仿微信朋友圈视频剪切功能/">仿微信朋友圈视频剪切功能</a>已经讲过。本<a href="https://github.com/JoshPellTan/TJGifMaker">DEMO</a>实现了照片选取转GIF、视频选取或拍摄转GIF、GIF分解为图片等功能，有兴趣的朋友可以下载看一下，觉得不错或对您有帮助的话请<a href="https://joshpelltan.github.io/2017/03/仿微信朋友圈视频剪切功能/">star</a>一个!!!</p>
 
-<p>简单的解释就是通过self这个类的，nameKey这个key,我们就可以取到nameKey相对应的值了。这就是如何通过runtime来动态的给类添加属性了，帅哥，你可以试试了！</p>
+<p>如有不足或缺陷敬请指正，共同学习，共同进步！</p>
 
-<p>加餐：<a href="http://blog.leichunfeng.com/blog/2015/06/26/objective-c-associated-objects-implementation-principle/">引用博客</a></p>
-
-<p>1,关联对象与被关联对象本身的存储并没有直接的关系，它是存储在单独的哈希表中的；</p>
-
-<p>2,关联对象的五种关联策略与属性的限定符非常类似，在绝大多数情况下，我们都会使用 OBJC_ASSOCIATION_RETAIN_NONATOMIC 的关联策略，这可以保证我们持有关联对象；
-3,关联对象的释放时机与移除时机并不总是一致，比如实验中用关联策略 OBJC_ASSOCIATION_ASSIGN 进行关联的对象，很早就已经被释放了，但是并没有被移除，而再使用这个关联对象时就会造成 Crash 。</p>
 
   </section>
 </article>
@@ -419,13 +404,13 @@ static char nameKey;
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2016/12/xib%E4%BD%9C%E4%B8%BAcell%E6%97%B6%E7%9A%84%E5%A4%8D%E7%94%A8%E9%97%AE%E9%A2%98/" data-toggle="tooltip" data-placement="top" title="xib作为cell时的复用问题">上一篇：  <span>xib作为cell时的复用问题</span>
+            <a href="/2017/05/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%91%E5%8A%A8%E8%A7%86%E5%9B%BE%E5%88%B7%E6%96%B0%E5%92%8C%E5%8A%A0%E8%BD%BD%E6%8E%A7%E4%BB%B6/" data-toggle="tooltip" data-placement="top" title="自定义表视图刷新和加载控件">上一篇：  <span>自定义表视图刷新和加载控件</span>
             </a>
         </li>
         
         
         <li class="next">
-            <a href="/2016/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/" data-toggle="tooltip" data-placement="top" title="RunTime方法交换">下一篇：  <span>RunTime方法交换</span>
+            <a href="/2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/" data-toggle="tooltip" data-placement="top" title="如何将自己项目的代码文档导出为苹果样式">下一篇：  <span>如何将自己项目的代码文档导出为苹果样式</span>
             </a>
         </li>
         
@@ -438,7 +423,7 @@ static char nameKey;
 <br>
 
 <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="" data-title="RunTime动态添加方法和属性 " data-url="JoshPell.cc//2016/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/"></div>
+	<div class="ds-thread" data-thread-key="" data-title="gif图片制作相关 " data-url="JoshPell.cc//2017/06/gif%E5%9B%BE%E7%89%87%E5%88%B6%E4%BD%9C%E7%9B%B8%E5%85%B3/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">

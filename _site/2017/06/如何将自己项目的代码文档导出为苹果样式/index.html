@@ -7,17 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-  <title>RunTime动态添加方法和属性</title>
-  <meta name="description" content="动态添加方法">
+  <title>如何将自己项目的代码文档导出为苹果样式</title>
+  <meta name="description" content="代码技术文档">
   <meta name="author" content="JoshPell">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="RunTime动态添加方法和属性">
-  <meta name="twitter:description" content="动态添加方法">
+  <meta name="twitter:title" content="如何将自己项目的代码文档导出为苹果样式">
+  <meta name="twitter:description" content="代码技术文档">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="RunTime动态添加方法和属性">
-  <meta property="og:description" content="动态添加方法">
+  <meta property="og:title" content="如何将自己项目的代码文档导出为苹果样式">
+  <meta property="og:description" content="代码技术文档">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="/2016/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/">
+  <link rel="canonical" href="/2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/">
   <link rel="alternate" type="application/rss+xml" title="JoshPell" href="/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -196,10 +196,10 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
 <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">RunTime动态添加方法和属性</h1>
+    <h1 class="post-title">如何将自己项目的代码文档导出为苹果样式</h1>
     <div class="post-meta" style="color:#FF6633">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2016-12-12 16:08:08 +0800" itemprop="datePublished" class="post-meta__date date">2016-12-12</time>  
+      <time datetime="2017-06-21 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-06-21</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -208,127 +208,119 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
   <section class="post">
 
-    <h3 id="section">动态添加方法</h3>
+    <h3 id="section">代码技术文档</h3>
 
-<p>面试的时候面试官可能会问用过performSelector方法么，那就请注意了，他百分之百问的是跟runtime有关的知识，不要傻乎乎的以为他就是问你有没有用过这个方法了，然后你还跟他扯可以延迟调用方法啥的，这些都是OC封装好的，相信我他不是在考你这个。</p>
+<p>代码技术文档是很多大公司的必做工作，这一步如果做得好，在后续的开发迭代中会少出现许多bug，而且不管开发人员如何迭代，都能快速地上手新项目，这样就能无形当中降低公司的成本。磨刀不误砍柴工，这个道理谁都懂。但是很多小公司或者是程序员可能会怕麻烦，增加工作量，便不去做这个东西，这就导致了很多小公司两三个或三四个人去维护一个项目，在每次更新迭代的时候都会出现同样的bug或者问题，或者是有人员流动的时候，新入员工需要花大量时间去阅读了解代码，后期还不一定会避免一些老的低级bug。表面上节省了文档编写的时间，但后续为此付出代价的时间比编写时间多许多。还有一种情况是上面英文文章中提到的，就是你如果在App Store上上线了一个APP，然后你需要做其他工作，几个月后你需要给该APP更新一下版本，那时候你再看代码想下手，肯定以为是别人写的，但如果有文档，工作肯定事半功倍了。</p>
 
-<p>performSelector方法区别于直接调用，直接调用时假如你方法没实现，编译直接报错，而performSelector只会报警告，所以人家是问你runtime动态添加方法的东西。</p>
+<p>本文将展示如何为一个项目做一个基于web的代码文档。</p>
 
-<p>动态添加方法是一个很有意义的事情，因为程序在编译的时候，会把所有的方法加到一个方法列表中，但是我们并不是所有的方法都会使用到，耗时耗力。我们应该多利用懒加载的方式，用到某个方法，再添加，不用的方法就不用管它。</p>
+<h3 id="beging">beging</h3>
 
-<p>首先我们需要导入<code class="highlighter-rouge">#import &lt;objc/message.h&gt;</code>，然后写下下面2个方法：</p>
+<p>新建一个oc工程，工程名后面会用到，<a href="https://github.com/JoshPellTan/TJJazzyDocumentForOC">DEMO</a>地址</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// 当某个类方法只声明，没有实现的时候，会执行下面的方法
-+ (BOOL)resolveClassMethod:(SEL)sel;
-// 当某个对象方法没有只声明，没有实现的时候，会执行下面的方法。
-+ (BOOL)resolveInstanceMethod:(SEL)sel ;
+<h3 id="section-1">文档标注</h3>
+
+<p>最简单的标注就是双斜杠：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>//标注说明的内容
 </code></pre>
 </div>
 
-<p>我们先创建一个函数：</p>
+<p>这种方法也是大家最经常用的，简单方便。如果说对于文档或者整个项目而言，就没有太大用处了，只是说你去仔细看某个类的时候会对你的理解有帮助。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>void eat(id self, SEL _cmd,id param1){
-    NSLog(@"调用%@---%@---%@",self,NSStringFromSelector(_cmd),param1);
-}
+<p>这里说的代码文档是指使用Xcode能很好的识别，看文档的人也能快速理解，Xcode是支持编程者使用特定的关键字，也叫标记，来对代码进行标注的。高效的标注几个基本要求如下：</p>
+
+<p>1.Utilities面板的Quick Help Inspector会显示标注
+2.当你按下Option键然后点击备注的方法、类或属性名时弹出的帮助菜单 Help Popup 里
+3.在代码提示的弹框里面会显示注释信息</p>
+
+<p>但在Xcode中使用 (⌥ Option + ⌘ Command + /)的组合键快速注释，有参数或者返回值的Xcode会自动识别并帮你添加@param或@return关键字，最牛逼的是注释支持markdown语法，你想怎么描述就怎么描述。</p>
+
+<p><img src="http://pic.yupoo.com/joshpell/GxnrXGtE/tOArP.png" width="400" height="" alt="photos" /></p>
+
+<p>再介绍其他两个关键字<code class="highlighter-rouge">@code ... @endcode</code>和<code class="highlighter-rouge">@remark</code>，前者是代码标签，可以放一小段代码用于提示等，后者是加粗重点提示。他们在你用<code class="highlighter-rouge">option</code>点击查看的时候才会看到，都是跟在属性说明或者方法说明后面。</p>
+
+<p>加上这些关键词后，在使用该方法时，<code class="highlighter-rouge">option</code>加单击该方法你就能看到如下图的注释了</p>
+
+<p><img src="http://pic.yupoo.com/joshpell/GxnrY4oN/aGNAZ.png" width="400" height="" alt="photos" /></p>
+
+<p>这里快速分享其他类型的文档注释关键词：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">@class</span><span class="err">:</span> <span class="err">后面跟类名，类的描述</span>
+<span class="err">@</span><span class="nc">interface</span><span class="o">:</span> <span class="err">同上</span>
+<span class="k">@protocol</span><span class="err">:</span> <span class="err">同上，需跟协议名，协议的描述</span>
+<span class="err">@</span><span class="nc">superclass</span><span class="o">:</span> <span class="err">本类的父类</span>
+<span class="err">@classdesign</span><span class="o">:</span> <span class="err">本类使用中需要特别注意的事项，如是单例类</span>
+<span class="err">@coclass</span><span class="o">:</span> <span class="err">合作开发的类</span>
+<span class="err">枚举这里就不讲了，去看</span><span class="n">demo</span><span class="err">吧</span><span class="p">,</span><span class="err">其他还有一些未涉及的注释希望读者也发掘发掘，并告诉我一下，共同学习</span>
 </code></pre>
 </div>
 
-<p>讲解一下，每一个函数，都有2个默认的隐式参数，一个是谁调用了自己，一个是SEL，SEL就是对方法的一种包装。包装的SEL类型数据它对应相应的方法地址,找到方法地址就可以调用方法。后面的id类型的param1是我写的一个参数，因为是C语言的函数，我们无法创建NS之类的类型，这里我就用id类型来接参数。</p>
+<h3 id="web">导出为基于web样式的代码文档</h3>
 
-<p>接下来，根据官方文档我们可以添加下面的代码做判断，使得在找不到eat方法的时候，可以执行我们动态添加的eat方法，注意，上面的函数名可以随意写，只需要在下面添加方法的时候做好关联就好：</p>
+<p>1.首先是安装jazzy：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// 外界调用一个没有实现的对象方法-
-// resolveInstanceMethod中sel是没有实现的参数
-+ (BOOL)resolveInstanceMethod:(SEL)sel{
-
-    NSLog(@"%@",NSStringFromSelector(sel));
-//    if (sel == @selector(eat)) {}这句话等同下面的判断
-
-    if ([NSStringFromSelector(sel) isEqualToString:@"eat:"] ) {
-        // 这里添加方法
-        // 给哪个类
-        //SEL:方法名
-        //IMP:方法的实现（函数的入口-函数的指针-函数的名）
-        //type :方法类型
-        class_addMethod(self, sel, (IMP)eat, "v@:@"); 
-        returnYES;
-    }
-    return [super resolveInstanceMethod:sel];
-}
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo gem install jazzy
 </code></pre>
 </div>
 
-<p>这里介绍一下<code class="highlighter-rouge">OBJC_EXPORT BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)</code>这个函数的参数意义:</p>
+<p>输入密码后等待安装成功，如果安装不成功，你就得去查查gem版本或ruby环境了，自己google。</p>
 
-<p>Class cls:就是你给哪个类添加的这个方法</p>
+<p>2.使用</p>
 
-<p>SEL name：就是方法名字是啥，默认进入方法的时候，肯定是方法上带的参数sel没有，所以我们这里传入的是sel。</p>
+<p>安装成功后cd到所需工程目录下，按顺序输入以下代码，选填表示不是必须输入：</p>
 
-<p>(IMP)eat：这里需要我们传入一个IMP，啥实IMP,IMP就是方法的实现（函数的入口-函数的指针-函数的名）大家这里意会下</p>
-
-<p>const char <em>types，这里我们可以好好说一说。我先说下意思，</em>v@:@*的意思就是，返回类型是void,参数是id,SEL,id。具体大家参考上面我写的函数以及函数说明。</p>
-
-<p>如果想查到这些代表啥意思，可以打开苹果文档，输入Type Encodings，选择我箭头所指，查询。</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/G5YKO1rz/BI7j7.png" alt="Thumper" /></p>
-
-<h3 id="section-1">动态添加属性</h3>
-<p>通过运行时添加属性，使用面还是比较广的。比如想给button类绑定一个属性，大家肯定会继承button来操作。其实通过运行时添加属性，我们就可以实现给系统button添加一个属性的需求。</p>
-
-<p>默认我们在创建分类的时候，添加一个成员属性后，大家往往会发现，直接调用这个类的点语法，我们获取不了属性,为什么呢？</p>
-
-<p>因为默认分类创建的属性，不会执行set和get方法。如果我们一定要获取到这个属性，我们应该怎么做呢？这里有2种方法，一种就是添加一个静态变量，重写它的set和get方法.另外一种就是通过运行时，添加这个属性。这里我只讲第二种，代码如下：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>// 声明一个char型的key
-static char nameKey;
-
-- (void)setName:(NSString *)name
-{
-    // 属性跟对象有关联-就是添加属性
-
-    // object:对象
-    // key:属性名，根据key去获取到值
-    // value:值
-    // policy：策略
-    objc_setAssociatedObject(self, &amp;nameKey, name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
+<div class="highlighter-rouge"><pre class="highlight"><code>jazzy \
+ --objc \
+ --author Joshpell（选填） \
+ --author_url 你的个人网站地址（选填） \
+ --module-version 1.0.0（选填） \
+ --umbrella-header PrefixHeader.pch（将你的所有需要文档化的头文件都放pch文件中，这里pch文件是相对路径） \
+ --framework-root . \
+ --output （文档输出相对路径，一般是工程文件夹新建一个docs：工程相对路径/docs） 
 </code></pre>
 </div>
 
-<p>这里我讲一下·OBJC_EXPORT void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)·这个方法。
-这个方法的字面意思就是把一个值，通过一个key绑定到一个类中，最后设置一下保存的策略。代码的意思是，把name的值，通过nameKey绑定到当前类，保存的是nonatomic的copy类型。
-补充一下最后一个参数（策略）：</p>
+<p>输入完成，回车，等待片刻即可。
+成功后工程文件夹会多一个docs文件夹，打开index.html就可以浏览你的代码文档了，如图：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>// assign类型
-   OBJC_ASSOCIATION_ASSIGN = 0,
-// 非原子性Retain--&gt;相当于Strong
-    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
-// 非原子性 copy-
-    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,
-// 原子性Retain
-    OBJC_ASSOCIATION_RETAIN = 01401,
-// 原子性copy
-    OBJC_ASSOCIATION_COPY
+<p><img src="http://pic.yupoo.com/joshpell/GxnrXN6O/dIkqQ.png" width="400" height="" alt="photos" /></p>
+
+<p><img src="http://pic.yupoo.com/joshpell/GxnrXKfv/CqPas.png" width="400" height="" alt="photos" /></p>
+
+<p>jazzy默认支持swift，如果你是swift项目，恭喜你了，cd到工程目录下，一行代码搞定(感觉OC受到了歧视。。。)：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>jazzy --min-acl internal
 </code></pre>
 </div>
 
-<p>取得动态绑定属性的方法如下:</p>
+<p>如果你是特定版本的swift，可能会看不到jazzy输出，就只能用特定版本的命令输出：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>- (NSString *)name
-{
-    return objc_getAssociatedObject(self, &amp;nameKey);
-}
+<div class="highlighter-rouge"><pre class="highlight"><code>jazzy --swift-version x.x.x --min-acl internal--
 </code></pre>
 </div>
 
-<p>简单的解释就是通过self这个类的，nameKey这个key,我们就可以取到nameKey相对应的值了。这就是如何通过runtime来动态的给类添加属性了，帅哥，你可以试试了！</p>
+<p>如果你想像OC一样加入更详细的文档描述，参考下面命令：</p>
 
-<p>加餐：<a href="http://blog.leichunfeng.com/blog/2015/06/26/objective-c-associated-objects-implementation-principle/">引用博客</a></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>jazzy \
+  --clean \
+  --author Realm \
+  --author_url https://realm.io \
+  --github_url https://github.com/realm/realm-cocoa \
+  --github-file-prefix https://github.com/realm/realm-cocoa/tree/v0.96.2 \
+  --module-version 0.96.2 \
+  --xcodebuild-arguments -scheme,RealmSwift \
+  --module RealmSwift \
+  --root-url https://realm.io/docs/swift/0.96.2/api/ \
+  --output docs/swift_output \
+  --theme docs/themes
+</code></pre>
+</div>
 
-<p>1,关联对象与被关联对象本身的存储并没有直接的关系，它是存储在单独的哈希表中的；</p>
+<p>有一点是非常牛逼的，你导出的文档它会自动生成一个swift代码版本的参照！
+<a href="https://github.com/JoshPellTan/TJJazzyDocumentForOC">DEMO</a>地址，如果觉得对你有帮助别忘了star一个，共同学习，共同进步！</p>
 
-<p>2,关联对象的五种关联策略与属性的限定符非常类似，在绝大多数情况下，我们都会使用 OBJC_ASSOCIATION_RETAIN_NONATOMIC 的关联策略，这可以保证我们持有关联对象；
-3,关联对象的释放时机与移除时机并不总是一致，比如实验中用关联策略 OBJC_ASSOCIATION_ASSIGN 进行关联的对象，很早就已经被释放了，但是并没有被移除，而再使用这个关联对象时就会造成 Crash 。</p>
+<p>参考<a href="http://www.appcoda.com/documenting-source-code-in-xcode/#disqus_thread">Documenting Your Objective-C and Swift Code in Xcode with HeaderDoc and Doxygen</a></p>
 
   </section>
 </article>
@@ -419,15 +411,10 @@ static char nameKey;
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2016/12/xib%E4%BD%9C%E4%B8%BAcell%E6%97%B6%E7%9A%84%E5%A4%8D%E7%94%A8%E9%97%AE%E9%A2%98/" data-toggle="tooltip" data-placement="top" title="xib作为cell时的复用问题">上一篇：  <span>xib作为cell时的复用问题</span>
+            <a href="/2017/06/gif%E5%9B%BE%E7%89%87%E5%88%B6%E4%BD%9C%E7%9B%B8%E5%85%B3/" data-toggle="tooltip" data-placement="top" title="gif图片制作相关">上一篇：  <span>gif图片制作相关</span>
             </a>
         </li>
         
-        
-        <li class="next">
-            <a href="/2016/12/RunTime%E6%96%B9%E6%B3%95%E4%BA%A4%E6%8D%A2/" data-toggle="tooltip" data-placement="top" title="RunTime方法交换">下一篇：  <span>RunTime方法交换</span>
-            </a>
-        </li>
         
     </ul>
 </section>
@@ -438,7 +425,7 @@ static char nameKey;
 <br>
 
 <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="" data-title="RunTime动态添加方法和属性 " data-url="JoshPell.cc//2016/12/RunTime%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%96%B9%E6%B3%95%E5%92%8C%E5%B1%9E%E6%80%A7/"></div>
+	<div class="ds-thread" data-thread-key="" data-title="如何将自己项目的代码文档导出为苹果样式 " data-url="JoshPell.cc//2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">

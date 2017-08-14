@@ -1,13 +1,264 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>谭健</title>
+    <title>JoshPell</title>
     <description>欢迎来到我的个人网站~</description>
     <link>/</link>
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 26 May 2017 15:10:02 +0800</pubDate>
-    <lastBuildDate>Fri, 26 May 2017 15:10:02 +0800</lastBuildDate>
+    <pubDate>Mon, 14 Aug 2017 14:45:30 +0800</pubDate>
+    <lastBuildDate>Mon, 14 Aug 2017 14:45:30 +0800</lastBuildDate>
     <generator>Jekyll v3.1.1</generator>
+    
+      <item>
+        <title>如何将自己项目的代码文档导出为苹果样式</title>
+        <description>&lt;h3 id=&quot;section&quot;&gt;代码技术文档&lt;/h3&gt;
+
+&lt;p&gt;代码技术文档是很多大公司的必做工作，这一步如果做得好，在后续的开发迭代中会少出现许多bug，而且不管开发人员如何迭代，都能快速地上手新项目，这样就能无形当中降低公司的成本。磨刀不误砍柴工，这个道理谁都懂。但是很多小公司或者是程序员可能会怕麻烦，增加工作量，便不去做这个东西，这就导致了很多小公司两三个或三四个人去维护一个项目，在每次更新迭代的时候都会出现同样的bug或者问题，或者是有人员流动的时候，新入员工需要花大量时间去阅读了解代码，后期还不一定会避免一些老的低级bug。表面上节省了文档编写的时间，但后续为此付出代价的时间比编写时间多许多。还有一种情况是上面英文文章中提到的，就是你如果在App Store上上线了一个APP，然后你需要做其他工作，几个月后你需要给该APP更新一下版本，那时候你再看代码想下手，肯定以为是别人写的，但如果有文档，工作肯定事半功倍了。&lt;/p&gt;
+
+&lt;p&gt;本文将展示如何为一个项目做一个基于web的代码文档。&lt;/p&gt;
+
+&lt;h3 id=&quot;beging&quot;&gt;beging&lt;/h3&gt;
+
+&lt;p&gt;新建一个oc工程，工程名后面会用到，&lt;a href=&quot;https://github.com/JoshPellTan/TJJazzyDocumentForOC&quot;&gt;DEMO&lt;/a&gt;地址&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;文档标注&lt;/h3&gt;
+
+&lt;p&gt;最简单的标注就是双斜杠：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//标注说明的内容
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这种方法也是大家最经常用的，简单方便。如果说对于文档或者整个项目而言，就没有太大用处了，只是说你去仔细看某个类的时候会对你的理解有帮助。&lt;/p&gt;
+
+&lt;p&gt;这里说的代码文档是指使用Xcode能很好的识别，看文档的人也能快速理解，Xcode是支持编程者使用特定的关键字，也叫标记，来对代码进行标注的。高效的标注几个基本要求如下：&lt;/p&gt;
+
+&lt;p&gt;1.Utilities面板的Quick Help Inspector会显示标注
+2.当你按下Option键然后点击备注的方法、类或属性名时弹出的帮助菜单 Help Popup 里
+3.在代码提示的弹框里面会显示注释信息&lt;/p&gt;
+
+&lt;p&gt;但在Xcode中使用 (⌥ Option + ⌘ Command + /)的组合键快速注释，有参数或者返回值的Xcode会自动识别并帮你添加@param或@return关键字，最牛逼的是注释支持markdown语法，你想怎么描述就怎么描述。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/GxnrXGtE/tOArP.png&quot; width=&quot;400&quot; height=&quot;&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;再介绍其他两个关键字&lt;code class=&quot;highlighter-rouge&quot;&gt;@code ... @endcode&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;@remark&lt;/code&gt;，前者是代码标签，可以放一小段代码用于提示等，后者是加粗重点提示。他们在你用&lt;code class=&quot;highlighter-rouge&quot;&gt;option&lt;/code&gt;点击查看的时候才会看到，都是跟在属性说明或者方法说明后面。&lt;/p&gt;
+
+&lt;p&gt;加上这些关键词后，在使用该方法时，&lt;code class=&quot;highlighter-rouge&quot;&gt;option&lt;/code&gt;加单击该方法你就能看到如下图的注释了&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/GxnrY4oN/aGNAZ.png&quot; width=&quot;400&quot; height=&quot;&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这里快速分享其他类型的文档注释关键词：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@class&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;后面跟类名，类的描述&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;interface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;同上&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@protocol&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;同上，需跟协议名，协议的描述&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;superclass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;本类的父类&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;@classdesign&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;本类使用中需要特别注意的事项，如是单例类&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;@coclass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;合作开发的类&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;枚举这里就不讲了，去看&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;demo&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;吧&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;其他还有一些未涉及的注释希望读者也发掘发掘，并告诉我一下，共同学习&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;web&quot;&gt;导出为基于web样式的代码文档&lt;/h3&gt;
+
+&lt;p&gt;1.首先是安装jazzy：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo gem install jazzy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;输入密码后等待安装成功，如果安装不成功，你就得去查查gem版本或ruby环境了，自己google。&lt;/p&gt;
+
+&lt;p&gt;2.使用&lt;/p&gt;
+
+&lt;p&gt;安装成功后cd到所需工程目录下，按顺序输入以下代码，选填表示不是必须输入：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;jazzy \
+ --objc \
+ --author Joshpell（选填） \
+ --author_url 你的个人网站地址（选填） \
+ --module-version 1.0.0（选填） \
+ --umbrella-header PrefixHeader.pch（将你的所有需要文档化的头文件都放pch文件中，这里pch文件是相对路径） \
+ --framework-root . \
+ --output （文档输出相对路径，一般是工程文件夹新建一个docs：工程相对路径/docs） 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;输入完成，回车，等待片刻即可。
+成功后工程文件夹会多一个docs文件夹，打开index.html就可以浏览你的代码文档了，如图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/GxnrXN6O/dIkqQ.png&quot; width=&quot;400&quot; height=&quot;&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/GxnrXKfv/CqPas.png&quot; width=&quot;400&quot; height=&quot;&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;jazzy默认支持swift，如果你是swift项目，恭喜你了，cd到工程目录下，一行代码搞定(感觉OC受到了歧视。。。)：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;jazzy --min-acl internal
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;如果你是特定版本的swift，可能会看不到jazzy输出，就只能用特定版本的命令输出：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;jazzy --swift-version x.x.x --min-acl internal--
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;如果你想像OC一样加入更详细的文档描述，参考下面命令：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;jazzy \
+  --clean \
+  --author Realm \
+  --author_url https://realm.io \
+  --github_url https://github.com/realm/realm-cocoa \
+  --github-file-prefix https://github.com/realm/realm-cocoa/tree/v0.96.2 \
+  --module-version 0.96.2 \
+  --xcodebuild-arguments -scheme,RealmSwift \
+  --module RealmSwift \
+  --root-url https://realm.io/docs/swift/0.96.2/api/ \
+  --output docs/swift_output \
+  --theme docs/themes
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;有一点是非常牛逼的，你导出的文档它会自动生成一个swift代码版本的参照！
+&lt;a href=&quot;https://github.com/JoshPellTan/TJJazzyDocumentForOC&quot;&gt;DEMO&lt;/a&gt;地址，如果觉得对你有帮助别忘了star一个，共同学习，共同进步！&lt;/p&gt;
+
+&lt;p&gt;参考&lt;a href=&quot;http://www.appcoda.com/documenting-source-code-in-xcode/#disqus_thread&quot;&gt;Documenting Your Objective-C and Swift Code in Xcode with HeaderDoc and Doxygen&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 21 Jun 2017 16:08:13 +0800</pubDate>
+        <link>/2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/</link>
+        <guid isPermaLink="true">/2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/</guid>
+        
+        <category>文档</category>
+        
+        <category>如何将自己项目的代码文档导出为苹果样式（本文以OC为例）</category>
+        
+        
+        <category>study</category>
+        
+      </item>
+    
+      <item>
+        <title>gif图片制作相关</title>
+        <description>&lt;p&gt;今年是GIF图片诞生30周年，而且一直对iOS的GIF图片比较感兴趣，前两天就花了点时间研究了一下，在此跟大家分享，共同学习，共同进步！
+大家也可以直接看&lt;a href=&quot;https://github.com/JoshPellTan/TJGifMaker&quot;&gt;DEMO&lt;/a&gt;，里面在关键地方都有注释。&lt;/p&gt;
+
+&lt;h3 id=&quot;gif&quot;&gt;gif图片本质&lt;/h3&gt;
+&lt;p&gt;GIF图片其实和jpg图片一样，是一种流行的图形文件格式。但大家不要以为GIF都是动图，它也是有静态的，只不过我们通常看到的都是动的图片，所以下意识地人为GIF都是动图。&lt;/p&gt;
+
+&lt;h3 id=&quot;gif-1&quot;&gt;gif动图&lt;/h3&gt;
+&lt;p&gt;我们主要来研究GIF动图，其实它就是一个图片连续播放的效果而已，只不过这不是我们手动来实现的，各个平台已经对它进行了适配，只要是动图它就能动起来而已。tom猫不知大家玩过没有，它就用的是自己手动展示多张连环图片的方法来实现的动画。&lt;/p&gt;
+
+&lt;h3 id=&quot;gif-2&quot;&gt;gif动图制作&lt;/h3&gt;
+
+&lt;p&gt;这里提供两种方法，一种是偏底层一点需要使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Core&lt;/code&gt;框架的方法，另一种是读&lt;code class=&quot;highlighter-rouge&quot;&gt;SDWebImage&lt;/code&gt;源码找到的苹果封装好的方法.&lt;/p&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    //创建gif路
+    NSURL * gifPath = [self gifPathURL];
+
+    //图像目标
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)gifPath, kUTTypeGIF, imagePathArray.count, NULL);
+    
+    //gif设置
+    NSDictionary *fileProperties = @{
+                                     (__bridge id)kCGImagePropertyGIFDictionary:
+                                         @{(__bridge id)kCGImagePropertyGIFLoopCount: @0},
+                                     (NSString*)kCGImagePropertyGIFHasGlobalColorMap:[NSNumber numberWithBool:YES],
+                                     (NSString *)kCGImagePropertyColorModel:(NSString *)kCGImagePropertyColorModelRGB,
+                                     (NSString*)kCGImagePropertyDepth:[NSNumber numberWithInt:8]};
+    //a float (not double!) in seconds, rounded to centiseconds in the GIF data
+    NSDictionary *frameProperties = @{
+                                      (__bridge id)kCGImagePropertyGIFDictionary:
+                                          @{(__bridge id)kCGImagePropertyGIFDelayTime: [NSNumber numberWithFloat:duration]}};
+    
+    CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)fileProperties);
+    
+    //合成gif
+    for (UIImage *image in imagePathArray)
+    {
+
+        CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef)frameProperties);
+    }
+    
+    CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)frameProperties);
+    if (!CGImageDestinationFinalize(destination)) {
+        NSLog(@&quot;failed to finalize image destination&quot;);
+    }
+    
+    CFRelease(destination);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;UIImage *animatedImage;
+    CGFloat totalTime;
+    if (!duration) {
+        
+        totalTime = (3.0f / 10.0f) * imageArr.count;
+    }else{
+     
+        duration = duration * imageArr.count;
+    }
+    
+    animatedImage = [UIImage animatedImageWithImages:imageArr duration:duration];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;gif-3&quot;&gt;gif图片分解&lt;/h3&gt;
+&lt;p&gt;GIF动图是多张图片合成的，当然也有方法将其中的图片一张一张分解出来，注释比较详细，就不多说了。代码：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//用于保存所有图片
+NSMutableArray *imgObjects = [NSMutableArray array];
+
+//1.gif转换成data
+NSData *gifData=[NSData dataWithContentsOfFile:gifPath];
+
+//2.通过data获取image的数据源
+CGImageSourceRef source =CGImageSourceCreateWithData((CFDataRef)gifData, NULL);
+
+//3.获取gif帧数
+size_t count = CGImageSourceGetCount(source);
+for (int i=0; i&amp;lt;count; i++) {
+    
+//4.获取单帧图片
+CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
+    
+//5.根据CGImageRef获取图片
+//[UIScreen mainScreen].scale    是计算屏幕分辨率的
+//UIImageOrientationUp           指定新的图像的绘制方向
+UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    
+//6.释放CGImageRef对象
+CGImageRelease(imageRef);
+
+[imgObjects addObject:image];
+//释放source
+CFRelease(source);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;giftips&quot;&gt;gif使用tips&lt;/h3&gt;
+
+&lt;p&gt;GIF动图的合成和分解比较简单，但使用过程中会有一些小问题，比如你想把制作的GIF放到微信中跟好友秀一下，那么你就必须要控制GIF图片的大小和质量了，否则会失败。还有如何直接用视频制作GIF，取视频中的帧图片拿来合成即可，如何取视频图片我在&lt;a href=&quot;https://joshpelltan.github.io/2017/03/仿微信朋友圈视频剪切功能/&quot;&gt;仿微信朋友圈视频剪切功能&lt;/a&gt;已经讲过。本&lt;a href=&quot;https://github.com/JoshPellTan/TJGifMaker&quot;&gt;DEMO&lt;/a&gt;实现了照片选取转GIF、视频选取或拍摄转GIF、GIF分解为图片等功能，有兴趣的朋友可以下载看一下，觉得不错或对您有帮助的话请&lt;a href=&quot;https://joshpelltan.github.io/2017/03/仿微信朋友圈视频剪切功能/&quot;&gt;star&lt;/a&gt;一个!!!&lt;/p&gt;
+
+&lt;p&gt;如有不足或缺陷敬请指正，共同学习，共同进步！&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 19 Jun 2017 16:08:13 +0800</pubDate>
+        <link>/2017/06/gif%E5%9B%BE%E7%89%87%E5%88%B6%E4%BD%9C%E7%9B%B8%E5%85%B3/</link>
+        <guid isPermaLink="true">/2017/06/gif%E5%9B%BE%E7%89%87%E5%88%B6%E4%BD%9C%E7%9B%B8%E5%85%B3/</guid>
+        
+        <category>gif</category>
+        
+        <category>gif图片制作相关</category>
+        
+        
+        <category>study</category>
+        
+      </item>
     
       <item>
         <title>自定义表视图刷新和加载控件</title>
@@ -309,6 +560,9 @@ NSLog(@&quot;error doing outputaudioportoverride - %@&quot;, [audioError localiz
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
+&lt;h3 id=&quot;tips-one-more&quot;&gt;Tips one more&lt;/h3&gt;
+
+&lt;p&gt;完整功能的&lt;a href=&quot;https://github.com/JoshPellTan/TJAudioRecorderAndPlayer&quot;&gt;demo&lt;/a&gt;已经更新，分别实现了录音、播放本地录音和播放网络音频的&lt;code class=&quot;highlighter-rouge&quot;&gt;播放&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;暂停&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;继续&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;停止&lt;/code&gt;。&lt;/p&gt;
 </description>
         <pubDate>Fri, 19 May 2017 16:08:13 +0800</pubDate>
         <link>/2017/05/%E5%BD%95%E9%9F%B3%E4%B8%8E%E6%92%AD%E6%94%BE%E4%BB%A5%E5%8F%8A%E7%BD%91%E7%BB%9C%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE/</link>
@@ -1297,296 +1551,6 @@ Result : PASS
         
         
         <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>仿微信朋友圈视频剪切功能</title>
-        <description>&lt;p&gt;写在前面&lt;/p&gt;
-
-&lt;p&gt;公司项目最近有个小视频功能，上传的视频最长只有15秒，所以需要实现一个视频剪辑的功能。发现微信有这个功能，便准备仿微信的交互写一个，结果遇到不少坑，分享给大家让大家少走弯路。撸起袖子说干就干。&lt;/p&gt;
-
-&lt;p&gt;分析需求&lt;/p&gt;
-
-&lt;p&gt;我们先看一看微信的界面&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-d6fc6ea37b3fd2f3.PNG?imageMogr2/auto-orient/strip&quot; width=&quot;200&quot; height=&quot;350&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;微信视频裁剪界面&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;1.页面下部拖动左边和右边的白色竖条控制剪切视频的开始和结束时间，预览界面跟随拖动位置跳到视频相应帧画面,控制视频长度最长15秒，最短5秒&lt;/p&gt;
-
-&lt;p&gt;2.拖动下部图片预览条，视频预览画面跳转到左边白条停留处的帧画面&lt;/p&gt;
-
-&lt;p&gt;3.下部操作区域拖动操作时，视频暂停，松手后视频播放，播放内容为两个白条之间的内容，可以循环播放&lt;/p&gt;
-
-&lt;p&gt;4.界面的“取消”返回，“确定”后裁剪视频输出&lt;/p&gt;
-
-&lt;p&gt;先上一个我做完的效果截图：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-e37e40c9c1aa40d0.jpg?imageMogr2/auto-orient/strip&quot; width=&quot;200&quot; height=&quot;350&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;仿照效果图&lt;/p&gt;
-
-&lt;p&gt;我自己设计的控制条跟微信略有不同，微信是最长时间时候左右两个白色竖条离边框都还有一点距离，我这里设计的是两边白条都贴边框，返回按钮和确定裁剪按钮也不同。其实也没差，要说微信那样设计有特殊考虑的话，我只能说我不是交互和视觉设计师😳&lt;/p&gt;
-
-&lt;h3 id=&quot;section&quot;&gt;实现&lt;/h3&gt;
-
-&lt;p&gt;1.我这里完整的拖动选择视图是封装的一个&lt;code class=&quot;highlighter-rouge&quot;&gt;view&lt;/code&gt;，上面放一个&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;来展示小的预览图片，再上面放两个&lt;code class=&quot;highlighter-rouge&quot;&gt;image&lt;/code&gt;来做视频截取范围的开始和结束指示器。首先需要实现下面缩略图排列以及它的左右滑动，首先需要找到方法获取视频的帧图片。找了一下资料，很多，基本都是同一个方法，所以暂时选取了这个方法。为何说暂时，后面会解释。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//获取想要时间的帧视频图片
-
-+(UIImage *)getCoverImage:(NSURL *)outMovieURL atTime:(CGFloat)time isKeyImage:(BOOL)isKeyImage{
-
-AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outMovieURL options:nil];
-
-NSParameterAssert(asset);
-
-AVAssetImageGenerator *assetImageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-
-assetImageGenerator.appliesPreferredTrackTransform = YES;
-
-assetImageGenerator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
-
-__block CGImageRef thumbnailImageRef = NULL;
-
-NSError *thumbnailImageGenerationError = nil;
-
-//tips:下面代码控制时间点的取图是否为关键帧图片，系统为了性能是默认取关键帧图片
-
-CMTime myTime = CMTimeMake(time, 1);
-
-if (!isKeyImage) {
-
-assetImageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
-
-assetImageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
-
-CMTime duration = asset.duration;
-
-myTime = CMTimeMake(time*30,30);
-
-}
-
-thumbnailImageRef = [assetImageGenerator copyCGImageAtTime:myTime actualTime:NULL error:nil];
-
-if (!thumbnailImageRef){
-
-NSLog(@&quot;thumbnailImageGenerationError %@&quot;, thumbnailImageGenerationError);
-
-}
-
-UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc]
-
-initWithCGImage:thumbnailImageRef] : nil;
-
-CGImageRelease(thumbnailImageRef);
-
-return thumbnailImage;
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;通常开发者认为时间的呈现格式应该是浮点数据，我们一般使用&lt;code class=&quot;highlighter-rouge&quot;&gt;NSTimeInterval&lt;/code&gt;，实际上它是简单的双精度&lt;code class=&quot;highlighter-rouge&quot;&gt;double&lt;/code&gt;类型，只是&lt;code class=&quot;highlighter-rouge&quot;&gt;typedef&lt;/code&gt;了一下，但是由于浮点型数据计算很容易导致精度的丢失，在一些要求高精度的应用场景显然不适合，于是苹果在&lt;code class=&quot;highlighter-rouge&quot;&gt;Core Media&lt;/code&gt;框架中定义了&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTime&lt;/code&gt;数据类型作为时间的格式&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef struct{
-
-	CMTimeValue    value;
-	
-	CMTimeScale    timescale;
-	
-	CMTimeFlags    flags;
-	
-	CMTimeEpoch    epoch;
-
-} CMTime;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;显然，&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTime&lt;/code&gt;定义是一个C语言的结构体，&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTime&lt;/code&gt;是以分数的形式表示时间，&lt;code class=&quot;highlighter-rouge&quot;&gt;value&lt;/code&gt;表示分子，&lt;code class=&quot;highlighter-rouge&quot;&gt;timescale&lt;/code&gt;表示分母，&lt;code class=&quot;highlighter-rouge&quot;&gt;flags&lt;/code&gt;是位掩码，表示时间的指定状态。&lt;code class=&quot;highlighter-rouge&quot;&gt;CMTimeMake(3, 1)&lt;/code&gt;结果为3。
-我是默认一个完整屏幕宽度为15秒的截取长度，在视频的每秒取一张帧图片作为底部预览小图，起初我是用循环视频时长秒数，每次用上面方法取一张图片，再用&lt;code class=&quot;highlighter-rouge&quot;&gt;UIImageView&lt;/code&gt;放置这张图片，最后再计算&lt;code class=&quot;highlighter-rouge&quot;&gt;imageView&lt;/code&gt;的位置添加到&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;上。结果这是一个坑，视频只有二三十秒还好，如果比较长则会创建很多个&lt;code class=&quot;highlighter-rouge&quot;&gt;imageView&lt;/code&gt;，内存暴涨，导致卡顿或者直接crash。后来想到了绘图，这样就不会请求内存多次分配空间，从而解决内存暴涨问题。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;WZScrollView&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;UIScrollView&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;@property&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nonatomic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;assign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;image&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;inRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;WZScrollView&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-
-	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;drawRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-	
-	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_image&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;drawInRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;image&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;inRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-
-	&lt;span class=&quot;n&quot;&gt;_image&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	
-	&lt;span class=&quot;n&quot;&gt;_rect&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;
-	
-	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setNeedsDisplayInRect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;结果发现直接画图到&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;上后，在你拖动&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;的时候它始终会只显示前面15张图片的效果，o(╯□╰)o！！！测试了一下，滚动是有效果的，但是体验不好啊。后来把上面的继承类从&lt;code class=&quot;highlighter-rouge&quot;&gt;UIScrollView&lt;/code&gt;改成了&lt;code class=&quot;highlighter-rouge&quot;&gt;UIView&lt;/code&gt;，把图片绘制到&lt;code class=&quot;highlighter-rouge&quot;&gt;view&lt;/code&gt;上再加到&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollView&lt;/code&gt;上，设置好&lt;code class=&quot;highlighter-rouge&quot;&gt;contentSize&lt;/code&gt;，问题解决。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;@interface WZScrollView : UIView
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;接下来就是左右开始和结束的指示图片了，由于图片太小会有可能接收不到点击事件，所以我这里的切图在开始处指示图片的右边和结束指示图片的左边多裁一部分透明范围，这样指示器的面积就比你看到的大了，方便操作。接下来就是它们的拖动操作，最开始我使用的是view的&lt;code class=&quot;highlighter-rouge&quot;&gt;touchesMoved：withEvent:&lt;/code&gt;来让图片改变x值从而跟随手指移动。结果发现，手速稍快或者触点稍微偏移就会导致图片位置改变停止，体验和性能都不行。后来改用拖动手势&lt;code class=&quot;highlighter-rouge&quot;&gt;UIPanGestureRecognizer&lt;/code&gt;就完美解决了此问题，这里代码多是逻辑处理问题，包括拖动范围何时会让相应图片进行位置改变的响应，上下的白色线条位置和长度改变等等。但这里需要注意三个问题：a.拖动手势的回调方法里面的改变距离和原视图位置的x值会指数相加，每次回调都应该将视图的&lt;code class=&quot;highlighter-rouge&quot;&gt;translation&lt;/code&gt;置0。b.需要每次回调都计算开始和结束位置的时间点，让其有实时性。c.拖动结束时需要让播放器循环播放两个时间点间的视频内容。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-(void)panAction:(UIPanGestureRecognizer *)panGR{
-
-//伪代码：根据需求改变开始和结束指示图片的位置
-
-if(panGR.state == UIGestureRecognizerStateChanged){
-
-[panGR setTranslation:CGPointZero inView:self.superview];
-
-}
-
-[self calculateForTimeNodes];//实时计算裁剪时间
-
-if (panGR.state == UIGestureRecognizerStateEnded) {
-
-//伪代码：指示播放器播放相应视频片段代码
-
-}
-//计算开始结束时间点
-
--(void)calculateForTimeNodes{
-
-CGPoint offset = _scrollView.contentOffset;
-
-_startTime =(offset.x+self.startView.frame.origin.x)*15*1.0f/self.bounds.size.width;
-
-_endTime = (offset.x + self.endView.frame.origin.x + KendTimeButtonWidth) * 15 * 1.0f/self.bounds.size.width;
-
-CGFloat imageTime = _startTime;//预览时间点
-
-if (_chooseType == imageTypeEnd) {
-
-imageTime = _endTime;
-
-}
-
-if (self.getTimeRange) {
-
-self.getTimeRange(_startTime,_endTime,imageTime);//控制预览播放界面的当前画面（这里是一个播放页传过来的block的调用）
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;2.拖动scrollView时，默认是展示开始时间点的视频帧画面，在&lt;code class=&quot;highlighter-rouge&quot;&gt;scrollViewDidScroll:&lt;/code&gt;方法中调用&lt;code class=&quot;highlighter-rouge&quot;&gt;calculateForTimeNodes&lt;/code&gt;方法即可实时更新开始、结束和预览3个时间点参数，这一步的很多逻辑都封装到第一步的一些方法中了，所以这一步比较简单。&lt;/p&gt;
-
-&lt;p&gt;3.拖动时暂停播放，松手后播放相应时间范围视频内容，可以循环播放。关于开始和结束指示图片的拖动状态可以用上面提到的&lt;code class=&quot;highlighter-rouge&quot;&gt;panGR.state == UIGestureRecognizerStateEnded&lt;/code&gt;来判断，进入判断说明松手了，没有则还在拖动。而scrollView的拖动和停止直接调用它的代理就行了，这里不赘述，不明白可以在demo里面查看。这里遇到个坑是因为前面在视频预览页面拖动的时候需要有当前的视频帧画面用作预览，而开始是&lt;code class=&quot;highlighter-rouge&quot;&gt;getCoverImage: atTime: isKeyImage:&lt;/code&gt;这个方法来获取帧图片的，当拖动时就显示图片图层，停止拖动就隐藏图片图层，进而显示下面的视频图层。结果这个方法比较消耗cpu，会导致卡顿情况，还会经常因为cpu过高直接crash。后来发现AVPlayer里面有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;seekToTime: toleranceBefore: toleranceAfter: completionHandler:&lt;/code&gt;方法，作用是让视频跳到某个时间点开始播放。我去,这么简单我却饶了好大一个弯，所以大家一定要在使用类的时候要养成多看原类文件的好习惯，可以少跳抗，囧！！！其实AVPlayer还有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;seekToTime:&lt;/code&gt;方法,我不使用它的原因是它有一个自己的最小时间单位（貌似是关键帧），用它不会实时改变播放器画面。&lt;/p&gt;
-
-&lt;p&gt;视频拖动时：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[_player pause];
-
-[_player seekToTime:CMTimeMake(time*30, 30) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
-
-}];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;拖动停止时：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[_player seekToTime:CMTimeMake(_startTime*30, 30) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
-
-[_player play];
-
-}];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;4.最后就是对视频进行裁剪了，这里的这个方法不是我写的，是网上找的别人的代码，但是原代码有个小问题，就是输出的视频文件方向改变了。在这里我用了下面3行代码来保证输出视频的方向跟原视频保持一致&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;AVURLAsset *asset = [AVURLAsset assetWithURL:videoUrl];
-
-AVAssetTrack *assetVideoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo]firstObject];
-
-[compositionVideoTrack setPreferredTransform:assetVideoTrack.preferredTransform];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;我这里视频裁剪后的输出视频路径是固定的，所以我封装的方法里面的回调是没有参数的，码友如果需要可以自行改装：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+ (void)addBackgroundMiusicWithVideoUrlStr:(NSURL *)videoUrl audioUrl:(NSURL *)audioUrl andCaptureVideoWithRange:(TimeRange)videoRange completion:(void(^)(void))completionHandle；
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;大家如果下demo来看的话会发现我在这个方法调用时在回调里面多加了一个保存视频方法到里面，是由于我的项目需求。这个方法会新建一个以项目名称命名的相册，用来存放剪切后的视频，回调会传回一个PHAsset对象（项目需求），这个就是赠送节目了😁。&lt;/p&gt;
-
-&lt;p&gt;这里是&lt;a href=&quot;https://github.com/JoshPellTan/TJVideoCutDemo&quot;&gt;demo&lt;/a&gt;下载地址，如果对你有用的话别忘了star一个😁。&lt;/p&gt;
-
-&lt;p&gt;好久没动swift了，本来想写一个swift版练一练，后面再说吧哈哈。。。&lt;/p&gt;
-</description>
-        <pubDate>Tue, 07 Mar 2017 16:08:13 +0800</pubDate>
-        <link>/2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/</link>
-        <guid isPermaLink="true">/2017/03/%E4%BB%BF%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E8%A7%86%E9%A2%91%E5%89%AA%E5%88%87%E5%8A%9F%E8%83%BD/</guid>
-        
-        <category>视频</category>
-        
-        <category>剪切</category>
-        
-        <category>微信</category>
-        
-        <category>仿微信朋友圈视频剪切功能</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>关于修改系统自带的导航栏</title>
-        <description>&lt;p&gt;今天遇到了一个这样的需求，需要在导航栏加上searchBar。但我直接加上之后出现了这种情况：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/Gdhltvrh/QmhKB.png&quot; width=&quot;400&quot; height=&quot;60&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;自己定义的返回按钮距离左边太远，视觉效果不好，但我无论怎么调整这个button的frame都解决不了问题，后来找到了这个解决方案：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;//设置导航栏，并调整自定义返回按钮的位置和大小
-UIBarButtonItem * spaceItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-UIBarButtonItem * backItem = [[UIBarButtonItem alloc]initWithCustomView: self.backBtn];
-//将宽度设为负值，否则返回按钮会很宽
-spaceItem.width = -15;
-self.navigationItem.leftBarButtonItems = @[spaceItem,backItem];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;跑代码测试：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://pic.yupoo.com/joshpell/GdhltzI1/vgqjY.png&quot; width=&quot;400&quot; height=&quot;60&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;完美！&lt;/p&gt;
-
-</description>
-        <pubDate>Thu, 09 Feb 2017 16:08:13 +0800</pubDate>
-        <link>/2017/02/%E5%85%B3%E4%BA%8E%E4%BF%AE%E6%94%B9%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B8%A6%E7%9A%84%E5%AF%BC%E8%88%AA%E6%A0%8F/</link>
-        <guid isPermaLink="true">/2017/02/%E5%85%B3%E4%BA%8E%E4%BF%AE%E6%94%B9%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B8%A6%E7%9A%84%E5%AF%BC%E8%88%AA%E6%A0%8F/</guid>
-        
-        <category>导航栏</category>
-        
-        <category>关于修改系统自带的导航栏</category>
-        
-        
-        <category>tips</category>
         
       </item>
     

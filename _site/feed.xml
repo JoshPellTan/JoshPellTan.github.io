@@ -5,9 +5,89 @@
     <description>欢迎来到我的个人网站~</description>
     <link>/</link>
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 14 Aug 2017 14:45:30 +0800</pubDate>
-    <lastBuildDate>Mon, 14 Aug 2017 14:45:30 +0800</lastBuildDate>
+    <pubDate>Tue, 15 Aug 2017 12:01:04 +0800</pubDate>
+    <lastBuildDate>Tue, 15 Aug 2017 12:01:04 +0800</lastBuildDate>
     <generator>Jekyll v3.1.1</generator>
+    
+      <item>
+        <title>iOS 9 Universal links 实践</title>
+        <description>&lt;p&gt;最近一个多月公司项目UI大改，做的都是大量重复的简单工作，一是没时间二是没有什么新的技术点，唯一遇到的新的值得写个小文章记录一下的就是这个了。&lt;/p&gt;
+
+&lt;h3 id=&quot;universal-links&quot;&gt;Universal links简介&lt;/h3&gt;
+&lt;p&gt;Universal links是苹果在WWDC 2015上为iOS 9宣布加入的一个所谓通用链接的深层链接特性，&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2015/509/&quot;&gt;视频介绍&lt;/a&gt;和&lt;a href=&quot;https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html#//apple_ref/doc/uid/TP40016308-CH12-SW1&quot;&gt;官方说明文档&lt;/a&gt;,官方描述是Deep link，是系统级的跳转功能，通过传统 HTTP 链接来启动 App, 使用相同的网址打开网站和 App。重要的是不需要特别的schema，其他App阻止不了跳转！很多App垂涎已久的流量转化可以实现了！&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;流程简述&lt;/h3&gt;
+&lt;p&gt;现在有一个你公司自己的网页（网址随意，与跳转无关），网页上有一个“打开App”按钮，点击效果是打开一个链接（需要配置，后面详述），若已安装App则直接会打开（苹果系统操作，不用管），若没有则H5延时判断跳转苹果商店，结束。这样一个流程对比使用schema来打开App，一是简化了用户的操作，二是不用获取初始App的授权，简直是广大中小App运营者的福音啊&lt;/p&gt;
+
+&lt;h3 id=&quot;universal-links-1&quot;&gt;Universal links使用和配置&lt;/h3&gt;
+
+&lt;p&gt;想使用Universal links说难也不难，但说简单也不简单，它的不简单是由于需要配置的东西比较多，而且一步都不能少，接下来就给大家说一下需要配置哪些东西。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;1.（服务器端）一个通过https配置的域名，证书最好不要自制，尽量使用第三方证书，测试方法：用Safari打开该域名，如果中间没有警告提示能直接打开网址，说明证书配置成功&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;2.（服务器端）编辑一个JSON内容格式的文件，放到上面配置好的域名子目录下，苹果规定是域名的根目录或者是well-known目录下，测试方法：浏览器打开https://&amp;lt;domain&amp;gt;/apple-app-site-association 或者 https://&amp;lt;domain&amp;gt;/.well-known/apple-app-site-association能看到你的JSON文件的内容，苹果会在适当的时候去访问这个文件，以此来决定你的跳转能否支持，文件内容如下：&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;applinks&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;apps&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;details&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;appID&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;9JA89QQLNQ.com.apple.wwdc&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;paths&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/wwdc/news/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/videos/wwdc/2015/*&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;appID&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ABCD1234.com.apple.wwdc&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;paths&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;*&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;
+参数说明：&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;apps&quot;: [],&lt;/code&gt;格式固定，不用修改；&lt;code class=&quot;highlighter-rouge&quot;&gt;details&lt;/code&gt;：本域名支持跳转的app信息（如公司旗下App不止一个，则需挨个配置）；&lt;code class=&quot;highlighter-rouge&quot;&gt;appID&lt;/code&gt;:格式为“&lt;code class=&quot;highlighter-rouge&quot;&gt;teamID&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle id&lt;/code&gt;”（打开苹果开发者中心，登陆自己账号，identifiers-&amp;gt;App IDs,点击该App使用的ID即可看到）；&lt;code class=&quot;highlighter-rouge&quot;&gt;paths&lt;/code&gt;：支持跳转的网址目录，“*”表示配置网址的所有子目录都支持跳转。&lt;/p&gt;
+
+&lt;p&gt;这一步有个&lt;a href=&quot;https://search.developer.apple.com/appsearch-validation-tool/&quot;&gt;官方测试方法&lt;/a&gt;，但仅做参考，因为我配置好App端和服务器端，都能打开App了，这个测试网址还检测我的配置网址有问题。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;3.（App端）打开你项目targets-&amp;gt;Capabilities下的Associated Domains开关，并将你前面配置的域名添加到这里，支持添加多个域名，如图：&lt;/code&gt;
+&lt;img src=&quot;http://cc.cocimg.com/api/uploads/20150902/1441166240882211.png&quot; width=&quot;400&quot; height=&quot;&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;4.（App端）以上东西配置好后一定不要忘了这一步，更新Certificates证书到项目中！删除原有钥匙串管理中的证书，下载安装新的证书&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;5.（App端）这个应该写在第一点，就是本功能仅支持iOS 9 beta 2和Xcode 7 beta 2及以上版本&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;6.(App端)如果前面几步都做正确的话，这时候你已经能从H5打开App了，这时候就需要来实现App端的功能了，如果需求是打开App后会有相关操作，则需要实现**- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler**方法了，通过代码**NSURL *url = userActivity.webpageURL**可以获取本次跳转的链接信息，App端可以和其约定参数进行后续操作&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Universal links工作流程：
+&lt;img src=&quot;http://cc.cocimg.com/api/uploads/20150902/1441174097574453.png&quot; width=&quot;400&quot; height=&quot;&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;以上几步就能确保你的App能在iOS9以后的系统中打开了，enjoy your self!&lt;/p&gt;
+
+&lt;h3 id=&quot;universal-links-2&quot;&gt;Universal links缺点&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;1.只适用于iOS 9+，大型App有许多低版本用户，不适用&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;2.总会进入到先前App所在的页面，如果需求是在特定界面，会需要一些额外操作&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;3.必须拥有并维护一个网站，许多小型App或个人开发者无法负担&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;第三方解决方案&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;strong&gt;&lt;a href=&quot;https://hokolinks.com&quot;&gt;HOKO&lt;/a&gt;&lt;/strong&gt;（境外服务上商）&lt;/p&gt;
+
+&lt;p&gt;2&lt;strong&gt;&lt;a href=&quot;http://www.magicwindow.cn&quot;&gt;魔窗&lt;/a&gt;&lt;/strong&gt;（境内服务商）&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 14 Aug 2017 16:08:13 +0800</pubDate>
+        <link>/2017/08/iOS-9-Universal-links-%E5%AE%9E%E8%B7%B5/</link>
+        <guid isPermaLink="true">/2017/08/iOS-9-Universal-links-%E5%AE%9E%E8%B7%B5/</guid>
+        
+        <category>Universal links</category>
+        
+        <category>APP间跳转</category>
+        
+        <category>Universal links 从微信QQ等其他App跳转到你自己APP的实践</category>
+        
+        
+        <category>study</category>
+        
+      </item>
     
       <item>
         <title>如何将自己项目的代码文档导出为苹果样式</title>
@@ -1459,95 +1539,6 @@ Result : PASS
         <category>内存</category>
         
         <category>iOS的静态与动态内存分析</category>
-        
-        
-        <category>study</category>
-        
-      </item>
-    
-      <item>
-        <title>检测app性能并实现优化-图形性能篇</title>
-        <description>&lt;p&gt;很多尚未成熟的App都会存在很多问题，如卡顿、耗电、内存管理等等，包括我们项目App。今天有空闲时间，就决定对部分性能进行优化，当然工具主要就是用Xcode自带的Core Animation了。话不多说，开干。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Core Animation启动运行&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;1.打开Xcode对当前项目Profile，点击Product再点击Profile&lt;/p&gt;
-
-&lt;p&gt;2.这时就会打开 Profiling Template 选项对话框：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-5c7213dbefc19c86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;400&quot; height=&quot;250&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;3.选择Core Animation即可&lt;/p&gt;
-
-&lt;p&gt;4.点击红色运行按钮启动App，随后操作App就能看到FPS和CPU等性能信息了&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;但是你看到这些信息了，发现了问题，该如何优化呢，下面就用Core Animation来一个个优化&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;在右下角面板的 Display Settings 区域，我们可以看到多个 Debug Options&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-4c4211d0669f0082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;250&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;接下来一个一个看。&lt;/p&gt;
-
-&lt;h4 id=&quot;color-blended-layers&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Blended Layers&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;这个选项选项基于渲染程度对屏幕中的混合区域进行绿到红的高亮显示，越红表示性能越差，会对帧率等指标造成较大的影响。红色通常是由于多个半透明图层叠加引，而且无用的图层叠加越多，颜色越红。所以对这个做性能优化就是尽量保证图层叠加少，并尽量减少对透明度的使用。下面就是优化后的App界面与微信朋友圈的对比，可以看出这个性能比微信还更胜一筹。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-4c4211d0669f0082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;
-&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-765097aa49b36c8f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;color-hits-green-and-misses-red&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Hits Green and Misses Red&lt;/code&gt;&lt;/h4&gt;
-&lt;p&gt;当 UIView.layer.shouldRasterize = YES 时，耗时的图片绘制会被缓存，并当做一个简单的扁平图片来呈现。这时候，如果页面的其他区块(比如 UITableViewCell 的复用)使用缓存直接命中，就显示绿色，反之，如果不命中，这时就显示红色。红色越多，性能越差。因为栅格化生成缓存的过程是有开销的，如果缓存能被大量命中和有效使用，则总体上会降低开销，反之则意味着要频繁生成新的缓存，这会让性能问题雪上加霜。
-所以这里的这个缓存就需要慎重使用，而我们App包括微信QQ支付宝等我看也基本没有使用这个方式。而我们App的statusBar会经常闪红色，这是因为我使用了一个CPU和FPS的实时查看工具，需要经常刷新显示，所以就没啥解决的。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-12b7a6991f4f3798.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;color-copied-images&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Copied Images&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;对于 GPU 不支持的色彩格式的图片只能由 CPU 来处理，把这样的图片标为蓝色。蓝色越多，性能越差。因为，我们不希望在滚动视图的时候，由 CPU 来处理图片，这样可能会对主线程造成阻塞。看了App好几个页面，发现根本不会出现这里所说的蓝色，但我查看支付宝QQ就发现了几个蓝色的地方，不知道是他们有特殊的考虑还是没发现这问题，但问题也特少，影响不大。图就不上了&lt;/p&gt;
-
-&lt;h4 id=&quot;color-non-standard-surface-formats&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Non-Standard Surface Formats&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;这个性能发现基本上没有资料能查到，打开这个性能检测后，发现App上很多浅灰色色块，并且有个规律，它们都是没有设置背景色的区域，后来自己设置了背景色就没有色块了，但我不知道是前者还是后者性能好，希望知道的人解答一下。但我发现QQ支付宝这些大型的App也没有对这些做处理，而且发现苹果原生界面也有很多这种灰色色块，所以我也没有对当前App的这些问题做处理，上一组图看看效果。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-d42c2ca9e40002d6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;
-&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-bcc1746f40cdae32.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;color-immediately&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Immediately&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;通常 Core Animation Instruments 以每毫秒 10 次的频率更新图层调试颜色。对某些效果来说，这显然太慢了。这个选项就可以用来设置每帧都更新（可能会影响到渲染性能，而且会导致帧率测量不准，所以不要一直都设置它）。这是一个辅助调试工具，本身是没有啥效果的，需要联合其他调试类别。&lt;/p&gt;
-
-&lt;h4 id=&quot;color-misaligned-images&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Misaligned Images&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;这个选项检查了图片是否被缩放，以及像素是否对齐。被放缩的图片会被标记为黄色，像素不对齐则会标注为紫色。黄色、紫色越多，性能越差。主要是将控件按照图片大小来设定大小，如点赞、评论、分割线和聊天按钮，还有就是头像图片在下载的时候就从cdn下载自己需要的大小，这样图片的黄色缩放问题就没了；再就是控件的宽高最好是整数,因为苹果的屏幕最小单位是1像素，如果有小数了，设备显示就会多次再计算，再选择一个整数像素来显示。而单张大图由于需求原因，暂时没有做处理。下面就是前后对比图：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-cd7afd6abffcaa27.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;
-&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/1709525-595fe2819f937070.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; width=&quot;200&quot; height=&quot;300&quot; alt=&quot;photos&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;color-offscreen-rendered-yellow&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Color Offscreen-Rendered Yellow&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;这个选项会把那些离屏渲染的图层显示为黄色。黄色越多，性能越差。这些显示为黄色的图层很可能需要用 shadowPath 或者 shouldRasterize 来优化。这里只需要少使用图层的clipsToBounds和layer层的masksToBounds方法即可。&lt;/p&gt;
-
-&lt;h4 id=&quot;color-compositing-fast-path-blue&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;color compositing fast-path blue&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;官方说明：“Places a blue overlay over content that is detached from the compositor.”标记由硬件绘制的路径为蓝色，蓝色越多越好，可以对直接使用OpenGL绘制的图层进行高亮。对OpenGL没什么研究，所以这里没办法给出方法，大家只需要记住蓝色越多越好就ok。&lt;/p&gt;
-
-&lt;h4 id=&quot;flash-updated-regions&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Flash Updated Regions&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;这个选项会把重绘的内容显示为黄色。不该出现的黄色越多，性能越差。通常我们希望只是更新的部分被标记完黄色。当你滑动app视图的时候屏幕就是黄色的，建议大家少用这个调试，因为——&amp;gt;闪得眼睛疼！&lt;/p&gt;
-
-&lt;p&gt;我们也可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;OpenGL ES Analysis&lt;/code&gt;来监测图形的相关性能。谢谢支持！&lt;/p&gt;
-
-</description>
-        <pubDate>Wed, 29 Mar 2017 16:08:13 +0800</pubDate>
-        <link>/2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/</link>
-        <guid isPermaLink="true">/2017/03/%E6%A3%80%E6%B5%8Bapp%E6%80%A7%E8%83%BD%E5%B9%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96-%E5%9B%BE%E5%BD%A2%E6%80%A7%E8%83%BD%E7%AF%87/</guid>
-        
-        <category>优化</category>
-        
-        <category>性能</category>
-        
-        <category>检测app性能并实现优化-图形性能篇</category>
         
         
         <category>study</category>

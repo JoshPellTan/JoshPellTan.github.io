@@ -9,7 +9,7 @@ tag:
  - Universal links
  - APP间跳转
 
-Universal links 从微信QQ等其他App跳转到你自己APP的实践
+ - Universal links 从微信QQ等其他App跳转到你自己APP的实践
 ---
 
 最近一个多月公司项目UI大改，做的都是大量重复的简单工作，一是没时间二是没有什么新的技术点，唯一遇到的新的值得写个小文章记录一下的就是这个了。

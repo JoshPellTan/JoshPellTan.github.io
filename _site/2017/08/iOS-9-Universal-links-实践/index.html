@@ -7,17 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-  <title>如何将自己项目的代码文档导出为苹果样式</title>
-  <meta name="description" content="代码技术文档">
+  <title>iOS 9 Universal links 实践</title>
+  <meta name="description" content="最近一个多月公司项目UI大改，做的都是大量重复的简单工作，一是没时间二是没有什么新的技术点，唯一遇到的新的值得写个小文章记录一下的就是这个了。">
   <meta name="author" content="JoshPell">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="如何将自己项目的代码文档导出为苹果样式">
-  <meta name="twitter:description" content="代码技术文档">
+  <meta name="twitter:title" content="iOS 9 Universal links 实践">
+  <meta name="twitter:description" content="最近一个多月公司项目UI大改，做的都是大量重复的简单工作，一是没时间二是没有什么新的技术点，唯一遇到的新的值得写个小文章记录一下的就是这个了。">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="如何将自己项目的代码文档导出为苹果样式">
-  <meta property="og:description" content="代码技术文档">
+  <meta property="og:title" content="iOS 9 Universal links 实践">
+  <meta property="og:description" content="最近一个多月公司项目UI大改，做的都是大量重复的简单工作，一是没时间二是没有什么新的技术点，唯一遇到的新的值得写个小文章记录一下的就是这个了。">
   
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="/2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/">
+  <link rel="canonical" href="/2017/08/iOS-9-Universal-links-%E5%AE%9E%E8%B7%B5/">
   <link rel="alternate" type="application/rss+xml" title="JoshPell" href="/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -196,10 +196,10 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
 <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">如何将自己项目的代码文档导出为苹果样式</h1>
+    <h1 class="post-title">iOS 9 Universal links 实践</h1>
     <div class="post-meta" style="color:#FF6633">
       <img src="/images/calendar.png" width="20px"/> 
-      <time datetime="2017-06-21 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-06-21</time>  
+      <time datetime="2017-08-14 16:08:13 +0800" itemprop="datePublished" class="post-meta__date date">2017-08-14</time>  
          
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -208,119 +208,68 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 
   <section class="post">
 
-    <h3 id="section">代码技术文档</h3>
+    <p>最近一个多月公司项目UI大改，做的都是大量重复的简单工作，一是没时间二是没有什么新的技术点，唯一遇到的新的值得写个小文章记录一下的就是这个了。</p>
 
-<p>代码技术文档是很多大公司的必做工作，这一步如果做得好，在后续的开发迭代中会少出现许多bug，而且不管开发人员如何迭代，都能快速地上手新项目，这样就能无形当中降低公司的成本。磨刀不误砍柴工，这个道理谁都懂。但是很多小公司或者是程序员可能会怕麻烦，增加工作量，便不去做这个东西，这就导致了很多小公司两三个或三四个人去维护一个项目，在每次更新迭代的时候都会出现同样的bug或者问题，或者是有人员流动的时候，新入员工需要花大量时间去阅读了解代码，后期还不一定会避免一些老的低级bug。表面上节省了文档编写的时间，但后续为此付出代价的时间比编写时间多许多。还有一种情况是上面英文文章中提到的，就是你如果在App Store上上线了一个APP，然后你需要做其他工作，几个月后你需要给该APP更新一下版本，那时候你再看代码想下手，肯定以为是别人写的，但如果有文档，工作肯定事半功倍了。</p>
+<h3 id="universal-links">Universal links简介</h3>
+<p>Universal links是苹果在WWDC 2015上为iOS 9宣布加入的一个所谓通用链接的深层链接特性，<a href="https://developer.apple.com/videos/play/wwdc2015/509/">视频介绍</a>和<a href="https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html#//apple_ref/doc/uid/TP40016308-CH12-SW1">官方说明文档</a>,官方描述是Deep link，是系统级的跳转功能，通过传统 HTTP 链接来启动 App, 使用相同的网址打开网站和 App。重要的是不需要特别的schema，其他App阻止不了跳转！很多App垂涎已久的流量转化可以实现了！</p>
 
-<p>本文将展示如何为一个项目做一个基于web的代码文档。</p>
+<h3 id="section">流程简述</h3>
+<p>现在有一个你公司自己的网页（网址随意，与跳转无关），网页上有一个“打开App”按钮，点击效果是打开一个链接（需要配置，后面详述），若已安装App则直接会打开（苹果系统操作，不用管），若没有则H5延时判断跳转苹果商店，结束。这样一个流程对比使用schema来打开App，一是简化了用户的操作，二是不用获取初始App的授权，简直是广大中小App运营者的福音啊</p>
 
-<h3 id="beging">beging</h3>
+<h3 id="universal-links-1">Universal links使用和配置</h3>
 
-<p>新建一个oc工程，工程名后面会用到，<a href="https://github.com/JoshPellTan/TJJazzyDocumentForOC">DEMO</a>地址</p>
+<p>想使用Universal links说难也不难，但说简单也不简单，它的不简单是由于需要配置的东西比较多，而且一步都不能少，接下来就给大家说一下需要配置哪些东西。</p>
 
-<h3 id="section-1">文档标注</h3>
+<p><code class="highlighter-rouge">1.（服务器端）一个通过https配置的域名，证书最好不要自制，尽量使用第三方证书，测试方法：用Safari打开该域名，如果中间没有警告提示能直接打开网址，说明证书配置成功</code>
+<code class="highlighter-rouge">2.（服务器端）编辑一个JSON内容格式的文件，放到上面配置好的域名子目录下，苹果规定是域名的根目录或者是well-known目录下，测试方法：浏览器打开https://&lt;domain&gt;/apple-app-site-association 或者 https://&lt;domain&gt;/.well-known/apple-app-site-association能看到你的JSON文件的内容，苹果会在适当的时候去访问这个文件，以此来决定你的跳转能否支持，文件内容如下：</code></p>
 
-<p>最简单的标注就是双斜杠：</p>
+<p><code class="highlighter-rouge"><span class="w">
+</span><span class="p">{</span><span class="w">
+    </span><span class="nt">"applinks"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"apps"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nt">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"appID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9JA89QQLNQ.com.apple.wwdc"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"/wwdc/news/"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/videos/wwdc/2015/*"</span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"appID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ABCD1234.com.apple.wwdc"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"*"</span><span class="w"> </span><span class="p">]</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code>
+参数说明：<code class="highlighter-rouge">"apps": [],</code>格式固定，不用修改；<code class="highlighter-rouge">details</code>：本域名支持跳转的app信息（如公司旗下App不止一个，则需挨个配置）；<code class="highlighter-rouge">appID</code>:格式为“<code class="highlighter-rouge">teamID</code>. <code class="highlighter-rouge">bundle id</code>”（打开苹果开发者中心，登陆自己账号，identifiers-&gt;App IDs,点击该App使用的ID即可看到）；<code class="highlighter-rouge">paths</code>：支持跳转的网址目录，“*”表示配置网址的所有子目录都支持跳转。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>//标注说明的内容
-</code></pre>
-</div>
+<p>这一步有个<a href="https://search.developer.apple.com/appsearch-validation-tool/">官方测试方法</a>，但仅做参考，因为我配置好App端和服务器端，都能打开App了，这个测试网址还检测我的配置网址有问题。</p>
 
-<p>这种方法也是大家最经常用的，简单方便。如果说对于文档或者整个项目而言，就没有太大用处了，只是说你去仔细看某个类的时候会对你的理解有帮助。</p>
+<p><code class="highlighter-rouge">3.（App端）打开你项目targets-&gt;Capabilities下的Associated Domains开关，并将你前面配置的域名添加到这里，支持添加多个域名，如图：</code>
+<img src="http://cc.cocimg.com/api/uploads/20150902/1441166240882211.png" width="400" height="" alt="photos" /></p>
 
-<p>这里说的代码文档是指使用Xcode能很好的识别，看文档的人也能快速理解，Xcode是支持编程者使用特定的关键字，也叫标记，来对代码进行标注的。高效的标注几个基本要求如下：</p>
+<p><code class="highlighter-rouge">4.（App端）以上东西配置好后一定不要忘了这一步，更新Certificates证书到项目中！删除原有钥匙串管理中的证书，下载安装新的证书</code></p>
 
-<p>1.Utilities面板的Quick Help Inspector会显示标注
-2.当你按下Option键然后点击备注的方法、类或属性名时弹出的帮助菜单 Help Popup 里
-3.在代码提示的弹框里面会显示注释信息</p>
+<p><code class="highlighter-rouge">5.（App端）这个应该写在第一点，就是本功能仅支持iOS 9 beta 2和Xcode 7 beta 2及以上版本</code></p>
 
-<p>但在Xcode中使用 (⌥ Option + ⌘ Command + /)的组合键快速注释，有参数或者返回值的Xcode会自动识别并帮你添加@param或@return关键字，最牛逼的是注释支持markdown语法，你想怎么描述就怎么描述。</p>
+<p><code class="highlighter-rouge">6.(App端)如果前面几步都做正确的话，这时候你已经能从H5打开App了，这时候就需要来实现App端的功能了，如果需求是打开App后会有相关操作，则需要实现**- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler**方法了，通过代码**NSURL *url = userActivity.webpageURL**可以获取本次跳转的链接信息，App端可以和其约定参数进行后续操作</code></p>
 
-<p><img src="http://pic.yupoo.com/joshpell/GxnrXGtE/tOArP.png" width="400" height="" alt="photos" /></p>
+<p>Universal links工作流程：
+<img src="http://cc.cocimg.com/api/uploads/20150902/1441174097574453.png" width="400" height="" alt="photos" /></p>
 
-<p>再介绍其他两个关键字<code class="highlighter-rouge">@code ... @endcode</code>和<code class="highlighter-rouge">@remark</code>，前者是代码标签，可以放一小段代码用于提示等，后者是加粗重点提示。他们在你用<code class="highlighter-rouge">option</code>点击查看的时候才会看到，都是跟在属性说明或者方法说明后面。</p>
+<p>以上几步就能确保你的App能在iOS9以后的系统中打开了，enjoy your self!</p>
 
-<p>加上这些关键词后，在使用该方法时，<code class="highlighter-rouge">option</code>加单击该方法你就能看到如下图的注释了</p>
+<h3 id="universal-links-2">Universal links缺点</h3>
 
-<p><img src="http://pic.yupoo.com/joshpell/GxnrY4oN/aGNAZ.png" width="400" height="" alt="photos" /></p>
+<p><code class="highlighter-rouge">1.只适用于iOS 9+，大型App有许多低版本用户，不适用</code>
+<code class="highlighter-rouge">2.总会进入到先前App所在的页面，如果需求是在特定界面，会需要一些额外操作</code>
+<code class="highlighter-rouge">3.必须拥有并维护一个网站，许多小型App或个人开发者无法负担</code></p>
 
-<p>这里快速分享其他类型的文档注释关键词：</p>
+<h3 id="section-1">第三方解决方案</h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">@class</span><span class="err">:</span> <span class="err">后面跟类名，类的描述</span>
-<span class="err">@</span><span class="nc">interface</span><span class="o">:</span> <span class="err">同上</span>
-<span class="k">@protocol</span><span class="err">:</span> <span class="err">同上，需跟协议名，协议的描述</span>
-<span class="err">@</span><span class="nc">superclass</span><span class="o">:</span> <span class="err">本类的父类</span>
-<span class="err">@classdesign</span><span class="o">:</span> <span class="err">本类使用中需要特别注意的事项，如是单例类</span>
-<span class="err">@coclass</span><span class="o">:</span> <span class="err">合作开发的类</span>
-<span class="err">枚举这里就不讲了，去看</span><span class="n">demo</span><span class="err">吧</span><span class="p">,</span><span class="err">其他还有一些未涉及的注释希望读者也发掘发掘，并告诉我一下，共同学习</span>
-</code></pre>
-</div>
+<p>1.<strong><a href="https://hokolinks.com">HOKO</a></strong>（境外服务上商）</p>
 
-<h3 id="web">导出为基于web样式的代码文档</h3>
+<p>2<strong><a href="http://www.magicwindow.cn">魔窗</a></strong>（境内服务商）</p>
 
-<p>1.首先是安装jazzy：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>sudo gem install jazzy
-</code></pre>
-</div>
-
-<p>输入密码后等待安装成功，如果安装不成功，你就得去查查gem版本或ruby环境了，自己google。</p>
-
-<p>2.使用</p>
-
-<p>安装成功后cd到所需工程目录下，按顺序输入以下代码，选填表示不是必须输入：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>jazzy \
- --objc \
- --author Joshpell（选填） \
- --author_url 你的个人网站地址（选填） \
- --module-version 1.0.0（选填） \
- --umbrella-header PrefixHeader.pch（将你的所有需要文档化的头文件都放pch文件中，这里pch文件是相对路径） \
- --framework-root . \
- --output （文档输出相对路径，一般是工程文件夹新建一个docs：工程相对路径/docs） 
-</code></pre>
-</div>
-
-<p>输入完成，回车，等待片刻即可。
-成功后工程文件夹会多一个docs文件夹，打开index.html就可以浏览你的代码文档了，如图：</p>
-
-<p><img src="http://pic.yupoo.com/joshpell/GxnrXN6O/dIkqQ.png" width="400" height="" alt="photos" /></p>
-
-<p><img src="http://pic.yupoo.com/joshpell/GxnrXKfv/CqPas.png" width="400" height="" alt="photos" /></p>
-
-<p>jazzy默认支持swift，如果你是swift项目，恭喜你了，cd到工程目录下，一行代码搞定(感觉OC受到了歧视。。。)：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>jazzy --min-acl internal
-</code></pre>
-</div>
-
-<p>如果你是特定版本的swift，可能会看不到jazzy输出，就只能用特定版本的命令输出：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>jazzy --swift-version x.x.x --min-acl internal--
-</code></pre>
-</div>
-
-<p>如果你想像OC一样加入更详细的文档描述，参考下面命令：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>jazzy \
-  --clean \
-  --author Realm \
-  --author_url https://realm.io \
-  --github_url https://github.com/realm/realm-cocoa \
-  --github-file-prefix https://github.com/realm/realm-cocoa/tree/v0.96.2 \
-  --module-version 0.96.2 \
-  --xcodebuild-arguments -scheme,RealmSwift \
-  --module RealmSwift \
-  --root-url https://realm.io/docs/swift/0.96.2/api/ \
-  --output docs/swift_output \
-  --theme docs/themes
-</code></pre>
-</div>
-
-<p>有一点是非常牛逼的，你导出的文档它会自动生成一个swift代码版本的参照！
-<a href="https://github.com/JoshPellTan/TJJazzyDocumentForOC">DEMO</a>地址，如果觉得对你有帮助别忘了star一个，共同学习，共同进步！</p>
-
-<p>参考<a href="http://www.appcoda.com/documenting-source-code-in-xcode/#disqus_thread">Documenting Your Objective-C and Swift Code in Xcode with HeaderDoc and Doxygen</a></p>
 
   </section>
 </article>
@@ -411,15 +360,10 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2017/06/gif%E5%9B%BE%E7%89%87%E5%88%B6%E4%BD%9C%E7%9B%B8%E5%85%B3/" data-toggle="tooltip" data-placement="top" title="gif图片制作相关">上一篇：  <span>gif图片制作相关</span>
+            <a href="/2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/" data-toggle="tooltip" data-placement="top" title="如何将自己项目的代码文档导出为苹果样式">上一篇：  <span>如何将自己项目的代码文档导出为苹果样式</span>
             </a>
         </li>
         
-        
-        <li class="next">
-            <a href="/2017/08/iOS-9-Universal-links-%E5%AE%9E%E8%B7%B5/" data-toggle="tooltip" data-placement="top" title="iOS 9 Universal links 实践">下一篇：  <span>iOS 9 Universal links 实践</span>
-            </a>
-        </li>
         
     </ul>
 </section>
@@ -430,7 +374,7 @@ p.flower {background-image: url(http://7sbmib.com1.z0.glb.clouddn.com/body_backg
 <br>
 
 <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="" data-title="如何将自己项目的代码文档导出为苹果样式 " data-url="JoshPell.cc//2017/06/%E5%A6%82%E4%BD%95%E5%B0%86%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA%E4%B8%BA%E8%8B%B9%E6%9E%9C%E6%A0%B7%E5%BC%8F/"></div>
+	<div class="ds-thread" data-thread-key="" data-title="iOS 9 Universal links 实践 " data-url="JoshPell.cc//2017/08/iOS-9-Universal-links-%E5%AE%9E%E8%B7%B5/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">

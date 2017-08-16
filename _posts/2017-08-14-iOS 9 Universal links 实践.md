@@ -75,9 +75,10 @@ Universal links工作流程：
 
 1.**[HOKO](https://hokolinks.com)**（境外服务上商）
 
-2**[魔窗](http://www.magicwindow.cn)**（境内服务商）
+2.**[魔窗](http://www.magicwindow.cn)**（境内服务商）
 
-
+## PS
+当你跳转到App后，手机右上角会出现你配置的支持跳转的域名，你如果点击了它，后面的点击跳转都会走Safari，不会再跳App。这是苹果的机制，恢复方法是：在Safari中打开你配置的域名，在页面中下拉一下，页面上方会出现在App打开的提示，点击恢复跳转！
 
 
 
